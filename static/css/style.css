@@ -1,0 +1,40 @@
+#canndle_stick_chart,
+#rsi_chart,
+#macd_chart {
+    width: 97%;
+    height: 700px !important;
+    margin: 20px;
+    padding: 0;
+}
+#canndle_stick_chart_zoom {
+    margin: 20px;
+    height: 700px !important;
+    width: 97%;
+}
+#rsi_chart {
+    margin: 20px;
+    height: 700px !important;
+    width: 97%;
+}
+#macd_chart {
+    margin: 20px;
+    height: 700px !important;
+    width: 97%;
+}
+#price_predict {
+    margin-left: -20px;
+    margin-bottom: -50px;
+    height: 200px;
+    width: 100%;
+}
+#cci_chart {
+    margin: 20px;
+    margin-left: 20px;
+    height: 700px;
+    width: 97%;
+}
+#middle {
+    text-align: center;
+    padding: 10px;
+    background: #d4e8f1;
+}

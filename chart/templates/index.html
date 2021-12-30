@@ -1,0 +1,846 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0"><span id="symbol"></span> <span id="timeframe"></span></h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active">Chart</li>
+              </ol>
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content-header -->
+  
+      <!-- Main content -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-lg-9">
+              <div class="card">
+                <div class="card-body">
+      
+                    <div id="canndle_stick_chart"></div>
+                    <div id="macd_chart"></div>
+                    <div id="canndle_stick_chart_zoom"></div>
+                
+                </div>
+              </div>
+  
+            </div>
+            <!-- /.col-md-6 -->
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-lg-6">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
+                  
+                                <div class="info-box-content">
+                                  <span class="info-box-text">ASK</span>
+                                  <span class="info-box-number" id="ask"></span>
+                                </div>
+                                <!-- /.info-box-content -->
+                              </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger"><i class="far fa-star"></i></span>
+                  
+                                <div class="info-box-content">
+                                  <span class="info-box-text">BID</span>
+                                  <span class="info-box-number" id="bid"></span>
+                                </div>
+                                <!-- /.info-box-content -->
+                              </div>
+                        </div>
+                    </div>
+
+      
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Standard Deviation</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Indicator</th>                                   
+                                <th>Value</th>
+                                <th>STD 20 Bars</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>SMA5</td>
+                                <td>0.021</td>
+                                <td>0.021</td>
+                              </tr>
+                              <tr>
+                                <td>SMA8</td>
+                                <td>0.15</td>
+                                <td>0.021</td>
+                              </tr>
+                              <tr>
+                                <td>SMA13</td>
+                                <td>0.15</td>
+                                <td>0.021</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">MACD Analysis</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Value</th>                                   
+                                <th>Trend</th>
+                                <th>Count</th>
+                                <th>Closed Cross</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>0.05</td>
+                                <td>UP</td>
+                                <td>145.1241</td>
+                                <td>145.1574</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                    
+                    <!-- /.card-body -->
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Linear Regression Analysis</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>20 Bars Slope</th>  
+                                <th>STD</th>                                 
+                                <th>Pattern</th>
+                                <th>Predict</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>0.05</td>
+                                <td>0.02</td>
+                                <td>High Up</td>
+                                <td>146.1241</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        <div id="price_predict"></div>
+                    </div>
+                    <h3 class="card-title mb-1 ml-1">Pattern Price = 0.0082X + 0.00124</h3>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">SMA 200 Analysis</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Trend</th>                                   
+                                <th>Specific</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Up</td>
+                                <td>High Up</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Orders</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Order</th>      
+                                <th>Spread</th>                             
+                                <th>Price</th>
+                                <th>Profit</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>1214254</td>
+                                <td>0.001</td>
+                                <td>145.23</td>
+                                <td>+25 USD</td>
+                              </tr>
+                              <tr>
+                                <td>1214271</td>
+                                <td>0.001</td>
+                                <td>145.14</td>
+                                <td>+15 USD</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            
+               
+            </div>
+            <!-- /.col-md-6 -->
+          </div>
+          <!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content -->
+      <script>
+        var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
+        var macdChart = echarts.init(document.getElementById('macd_chart')); 
+        var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
+        var pricePredictChart = echarts.init(document.getElementById('price_predict')); 
+        var responseData = JSON.parse("{{resData|escapejs}}"); 
+        var data = []
+        var axisData = [];
+        var MacdArr = [];
+        var AvgMacdArr = [];
+        var SignalArr = [];
+        var HistogramArr = [];
+        var RSIArr = [];
+        var RSIDelayArr = [];
+        var CCIArr = [];
+        var SSMA5Arr = [];
+        var SSMA8Arr = [];
+        var SSMA13Arr = [];
+        var SSMA20Arr = [];
+        var SSMA50Arr = [];
+        var SSMA100Arr = [];
+        var Smoth_SSMA5Arr = [];
+        var Smoth_SSMA8Arr = [];
+        var Smoth_SSMA13Arr = [];
+        var Smoth_SSMA20Arr = [];
+        var Smoth_SSMA50Arr = [];
+        var dataMA5 = [];
+        var dataMA10 = [];
+        var dataMA20 = [];
+        var dataMA50 = [];
+        var dataMA100 = [];
+        var dataMA200 = [];
+        var MarkData = [];
+
+        $( document ).ready(function () {   
+             setInterval(function(){
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'getohlc' %}",
+                    success: function (response){
+                        createData(response);
+                    },
+                    error: function(response){
+                        console.log("Error occured")
+                        location.reload(true);
+                    }
+                })
+             },10000)
+        });
+
+        function createData(response){
+            _forexData = response.series;
+            $("#ask").html(Number(response.price['ask']).toFixed(3));
+            $("#bid").html(Number(response.price['bid']).toFixed(3));
+            $("#timeframe").html(response.price['timeframe']);
+            $("#symbol").html(response.symbol);
+            data = getData(_forexData);
+            closedPrice = getClosedPrice(_forexData);
+            lowPrice = getLowPrice(_forexData);
+            highPrice = getHighPrice(_forexData);
+            axisData = getDateLabel(_forexData); 
+            EMA_SHORT = EMACalc(closedPrice,12);
+            EMA_LONG = EMACalc(closedPrice,26);
+            EMA5Arr = EMACalc(closedPrice,5);
+            EMA20Arr = EMACalc(closedPrice,20);
+            EMA50Arr = EMACalc(closedPrice,50);
+            EMA200Arr = EMACalc(closedPrice,200);
+            MACD = MACDCalc(EMA_LONG,EMA_SHORT,26,12);
+            SSMA5Arr = SSMA_Calc(closedPrice,5);
+            SSMA8Arr = SSMA_Calc(closedPrice,8);
+            SSMA13Arr = SSMA_Calc(closedPrice,13);
+            SSMA20Arr = SSMA_Calc(closedPrice,20);
+            SSMA50Arr = SSMA_Calc(closedPrice,50);
+
+            Smoth_SSMA5 = SSMA_BARESMOTH(SSMA5Arr,3);
+            Smoth_SSMA8 = SSMA_BARESMOTH(SSMA8Arr,3);
+            Smoth_SSMA13 = SSMA_BARESMOTH(SSMA13Arr,3);
+            Smoth_SSMA20 = SSMA_BARESMOTH(SSMA20Arr,3);
+            Smoth_SSMA50 = SSMA_BARESMOTH(SSMA50Arr,3);
+
+            SIGNAL = EMACalc(MACD,9);
+            HISTOGRAM = HistogramCalc(SIGNAL,MACD,9);
+
+            var nullForMACD = Array(closedPrice.length - MACD.length).fill(null);
+            var nullForSIGNAL = Array(closedPrice.length - SIGNAL.length).fill(null);
+            var nullForHISTOGRAM = Array(closedPrice.length - HISTOGRAM.length).fill(null);
+            var nullSmoth_SSMA5 = Array(closedPrice.length - Smoth_SSMA5.length).fill(null);
+            var nullSmoth_SSMA8 = Array(closedPrice.length - Smoth_SSMA8.length).fill(null);
+            var nullSmoth_SSMA13 = Array(closedPrice.length - Smoth_SSMA13.length).fill(null);
+            var nullSmoth_SSMA20 = Array(closedPrice.length - Smoth_SSMA20.length).fill(null);
+            var nullSmoth_SSMA50 = Array(closedPrice.length - Smoth_SSMA50.length).fill(null);
+
+            dataMA200 = calculateMA(200, data);
+            dataMA100 = calculateMA(100, data);
+
+            MacdArr = nullForMACD.concat(MACD); 
+            SignalArr = nullForSIGNAL.concat(SIGNAL); 
+            HistogramArr = nullForHISTOGRAM.concat(HISTOGRAM); 
+
+            Smoth_SSMA5Arr = nullSmoth_SSMA5.concat(Smoth_SSMA5); 
+            Smoth_SSMA8Arr = nullSmoth_SSMA8.concat(Smoth_SSMA8); 
+            Smoth_SSMA13Arr = nullSmoth_SSMA13.concat(Smoth_SSMA13); 
+            Smoth_SSMA20Arr = nullSmoth_SSMA20.concat(Smoth_SSMA20); 
+            Smoth_SSMA50Arr = nullSmoth_SSMA8.concat(Smoth_SSMA50); 
+
+            canndleStickChart.setOption({
+                series : [
+                    {
+                        name: 'OHLC',
+                        data: data,
+                        markPoint: {
+                            label: {
+                                normal: {
+                                    formatter: function (param) {
+                                        return param != null ? param.data['name'] : '';
+                                    }
+                                }
+                            },
+                            data: MarkData,
+                        },
+                    }, 
+                    {
+                        name: 'SSMA20',
+                        data: Smoth_SSMA20Arr,
+                    },
+                    {
+                        name: 'SSMA5',
+                        data: Smoth_SSMA5Arr,
+                    }, 
+                    {
+                        name: 'SSMA8',
+                        data: Smoth_SSMA8Arr,
+                    }, 
+                    {
+                        name: 'SSMA13',
+                        data: Smoth_SSMA13Arr,
+                    }
+                    // 
+                ],                
+                xAxis : [
+                    {
+                        data : axisData
+                    }
+                ],
+                dataZoom : {
+                    start : Math.round((data.length-70)/(data.length)*100),
+                    end : 100
+                },
+            });
+
+            macdChart.setOption({
+                series : [
+                    {
+                        name:'MACD',
+                        data: MacdArr,
+                    },{
+                        name:'SIGNAL',
+                        data: SignalArr,
+                    },{
+                        name:'HISTOGRAM',
+                        data: HistogramArr,
+                    }
+                ],                
+                xAxis : [
+                    {
+                        data : axisData
+                    }
+                ],
+                dataZoom : {
+                    start : Math.round((data.length-70)/(data.length)*100),
+                    end : 100
+                },
+            });
+
+            canndleStickChartZoom.setOption({
+                series : [
+                    {
+                        name: 'OHLC-ZOOM',
+                        data: data,
+                        markPoint: {
+                            label: {
+                                normal: {
+                                    formatter: function (param) {
+                                        return param != null ? param.data['name'] : '';
+                                    }
+                                }
+                            },
+                            data: MarkData,
+                        },
+                    }, 
+                    {
+                        name: 'MA100',
+                        data: dataMA100,
+                    }
+                ],                
+                xAxis : [
+                    {
+                        data : axisData
+                    }
+                ],
+                dataZoom : {
+                    start : Math.round((data.length-300)/(data.length)*100),
+                    end : 100
+                },
+
+            });
+
+        }
+
+        option = {
+            backgroundColor: '#21202D',
+            title : {
+                // text: 'OHLC',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            tooltip : {
+                trigger: 'axis',
+                showDelay: 0,             // delay ms
+                formatter: function (params) {
+                    var res = params[0].name;
+                    res += '<br/>' + params[0].seriesName;
+                    res += '<br/>  Open : ' + params[0].value[1] + '  High : ' + params[0].value[4];
+                    res += '<br/>  Close : ' + params[0].value[2] + '  Low : ' + params[0].value[3];
+                    return res;
+                }
+            },
+            legend: {
+                data:['OHLC','SSMA20', 'SSMA5','SSMA8','SSMA13'],
+                selected:{'SSMA20':false},
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    // mark : {show: true},
+                    // dataZoom : {show: true},
+                    // magicType : {show: true, type: ['line', 'bar']},
+                    // restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },            
+            dataZoom : {
+                y: 250,
+                show : false,
+                realtime: true,
+                start : Math.round((data.length-70)/(data.length)*100),
+                end : 100
+            },
+            grid: {
+                left: 80,
+                top: 40,
+                right: 20,
+                bottom: 85
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : true,
+                    axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData,
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    boundaryGap: [0.05, 0.05],
+                    splitArea : {show : true},
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            series : [
+                {
+                    name:'OHLC',
+                    type:'candlestick',
+                    data: data,
+                    markPoint: {
+                        label: {
+                            normal: {
+                                formatter: function (param) {
+                                    return param != null ? param.data['name'] : '';
+                                }
+                            }
+                        },
+                        data: MarkData,
+                    },
+                    itemStyle: {
+                        color: upColor,
+                        color0: downColor,
+                        borderColor: null,
+                        borderColor0: null
+                    },
+                }, 
+                {
+                    name: 'SSMA20',
+                    type: 'line',
+                    data: Smoth_SSMA20Arr,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }, {
+                    name: 'SSMA5',
+                    type: 'line',
+                    data: Smoth_SSMA5Arr,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }, {
+                    name: 'SSMA8',
+                    type: 'line',
+                    data: Smoth_SSMA8Arr,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }, {
+                    name: 'SSMA13',
+                    type: 'line',
+                    data: Smoth_SSMA13Arr,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                },
+            ]
+        };
+
+        option_macd = {
+            backgroundColor: '#21202D',
+            tooltip : {
+                trigger: 'axis',
+                showDelay: 0             // delay ms
+            },
+            legend: {
+                // y : -30,
+                data:['MACD','SIGNAL','HISTOGRAM'],
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            dataZoom : 
+                {
+                    show : true,
+                    realtime: true,
+                    start : Math.round((data.length-70)/(data.length)*100),
+                    end : 100,
+                    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                    handleSize: '80%',
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    handleStyle: {
+                        color: '#fff',
+                        shadowBlur: 3,
+                        shadowColor: 'rgba(0, 0, 0, 0.6)',
+                        shadowOffsetX: 2,
+                        shadowOffsetY: 2
+                    }
+                },
+
+            grid: {
+                x: 80,
+                y: 20,
+                x2: 20,
+                y2: 60
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : true,
+                    axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData,
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    splitNumber: 3,
+                    boundaryGap: [0.05, 0.05],
+                    splitArea : {show : true},
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            series : [
+                {
+                    name:'MACD',
+                    type:'line',
+                    symbol: 'none',
+                    data: MacdArr,
+                },{
+                    name:'SIGNAL',
+                    type:'line',
+                    symbol: 'none',
+                    data: SignalArr,
+                },{
+                    name:'HISTOGRAM',
+                    type:'bar',
+                    symbol: 'none',
+                    data: HistogramArr,
+                }
+            ]
+        };
+
+        option_zoom = {
+            backgroundColor: '#21202D',
+            title : {
+                // text: 'USDJPY',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            tooltip : {
+                trigger: 'axis',
+                showDelay: 0,             // delay ms
+                formatter: function (params) {
+                    var res = params[0].name;
+                    res += '<br/>' + params[0].seriesName;
+                    res += '<br/>  Open : ' + params[0].value[1] + '  High : ' + params[0].value[4];
+                    res += '<br/>  Close : ' + params[0].value[2] + '  Low : ' + params[0].value[3];
+                    return res;
+                }
+            },
+            legend: {
+                data:['OHLC-ZOOM','MA100'],
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    // mark : {show: true},
+                    // dataZoom : {show: true},
+                    // magicType : {show: true, type: ['line', 'bar']},
+                    // restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },            
+            dataZoom : {
+                y: 250,
+                show : false,
+                realtime: true,
+                start : Math.round((data.length-300)/(data.length)*100),
+                end : 100
+            },
+            grid: {
+                left: 80,
+                top: 40,
+                right: 20,
+                bottom: 85
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : true,
+                    axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData,                        
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    boundaryGap: [0.05, 0.05],
+                    splitArea : {show : true},
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            series : [
+                {
+                    name:'OHLC-ZOOM',
+                    type:'candlestick',
+                    data: data,
+                    markPoint: {
+                        label: {
+                            normal: {
+                                formatter: function (param) {
+                                    return param != null ? param.data['name'] : '';
+                                }
+                            }
+                        },
+                        data: MarkData,
+                    },
+                    itemStyle: {
+                        color: upColor,
+                        color0: downColor,
+                        borderColor: null,
+                        borderColor0: null
+                    },
+                }, 
+                {
+                    name: 'MA100',
+                    type: 'line',
+                    data: dataMA100,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }
+            ]
+        };
+
+        option_predictprice = {
+            // backgroundColor: '#21202D',
+            legend: {
+                data:['OHLC-ZOOM'],
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+           
+            grid: {
+                left: 80,
+                top: 40,
+                right: 20,
+                bottom: 85
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    axisTick: {onGap:true},
+                    splitLine: {show:true},
+                    data : [1,2,3,4,5],                        
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            yAxis : [
+                {
+                    // show:false,
+                    type : 'value',
+                    scale:true,
+                    // boundaryGap: [0.05, 0.05],
+                    splitArea : {show : true},
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            series : [
+                {
+                    name: 'PREDICT',
+                    type: 'line',
+                    data: [115.1021,115.1106,115.1203,115.1300,115.1410],
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }
+            ]
+        };
+        
+
+        canndleStickChart.setOption(option);
+        macdChart.setOption(option_macd);
+        canndleStickChartZoom.setOption(option_zoom);
+        pricePredictChart.setOption(option_predictprice);
+       
+        echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom,pricePredictChart]);
+        createData(responseData);
+        window.onresize = function () {
+            canndleStickChart.resize();
+            macdChart.resize();
+            canndleStickChartZoom.resize();
+            pricePredictChart.resize();
+        }
+
+    </script>
+
+{% endblock %} 
