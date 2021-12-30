@@ -258,6 +258,8 @@
         var dataMA100 = [];
         var dataMA200 = [];
         var MarkData = [];
+        var askPrice = 0;
+        var bidPrice = 0;
 
         $( document ).ready(function () {   
              setInterval(function(){
@@ -277,8 +279,10 @@
 
         function createData(response){
             _forexData = response.series;
-            $("#ask").html(Number(response.price['ask']).toFixed(3));
-            $("#bid").html(Number(response.price['bid']).toFixed(3));
+            askPrice = Number(response.price['ask']);
+            bidPrice = Number(response.price['bid']);
+            $("#ask").html(askPrice.toFixed(3));
+            $("#bid").html(bidPrice.toFixed(3));
             $("#timeframe").html(response.price['timeframe']);
             $("#symbol").html(response.symbol);
             data = getData(_forexData);
@@ -345,6 +349,11 @@
                             },
                             data: MarkData,
                         },
+                        // markLine: {
+                        //     data: [   
+                        //         {name: 'ASK ' + askPrice, yAxis: askPrice},
+                        //     ]
+                        // },
                     }, 
                     {
                         name: 'SSMA20',
@@ -444,14 +453,17 @@
             },
             tooltip : {
                 trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                },
                 showDelay: 0,             // delay ms
-                formatter: function (params) {
-                    var res = params[0].name;
-                    res += '<br/>' + params[0].seriesName;
-                    res += '<br/>  Open : ' + params[0].value[1] + '  High : ' + params[0].value[4];
-                    res += '<br/>  Close : ' + params[0].value[2] + '  Low : ' + params[0].value[3];
-                    return res;
-                }
+                // formatter: function (params) {
+                //     var res = params[0].name;
+                //     res += '<br/>' + params[0].seriesName;
+                //     res += '<br/>  Open : ' + params[0].value[1] + '  High : ' + params[0].value[4];
+                //     res += '<br/>  Close : ' + params[0].value[2] + '  Low : ' + params[0].value[3];
+                //     return res;
+                // }
             },
             legend: {
                 data:['OHLC','SSMA20', 'SSMA5','SSMA8','SSMA13'],
@@ -467,16 +479,31 @@
                     // dataZoom : {show: true},
                     // magicType : {show: true, type: ['line', 'bar']},
                     // restore : {show: true},
-                    saveAsImage : {show: true}
+                    saveAsImage : {
+                        show: true,
+                        title: 'Save As picture'
+                    }
                 }
             },            
-            dataZoom : {
-                y: 250,
-                show : false,
-                realtime: true,
-                start : Math.round((data.length-70)/(data.length)*100),
-                end : 100
-            },
+            dataZoom : 
+                {
+                    show : true,
+                    realtime: true,
+                    start : Math.round((data.length-70)/(data.length)*100),
+                    end : 100,
+                    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                    handleSize: '80%',
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    handleStyle: {
+                        color: '#fff',
+                        shadowBlur: 3,
+                        shadowColor: 'rgba(0, 0, 0, 0.6)',
+                        shadowOffsetX: 2,
+                        shadowOffsetY: 2
+                    }
+                },
             grid: {
                 left: 80,
                 top: 40,
@@ -525,6 +552,24 @@
                         },
                         data: MarkData,
                     },
+                    // markLine: {
+                    //     symbol: ['none', 'none'],
+                    //     lineStyle: {
+                    //         normal: {
+                    //             color: '#3498db',
+                    //         }
+                    //     },
+                    //     label: {
+                    //         formatter: '{b}',
+                    //         padding: -600,
+                    //         fontSize: 14,
+                    //         color: '#3498db',
+                            
+                    //     },
+                    //     data: [   
+                    //         {name: 'ASK 115.001', yAxis: askPrice},
+                    //     ]
+                    // },
                     itemStyle: {
                         color: upColor,
                         color0: downColor,
@@ -585,25 +630,6 @@
                     color: '#fff'
                 }
             },
-            dataZoom : 
-                {
-                    show : true,
-                    realtime: true,
-                    start : Math.round((data.length-70)/(data.length)*100),
-                    end : 100,
-                    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-                    handleSize: '80%',
-                    textStyle: {
-                        color: '#fff'
-                    },
-                    handleStyle: {
-                        color: '#fff',
-                        shadowBlur: 3,
-                        shadowColor: 'rgba(0, 0, 0, 0.6)',
-                        shadowOffsetX: 2,
-                        shadowOffsetY: 2
-                    }
-                },
 
             grid: {
                 x: 80,
@@ -670,13 +696,13 @@
             tooltip : {
                 trigger: 'axis',
                 showDelay: 0,             // delay ms
-                formatter: function (params) {
-                    var res = params[0].name;
-                    res += '<br/>' + params[0].seriesName;
-                    res += '<br/>  Open : ' + params[0].value[1] + '  High : ' + params[0].value[4];
-                    res += '<br/>  Close : ' + params[0].value[2] + '  Low : ' + params[0].value[3];
-                    return res;
-                }
+                // formatter: function (params) {
+                //     var res = params[0].name;
+                //     res += '<br/>' + params[0].seriesName;
+                //     res += '<br/>  Open : ' + params[0].value[1] + '  High : ' + params[0].value[4];
+                //     res += '<br/>  Close : ' + params[0].value[2] + '  Low : ' + params[0].value[3];
+                //     return res;
+                // }
             },
             legend: {
                 data:['OHLC-ZOOM','MA100'],
@@ -691,7 +717,10 @@
                     // dataZoom : {show: true},
                     // magicType : {show: true, type: ['line', 'bar']},
                     // restore : {show: true},
-                    saveAsImage : {show: true}
+                    saveAsImage : {
+                        show: true,
+                        title: 'Save As picture'
+                    }
                 }
             },            
             dataZoom : {
