@@ -83,7 +83,58 @@ def getohlc(request):
     }
     return JsonResponse(data)
 
+def getSymbolData(request):
+    timeframe = 'M5';
+    dataframe = mt5.TIMEFRAME_M5
+    tf = request.GET['selectedTimeframe']
+    if tf == 'M5':
+        timeframe = 'M5';
+        dataframe = mt5.TIMEFRAME_M5
+    if tf == 'M15':
+        timeframe = 'M15';
+        dataframe = mt5.TIMEFRAME_M15    
+    if tf == 'M30':
+        timeframe = 'M30';
+        dataframe = mt5.TIMEFRAME_M30        
+    if tf == 'H1':
+        timeframe = 'H1';
+        dataframe = mt5.TIMEFRAME_H1
+    if tf == 'H4':
+        timeframe = 'H1';
+        dataframe = mt5.TIMEFRAME_H4
 
+
+    symbol = request.GET['selectedSymbol']
+    
+    symbol_price = mt5.symbol_info_tick(symbol)._asdict()
+    
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlcs = []
+    for i, data in ohlc_data.iterrows():
+        ohlc = {
+            'time':data['time'].strftime('%Y-%m-%d %H:%M:%S'),
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume']
+        }
+        ohlcs.append(ohlc)
+
+    data = {
+        'symbol':symbol,
+        'series':ohlcs, 
+        'price': 
+        {
+            'ask':symbol_price['ask'],
+            'bid':symbol_price['bid'],
+            'timeframe':timeframe
+        }
+    }
+
+    data = dumps(data)
+    return render(request,'index.html',{'resData': data})
 
 
 

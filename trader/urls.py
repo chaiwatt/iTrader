@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index,name='index'),
     path('getohlc',views.getohlc,name='getohlc'),
+    path('getSymbolData',views.getSymbolData,name='getSymbolData'),
 ]

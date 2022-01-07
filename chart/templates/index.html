@@ -91,8 +91,41 @@
             <div class="col-lg-3">
                 <div class="card">
                     <div class="card-body">
-                        
-                      <div class="row">
+                        <form action="getSymbolData" action="GET">
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group"  >
+                                        <select class="form-control" name="selectedSymbol">
+                                            <option>USDJPY</option>
+                                            <option>AUDUSD</option>
+                                            <option>NZDUSD</option>
+                                            <option>USDCHF</option>
+                                            <option>USDCAD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group"> 
+                                        <select class="form-control" name="selectedTimeframe" >
+                                            <option>M5</option>
+                                            <option>M15</option>
+                                            <option>M30</option>
+                                            <option>H1</option>
+                                            <option>H4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <input type="submit" class="btn btn-primary mr-1 w-100" value="Get">
+                                </div>     
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                    
                         <div class="col-lg-6">
                             <div class="info-box">
                                 <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
@@ -427,7 +460,7 @@
                     }
                 ],
                 dataZoom : {
-                    start : Math.round((data.length-70)/(data.length)*100),
+                    start : Math.round((data.length-90)/(data.length)*100),
                     end : 100
                 },
             });
@@ -451,7 +484,7 @@
                     }
                 ],
                 dataZoom : {
-                    start : Math.round((data.length-70)/(data.length)*100),
+                    start : Math.round((data.length-90)/(data.length)*100),
                     end : 100
                 },
             });
@@ -681,7 +714,7 @@
                 {
                     show : true,
                     realtime: true,
-                    start : Math.round((data.length-70)/(data.length)*100),
+                    start : Math.round((data.length-90)/(data.length)*100),
                     end : 100,
                     handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
                     handleSize: '80%',
