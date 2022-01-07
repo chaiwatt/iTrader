@@ -22,4 +22,5 @@ urlpatterns = [
     path('',views.index,name='index'),
     path('getohlc',views.getohlc,name='getohlc'),
     path('getSymbolData',views.getSymbolData,name='getSymbolData'),
+    path('lineNotification',views.lineNotification,name='lineNotification'),
 ]
