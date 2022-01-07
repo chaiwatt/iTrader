@@ -151,3 +151,103 @@
         }).filter(x => x != null);
     }
 
+    function getMacdCross(macd,signal){
+        let isUp = true;
+        let crossAbove = true;  
+        let crossIndex = 0; 
+        if(macd[macd.length-1] > signal[signal.length-1]){ 
+            for(var i = macd.length-1 ; i > 0 ; i--){
+                if(macd[i] < signal[i]){
+                    if(macd[i] < 0){
+                        
+                        crossAbove = false
+                    }
+                    crossIndex = i;
+                    break;
+                }
+            }
+        }else{
+            isUp = false
+            for(var i = macd.length-1 ; i > 0 ; i--){
+                if(macd[i] > signal[i]){
+                    if(macd[i] < 0){
+                        
+                        crossAbove = false
+                    }
+                    crossIndex = i;
+                    break;
+                }
+            }
+        }
+        return [isUp,crossAbove,crossIndex+1]
+    }
+
+    function genRegressionLine(_data,nRange){
+        var yVal = [];
+        for(var i = _data.length-nRange ; i < _data.length ; i++ ){
+            yVal.push(_data[i]);
+        }
+        const xVal = Array(nRange ).fill().map((_, idx) => 1 + idx)
+      
+        const mX = xVal.reduce((a,v,i)=>(a*i+v)/(i+1));
+        const mY = yVal.reduce((a,v,i)=>(a*i+v)/(i+1));
+
+        let xValMinusMx = xVal.map(function(val){
+            return  (val - mX)
+        })
+
+        let xValMinusMxSquare = xValMinusMx.map(function(val){
+            return  val*val
+        })
+
+        let yValMinusMy = yVal.map(function(val){
+            return  (val - mY)
+        })
+      
+        let diffMxTimediffMy = yValMinusMy.map(function(val,index){
+            return val * xValMinusMx[index]
+        })
+
+        const sumSquareError = xValMinusMxSquare.reduce((a, b) => a + b, 0)
+
+        const sumdiffMxTimediffMy = diffMxTimediffMy.reduce((a, b) => a + b, 0)
+        
+        let slope = sumdiffMxTimediffMy/sumSquareError
+
+        let constantC = mY - mX*slope
+
+        return [slope,constantC]
+    }
+
+    function getCoord(arr,startX,endX,nRage){
+        let startY = 1 * arr[0] + arr[1]
+        let endY = nRage * arr[0] + arr[1]
+        return [[startX,startY],[endX,endY]]
+    }
+
+    function isUpTrend(slope,_data,sma100,nRange,slopeSpec){
+        let tmp = [
+                {
+                name: {
+                    slope: 'Slope: ' + slope
+                },
+                value: sma100[_data.length-1],
+                xAxis: _data.length-1,
+                yAxis: sma100[_data.length-1],
+                color: "#000",
+            }
+        ]
+        var allSMA100Low = true;
+        for(var i = _data.length-nRange ; i < _data.length ; i++ ){
+            if(sma100[i] > _data[i][2]){
+                allSMA100Low = false
+                return [tmp, false]
+            }        
+        }
+        if(allSMA100Low == true && slope > slopeSpec){
+            return [tmp, true]
+        }else{
+            return [tmp, false]
+        }
+    }
+

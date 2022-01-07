@@ -22,6 +22,68 @@
       <!-- Main content -->
       <div class="content">
         <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box" style="background: #00bc8c " id="slopeShow">
+                    <span class="info-box-icon" id="slopeShowIcon"><i class="fas fa-arrow-circle-up"></i></span>
+      
+                    <div class="info-box-content">
+                      <span class="info-box-text">MA100 Slope <span id="slopeShowSpec"></span> </span>
+                      <span class="info-box-number" id="slopeLabel" ></span>
+      
+                    
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box" style="background: #00bc8c " id="macdShow">
+                    <span class="info-box-icon" id="macdShowIcon"><i class="fas fa-arrow-circle-up"></i></span>
+      
+                    <div class="info-box-content">
+                      <span class="info-box-text">MACD</span>
+                      <span class="info-box-number" ><span id="macdShowTrend">Trend: <i class="fas fa-arrow-up mr-1"></i> </span> | <span id="macdShowCross">Cross: <i class="fas fa-arrow-down ml-1"></i></span></span>
+      
+                     
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box bg-success">
+                    <span class="info-box-icon"><i class="fas fa-arrow-circle-up"></i></span>
+      
+                    <div class="info-box-content">
+                      <span class="info-box-text">Aligator Square Error</span>
+                      <span class="info-box-number">0.025</span>
+      
+                  
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box bg-info">
+                    <span class="info-box-icon"><i class="fas fa-arrow-circle-down"></i></span>
+      
+                    <div class="info-box-content">
+                      <span class="info-box-text">Market State</span>
+                      <span class="info-box-number">OVER SOLD</span>
+      
+                 
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+              </div>
           <div class="row">
             <div class="col-lg-9">
               <div class="card">
@@ -39,6 +101,7 @@
             <div class="col-lg-3">
                 <div class="card">
                     <div class="card-body">
+                        
                       <div class="row">
                         <div class="col-lg-6">
                             <div class="info-box">
@@ -102,87 +165,8 @@
                     </div>
                     <!-- /.card-body -->
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">MACD Analysis</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Value</th>                                   
-                                <th>Trend</th>
-                                <th>Count</th>
-                                <th>Closed Cross</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>0.05</td>
-                                <td>UP</td>
-                                <td>145.1241</td>
-                                <td>145.1574</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                    </div>
-                    
-                    <!-- /.card-body -->
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Linear Regression Analysis</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>20 Bars Slope</th>  
-                                <th>STD</th>                                 
-                                <th>Pattern</th>
-                                <th>Predict</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>0.05</td>
-                                <td>0.02</td>
-                                <td>High Up</td>
-                                <td>146.1241</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        <div id="price_predict"></div>
-                    </div>
-                    <h3 class="card-title mb-1 ml-1">Pattern Price = 0.0082X + 0.00124</h3>
-                    <!-- /.card-body -->
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">SMA 200 Analysis</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Trend</th>                                   
-                                <th>Specific</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>Up</td>
-                                <td>High Up</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-
+                        
+        
                 <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Orders</h3>
@@ -216,8 +200,7 @@
                     </div>
                     <!-- /.card-body -->
                 </div>
-            
-               
+        
             </div>
             <!-- /.col-md-6 -->
           </div>
@@ -226,10 +209,12 @@
       </div>
       <!-- /.content -->
       <script>
+
+        var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
-        var pricePredictChart = echarts.init(document.getElementById('price_predict')); 
+        
         var responseData = JSON.parse("{{resData|escapejs}}"); 
         var data = []
         var axisData = [];
@@ -260,6 +245,10 @@
         var MarkData = [];
         var askPrice = 0;
         var bidPrice = 0;
+        var MacdCrossData  = [];
+        var markMA100LineCord = [];
+        var MarkMA100Slope  = [];
+        var sma100Trend = [];
 
         $( document ).ready(function () {   
              setInterval(function(){
@@ -274,7 +263,7 @@
                         location.reload(true);
                     }
                 })
-             },30000)
+             },2000)
         });
 
         function createData(response){
@@ -334,6 +323,23 @@
             Smoth_SSMA20Arr = nullSmoth_SSMA20.concat(Smoth_SSMA20); 
             Smoth_SSMA50Arr = nullSmoth_SSMA8.concat(Smoth_SSMA50); 
 
+            MacdCrossData = getMacdCross(MacdArr,SignalArr)
+            // console.log(MacdCrossData)
+            // console.log(data[MacdCrossData[2]])
+
+            let startX = dataMA100.length-1-30
+            let endX = dataMA100.length-1
+            let regressiveEq = genRegressionLine(dataMA100,30)
+            markMA100LineCord = getCoord(regressiveEq,startX,endX,30)
+
+            sma100Trend = isUpTrend(regressiveEq[0],data,dataMA100,30,slopeSpec)
+            
+            MarkMA100Slope = sma100Trend[0];
+
+
+
+            setDom()
+              
             canndleStickChart.setOption({
                 series : [
                     {
@@ -417,11 +423,33 @@
                             label: {
                                 normal: {
                                     formatter: function (param) {
-                                        return param != null ? param.data['name'] : '';
+                                        return param != null ? param.data['name']['slope'] : '';
                                     }
                                 }
                             },
-                            data: MarkData,
+                            symbol: 'circle',
+                            symbolRotate: 0,
+                            symbolSize: [1, 1],
+                            itemStyle: {
+                                color: 'black'
+                            },
+                            data: MarkMA100Slope,
+                        },
+                        markLine : {
+                            data: [
+                                [{
+                                    coord: markMA100LineCord[0],
+                                    symbol : 'none',
+                                    lineStyle: {
+                                        color: 'white'
+                                    }
+                                    }, {
+                                    coord: markMA100LineCord[1],
+                                    lineStyle: {
+                                        color: 'white'
+                                    }
+                                }]
+                            ],
                         },
                     }, 
                     {
@@ -440,6 +468,55 @@
                 },
 
             });
+
+            function setDom(){
+                const slopeLabel = document.querySelector('#slopeLabel')
+                const slopeShow = document.querySelector('#slopeShow')
+                const slopeShowIcon = document.querySelector('#slopeShowIcon')
+                
+                const macdShow = document.querySelector('#macdShow')
+                const macdShowIcon = document.querySelector('#macdShowIcon')
+
+                const macdShowTrend = document.querySelector('#macdShowTrend')
+                const macdShowCross = document.querySelector('#macdShowCross')
+
+                const slopeShowSpec = document.querySelector('#slopeShowSpec')
+
+                
+
+                slopeLabel.innerHTML = regressiveEq[0]
+                slopeShowSpec.innerHTML = "(@spec " + slopeSpec +")"
+
+                if(sma100Trend[1] == true){
+                    slopeShow.style.backgroundColor = "#00bc8c"
+                    slopeShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
+                }else{
+                    slopeShow.style.backgroundColor = "#e74c3c"
+                    slopeShowIcon.innerHTML = regressiveEq[0]
+                    slopeShowIcon.innerHTML = "<i class='fas fa-arrow-circle-down'>";
+                }
+
+                if(MacdCrossData[0] == true && MacdCrossData[1] == true){
+                    macdShow.style.backgroundColor = "#00bc8c"
+                    macdShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
+                }else{
+                    macdShow.style.backgroundColor = "#e74c3c"
+                    macdShowIcon.innerHTML = "<i class='fas fa-arrow-circle-down'>";
+                }
+
+                if(MacdCrossData[0] == true ){
+                    macdShowTrend.innerHTML = "Trend <i class='fas fa-arrow-up mr-1'></i>";
+                }else{
+                    macdShowTrend.innerHTML = "Trend <i class='fas fa-arrow-down mr-1'></i>";
+                }
+
+                if(MacdCrossData[1] == true ){
+                    macdShowCross.innerHTML = "Cross <i class='fas fa-sort-up ml-1'></i>";
+                }else{
+                    macdShowCross.innerHTML = "Cross <i class='fas fa-sort-down ml-1'></i>";
+                }
+                
+            }
 
         }
 
@@ -772,11 +849,33 @@
                         label: {
                             normal: {
                                 formatter: function (param) {
-                                    return param != null ? param.data['name'] : '';
+                                    return param != null ? param.data['name']['slope'] : '';
                                 }
                             }
                         },
-                        data: MarkData,
+                        symbol: 'circle',
+                        symbolRotate: 0,
+                        symbolSize: [1, 1],
+                        itemStyle: {
+                            color: 'black'
+                        },
+                        data: MarkMA100Slope,
+                    },
+                    markLine : {
+                        data: [
+                            [{
+                                coord: markMA100LineCord[0],
+                                symbol : 'none',
+                                lineStyle: {
+                                    color: 'white'
+                                }
+                                }, {
+                                coord: markMA100LineCord[1],
+                                lineStyle: {
+                                    color: 'white'
+                                }
+                            }]
+                        ],
                     },
                     itemStyle: {
                         color: upColor,
@@ -798,77 +897,21 @@
             ]
         };
 
-        option_predictprice = {
-            // backgroundColor: '#21202D',
-            legend: {
-                data:['OHLC-ZOOM'],
-                textStyle: {
-                    color: '#fff'
-                }
-            },
-           
-            grid: {
-                left: 80,
-                top: 40,
-                right: 20,
-                bottom: 85
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    boundaryGap : false,
-                    axisTick: {onGap:true},
-                    splitLine: {show:true},
-                    data : [1,2,3,4,5],                        
-                    axisLine:{
-                        lineStyle:{
-                            color:'#aca9a9'
-                        }
-                    },
-                }
-            ],
-            yAxis : [
-                {
-                    // show:false,
-                    type : 'value',
-                    scale:true,
-                    // boundaryGap: [0.05, 0.05],
-                    splitArea : {show : true},
-                    axisLine:{
-                        lineStyle:{
-                            color:'#aca9a9'
-                        }
-                    },
-                }
-            ],
-            series : [
-                {
-                    name: 'PREDICT',
-                    type: 'line',
-                    data: [115.1021,115.1106,115.1203,115.1300,115.1410],
-                    smooth: true,
-                    showSymbol: false,
-                    lineStyle: {
-                        width: 1
-                    }
-                }
-            ]
-        };
-        
 
         canndleStickChart.setOption(option);
         macdChart.setOption(option_macd);
         canndleStickChartZoom.setOption(option_zoom);
-        pricePredictChart.setOption(option_predictprice);
+    
        
-        echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom,pricePredictChart]);
+        echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom]);
         createData(responseData);
         window.onresize = function () {
             canndleStickChart.resize();
             macdChart.resize();
             canndleStickChartZoom.resize();
-            pricePredictChart.resize();
         }
+
+
 
     </script>
 

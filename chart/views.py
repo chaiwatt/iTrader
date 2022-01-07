@@ -7,8 +7,8 @@ from json import dumps
 
 symbol = 'USDJPY'
 #symbol = 'EURUSD'
-timeframe = 'M30';
-dataframe = mt5.TIMEFRAME_M30
+timeframe = 'M1';
+dataframe = mt5.TIMEFRAME_M1
 
 login = 25006371
 password = 'g(gpG4/hO%Z@'
@@ -27,7 +27,7 @@ def index(request):
     
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     
-    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 600))
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
     ohlcs = []
     for i, data in ohlc_data.iterrows():
