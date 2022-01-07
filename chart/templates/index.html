@@ -125,34 +125,36 @@
 
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
                     
-                        <div class="col-lg-6">
-                            <div class="info-box">
-                                <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
-                  
-                                <div class="info-box-content">
-                                  <span class="info-box-text">ASK</span>
-                                  <span class="info-box-number" id="ask"></span>
+                                    <div class="info-box-content">
+                                    <span class="info-box-text">ASK</span>
+                                    <span class="info-box-number" id="ask"></span>
+                                    </div>
+                                    <!-- /.info-box-content -->
                                 </div>
-                                <!-- /.info-box-content -->
-                              </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="info-box">
-                                <span class="info-box-icon bg-danger"><i class="far fa-star"></i></span>
-                  
-                                <div class="info-box-content">
-                                  <span class="info-box-text">BID</span>
-                                  <span class="info-box-number" id="bid"></span>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-danger"><i class="far fa-star"></i></span>
+                    
+                                    <div class="info-box-content">
+                                    <span class="info-box-text">BID</span>
+                                    <span class="info-box-number" id="bid"></span>
+                                    </div>
+                                    <!-- /.info-box-content -->
                                 </div>
-                                <!-- /.info-box-content -->
-                              </div>
+                            </div>
                         </div>
+                       
                     </div>
 
       
-                    </div>
                 </div>
+                <!-- </div> -->
                 <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Standard Deviation</h3>
@@ -289,7 +291,7 @@
                         location.reload(true);
                     }
                 })
-             },60000)
+             },2000)
         });
 
         function createData(response){
