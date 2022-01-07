@@ -251,3 +251,61 @@
         }
     }
 
+    function isSssmaSequence(ssma5,ssma8,ssma13){
+        if((ssma5[ssma5.length-1] > ssma8[ssma8.length-1]) && (ssma5[ssma5.length-1] > ssma13[ssma13.length-1])){
+            return true
+        }
+        return false
+    }
+
+    function StandardDeviationCalc(_array,nRange) {
+        let array = _array.slice((_array.length - nRange), _array.length)
+        const mean = array.reduce((a, b) => a + b) / nRange
+        return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / nRange)
+    }
+
+    function RS(mArray,mRange) {
+        var _closePriceChanged = [];
+        var _closePriceChangedGain = [];
+        var _closePriceChangedLost = [];
+        var _avgGain = [];
+        var _avgLost = [];
+        
+        var _RS = [];
+        for (var i = 1; i < mArray.length; i++) {
+            var closePriceChanged  = mArray[i] - mArray[i-1];
+            _closePriceChanged.push(closePriceChanged);
+            if(closePriceChanged > 0){
+                _closePriceChangedGain.push(closePriceChanged);
+                _closePriceChangedLost.push(0);
+            }else{
+                _closePriceChangedGain.push(0);
+                _closePriceChangedLost.push(closePriceChanged*-1)
+            }
+        }
+
+        var avgGain = _closePriceChangedGain.slice(0, mRange).reduce((a,c) => a + c, 0) / mRange;
+        var avgLost = _closePriceChangedLost.slice(0, mRange).reduce((a,c) => a + c, 0) / mRange;
+
+        _avgGain = [avgGain];
+        _avgLost = [avgLost];
+
+
+        for (var i = mRange; i < _closePriceChangedGain.length; i++) {
+            _avgGain.push((_avgGain[i-mRange]*(mRange-1) + _closePriceChangedGain[i])/mRange );
+        }
+
+        for (var i = mRange; i < _closePriceChangedLost.length; i++) {
+            _avgLost.push((_avgLost[i-mRange]*(mRange-1) + _closePriceChangedLost[i])/mRange );
+        }
+        for (var i = 0; i < _avgGain.length; i++) {
+            var rs = _avgGain[i] / _avgLost[i];
+            if(_avgLost[i] == 0){
+                _RS.push(100);
+            }else{
+                _RS.push(100-(100/(1+rs)));
+            }
+        }
+        return _RS;
+    }
+
