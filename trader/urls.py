@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index,name='index'),
     path('getohlc',views.getohlc,name='getohlc'),
+    path('backtest',views.backtest,name='backtest'),
     path('getSymbolData',views.getSymbolData,name='getSymbolData'),
     path('lineNotification',views.lineNotification,name='lineNotification'),
 ]

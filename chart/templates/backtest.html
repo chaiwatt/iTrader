@@ -6,12 +6,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0"><span id="symbol"></span> <span id="timeframe"></span></h1>
+              <h1 class="m-0">BACK TESTING: <span id="symbol"></span> <span id="timeframe"></span></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Chart</li>
+                <li class="breadcrumb-item active">Backtest</li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -89,76 +89,7 @@
             </div>
             <!-- /.col-md-6 -->
             <div class="col-lg-3">
-                <div class="card">
-                    <div class="card-body">
-                        <form action="getSymbolData" method="POST">
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-lg-5">
-                                    <div class="form-group"  >
-                                        <select class="form-control" name="selectedSymbol">
-                                            {% for symbol in symbols %}
-                                                <option value="{{ symbol.id }}"
-                                                {% if currentview.symbol_id  == symbol.id %}
-                                                    selected
-                                                {% endif %}
-                                                >{{ symbol.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group"> 
-                                        <select class="form-control" name="selectedTimeframe" >
-                                            {% for timeframe in timeframes %}
-                                                <option value="{{ timeframe.id }}"
-                                                    {% if currentview.timeframe_id  == timeframe.id %}
-                                                        selected
-                                                    {% endif %}
-                                                >{{ timeframe.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <input type="submit" class="btn btn-primary mr-1 w-100" value="Get">
-                                </div>     
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
-                    
-                                    <div class="info-box-content">
-                                    <span class="info-box-text">ASK</span>
-                                    <span class="info-box-number" id="ask"></span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-danger"><i class="far fa-star"></i></span>
-                    
-                                    <div class="info-box-content">
-                                    <span class="info-box-text">BID</span>
-                                    <span class="info-box-number" id="bid"></span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </div>
-                        </div>
-                       
-                    </div>
-
-      
-                </div>
+         
                 <!-- </div> -->
                 <div class="card">
                     <div class="card-header">
@@ -203,26 +134,74 @@
         
                 <div class="card">
                     <div class="card-header">
-                      <h3 class="card-title">Orders</h3>
+                      <h3 class="card-title">Back Test setting</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Order</th>      
-                                <th>Spread</th>                             
-                                <th>Price</th>
-                                <th>Profit</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            
-                            </tbody>
-                          </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
+                    <!-- form start -->
+                    <form>
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group"  >
+                                    <label for="symbol">Symbol</label>
+                                    <select class="form-control" name="selectedSymbol" id="symbol">
+                                        {% for symbol in symbols %}
+                                            <option value="{{ symbol.id }}"
+                                            {% if backtest.symbol_id  == symbol.id %}
+                                                selected
+                                            {% endif %}
+                                            >{{ symbol.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group"> 
+                                    <label for="timeframe">Time frame</label>
+                                    <select class="form-control" name="selectedTimeframe" id="timeframe" >
+                                        {% for timeframe in timeframes %}
+                                            <option value="{{ timeframe.id }}"
+                                                {% if backtest.timeframe_id  == timeframe.id %}
+                                                    selected
+                                                {% endif %}
+                                            >{{ timeframe.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="startbar">Start bar</label>
+                                    <input type="text" class="form-control" id="startbar" value="{{ backtest.startbar }}">
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="barrange">Bar range</label>
+                                    <input type="text" class="form-control" id="barrange" value="{{ backtest.barrange }}">
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="interval">Interval</label>
+                                    <input type="text" class="form-control" id="interval" value="{{ backtest.interval }}">
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="interval">Test time (second)</label>
+                                    <input type="text" class="form-control" id="interval" value="" readonly>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- /.card-body -->
+      
+                      <div class="card-footer ">
+                        <button type="submit" class="btn btn-primary float-right">Save Setting</button>
+                      </div>
+                    </form>
+                  </div>
         
             </div>
             <!-- /.col-md-6 -->
@@ -266,8 +245,6 @@
         var dataMA100 = [];
         var dataMA200 = [];
         var MarkData = [];
-        var askPrice = 0;
-        var bidPrice = 0;
         var MacdCrossData  = [];
         var markMA100LineCord = [];
         var MarkMA100Slope  = [];
@@ -284,30 +261,28 @@
         var ssma13STD = 0;
 
         $( document ).ready(function () {   
-             setInterval(function(){
-                $.ajax({
-                    type: 'GET',
-                    url: "{% url 'getohlc' %}",
-                    success: function (response){
-                        createData(response);
-                        console.log(response);
-                    },
-                    error: function(response){
-                        console.log("Error occured")
-                        location.reload(true);
-                    }
-                })
-             },20000)
+
+            //  setInterval(function(){
+            //     $.ajax({
+            //         type: 'GET',
+            //         url: "{% url 'getohlc' %}",
+            //         success: function (response){
+            //             createData(response);
+            //             console.log(response);
+            //         },
+            //         error: function(response){
+            //             console.log("Error occured")
+            //             location.reload(true);
+            //         }
+            //     })
+            //  },20000)
         });
 
         function createData(response){
             _forexData = response.series;
-            askPrice = Number(response.price['ask']);
-            bidPrice = Number(response.price['bid']);
-            $("#ask").html(askPrice.toFixed(3));
-            $("#bid").html(bidPrice.toFixed(3));
-            $("#timeframe").html(response.price['timeframe']);
+            $("#timeframe").html(response.timeframe);
             $("#symbol").html(response.symbol);
+            
             data = getData(_forexData);
             closedPrice = getClosedPrice(_forexData);
             lowPrice = getLowPrice(_forexData);

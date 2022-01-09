@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from datetime import datetime
 import pandas as pd
 import MetaTrader5 as mt5
 from django.http import JsonResponse
 from json import dumps
+from .models import CurrentView,Symbol,TimeFrame,BackTest
 import requests
 symbol = 'USDJPY'
 #symbol = 'EURUSD'
@@ -24,6 +25,13 @@ def index(request):
 
     account_info = mt5.account_info()
     # print(account_info)
+
+    currentview = CurrentView.objects.first()
+    tf = TimeFrame.objects.get(id = currentview.timeframe_id)
+    timeframe = tf.name
+    dataframe = getattr(mt5, f'TIMEFRAME_{timeframe}')
+    _symbol = Symbol.objects.get(id = currentview.symbol_id)
+    symbol = _symbol.name
     
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     
@@ -53,9 +61,21 @@ def index(request):
     }
 
     data = dumps(data)
-    return render(request,'index.html',{'resData': data})
+    return render(request,'index.html',{
+        'resData': data,
+        'symbols':Symbol.objects.filter(status="1"),
+        'timeframes':TimeFrame.objects.all(),
+        'currentview':currentview
+    })
 
 def getohlc(request):  
+    currentview = CurrentView.objects.first()
+    tf = TimeFrame.objects.get(id = currentview.timeframe_id)
+    timeframe = tf.name
+    dataframe = getattr(mt5, f'TIMEFRAME_{timeframe}')
+    _symbol = Symbol.objects.get(id = currentview.symbol_id)
+    symbol = _symbol.name
+
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 600))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
@@ -81,31 +101,22 @@ def getohlc(request):
             'timeframe':timeframe
         }
     }
+    
     return JsonResponse(data)
 
 def getSymbolData(request):
-    timeframe = 'M5';
-    dataframe = mt5.TIMEFRAME_M5
-    tf = request.GET['selectedTimeframe']
-    if tf == 'M5':
-        timeframe = 'M5';
-        dataframe = mt5.TIMEFRAME_M5
-    if tf == 'M15':
-        timeframe = 'M15';
-        dataframe = mt5.TIMEFRAME_M15    
-    if tf == 'M30':
-        timeframe = 'M30';
-        dataframe = mt5.TIMEFRAME_M30        
-    if tf == 'H1':
-        timeframe = 'H1';
-        dataframe = mt5.TIMEFRAME_H1
-    if tf == 'H4':
-        timeframe = 'H1';
-        dataframe = mt5.TIMEFRAME_H4
+    currentview = CurrentView.objects.first()
+    currentview.symbol_id = request.POST['selectedSymbol']
+    currentview.timeframe_id = request.POST['selectedTimeframe']
+    currentview.save()
 
+    currentview = CurrentView.objects.first()
+    tf = TimeFrame.objects.get(id = currentview.timeframe_id)
+    timeframe = tf.name
+    dataframe = getattr(mt5, f'TIMEFRAME_{timeframe}')
+    _symbol = Symbol.objects.get(id = currentview.symbol_id)
+    symbol = _symbol.name
 
-    symbol = request.GET['selectedSymbol']
-    
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
@@ -134,8 +145,12 @@ def getSymbolData(request):
     }
 
     data = dumps(data)
-    return render(request,'index.html',{'resData': data})
 
+    return redirect('/',{
+        'resData': data,
+        'symbols':Symbol.objects.filter(status="1"),
+        'timeframes':TimeFrame.objects.all()
+    })
 def lineNotification(request):
     message = 'ทดสอบ'
     payload = {'message':message}
@@ -148,7 +163,47 @@ def _lineNotify(payload,file=None):
     headers = {'Authorization':'Bearer '+token}
     return requests.post(url, headers=headers , data = payload, files=file)    
 
+def backtest(request):
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
 
+    mt5.login(login,password,server)
 
+    account_info = mt5.account_info()
+    # print(account_info)
 
+    backtest = BackTest.objects.first()
+    tf = TimeFrame.objects.get(id = backtest.timeframe_id)
 
+    backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
+    _symbol = Symbol.objects.get(id = backtest.symbol_id)
+    backtestsymbol = _symbol.name
+    
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 500))
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlcs = []
+    for i, data in ohlc_data.iterrows():
+        ohlc = {
+            'time':data['time'].strftime('%Y-%m-%d %H:%M:%S'),
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume']
+        }
+        ohlcs.append(ohlc)
+
+    data = {
+        'symbol':_symbol.name,
+        'series':ohlcs, 
+        'timeframe':tf.name
+    }
+
+    data = dumps(data)
+    return render(request,'backtest.html',{
+        'resData': data,
+        'symbols':Symbol.objects.filter(status="1"),
+        'timeframes':TimeFrame.objects.all(),
+        'backtest':backtest
+    })
