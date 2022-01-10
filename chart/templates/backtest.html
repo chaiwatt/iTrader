@@ -138,7 +138,7 @@
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form >
+                    <!-- <form > -->
                         {% csrf_token %}
                       <div class="card-body">
                           <div class="row">
@@ -206,9 +206,9 @@
                       <!-- /.card-body -->
       
                       <div class="card-footer ">
-                        <button type="submit" id="btnSaveSetting" class="btn btn-primary float-right">Save Setting</button>
+                        <button type="button" id="btnSaveSetting" class="btn btn-primary float-right">Save Setting</button>
                       </div>
-                    </form>
+                    <!-- </form> -->
                   </div>
         
             </div>
@@ -1096,17 +1096,19 @@
 
         function addBackTestSetting(symbols,timeframe,size,interval){
             // return new Promise((resolve, reject) => {
+                data = {
+                    backtestsymbols: symbols,
+                    timeframe: timeframe,
+                    size: size,
+                    interval: interval,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'createbacktest' %}",
                     // headers: {"X-CSRF-TOKEN": $("input[name=csrfmiddlewaretoken]").val() },
-                    data: {
-                        backtestsymbols : symbols,
-                        timeframe : timeframe,
-                        size : size,
-                        interval : interval,
-                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
-                    },
+                    dataType : "json",
+                    data: data,
                     success: function(data) {
                         resolve(data)
                     },

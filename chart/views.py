@@ -216,8 +216,8 @@ def backtest(request):
 
 def createbacktest(request):
     size = request.POST.get('size')
-    timeframe = request.POST.get('timeframe')
-    print(timeframe)
+    backtestsymbols = request.POST.getlist('backtestsymbols[]')
+    print(size)
     data = {
         'fuckpython':'',
     }
