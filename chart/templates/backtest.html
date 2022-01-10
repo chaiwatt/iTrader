@@ -163,8 +163,8 @@
 
                               <div class="col-md-6">
                                 <div class="form-group"> 
-                                    <label for="timeframe">Time frame</label>
-                                    <select class="form-control" name="selectedTimeframe" id="timeframe" >
+                                    <label for="backtesttimeframe">Time frame</label>
+                                    <select class="form-control" name="selectedTimeframe" id="backtesttimeframe" >
                                         {% for timeframe in timeframes %}
                                             <option value="{{ timeframe.id }}"
                                                 {% if backtest.timeframe_id  == timeframe.id %}
@@ -192,7 +192,15 @@
                               <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="interval">Interval</label>
-                                    <input type="text" class="form-control" id="interval" value="{{ backtest.interval }}">
+                                    <select class="form-control" name="interval" id="interval" >
+                                        {% for backtestinterval in backtestintervals %}
+                                            <option value="{{ backtestinterval.id }}"
+                                                {% if backtest.interval_id  == backtestinterval.id %}
+                                                    selected
+                                                {% endif %}
+                                            >{{ backtestinterval.interval }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                               </div>
                               <div class="col-md-6">
@@ -206,7 +214,16 @@
                       <!-- /.card-body -->
       
                       <div class="card-footer ">
-                        <button type="button" id="btnSaveSetting" class="btn btn-primary float-right">Save Setting</button>
+                        <div class="form-group float-right">
+                            <!-- <button type="button" id="btnBacktesting" class="btn btn-success mr-1">Back Test</button> -->
+                            <button type="button" id="btnSaveSetting" class="btn btn-success ">Start Test</button>
+                        </div>
+                        <div class="form-group">
+                            
+                        </div>
+
+                        
+                        
                       </div>
                     <!-- </form> -->
                   </div>
@@ -1069,12 +1086,10 @@
             ]
         };
 
-
         canndleStickChart.setOption(option);
         macdChart.setOption(option_macd);
         canndleStickChartZoom.setOption(option_zoom);
     
-       
         echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom]);
         createData(responseData);
         window.onresize = function () {
@@ -1088,14 +1103,20 @@
             $("#symbols :selected").each(function(){
                 selectedSymbols.push($(this).val()); 
             });
-            // console.log(selectedSymbols);
-            addBackTestSetting(selectedSymbols,1,500,500).then(data => {
-        
+            addBackTestSetting(selectedSymbols,$('#backtesttimeframe').val(),$('#backtestSize').val(),$('#interval').val()).then(data => {
+                Swal.fire({
+                    position: 'middle-end',
+                    icon: 'success',
+                    title: 'Setting has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }).catch(error => {})
         });
 
         function addBackTestSetting(symbols,timeframe,size,interval){
-            // return new Promise((resolve, reject) => {
+           
+            return new Promise((resolve, reject) => {
                 data = {
                     backtestsymbols: symbols,
                     timeframe: timeframe,
@@ -1106,7 +1127,6 @@
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'createbacktest' %}",
-                    // headers: {"X-CSRF-TOKEN": $("input[name=csrfmiddlewaretoken]").val() },
                     dataType : "json",
                     data: data,
                     success: function(data) {
@@ -1116,7 +1136,7 @@
                         reject(error)
                     },
                 })
-            // })
+            })
         }
 
     </script>

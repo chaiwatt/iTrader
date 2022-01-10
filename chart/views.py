@@ -4,7 +4,7 @@ import pandas as pd
 import MetaTrader5 as mt5
 from django.http import JsonResponse
 from json import dumps
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol,BackTestInterval,BackTestOHLC
 import requests
 symbol = 'USDJPY'
 #symbol = 'EURUSD'
@@ -182,7 +182,7 @@ def backtest(request):
     backtestsymbol = _symbol.name
 
     backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
-   
+    backtestintervals = BackTestInterval.objects.all()
     
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 200))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
@@ -211,14 +211,39 @@ def backtest(request):
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
         'backtest':backtest,
-        'backtestsymbols' : backtestsymbols
+        'backtestsymbols' : backtestsymbols,
+        'backtestintervals':backtestintervals
     })
 
 def createbacktest(request):
-    size = request.POST.get('size')
     backtestsymbols = request.POST.getlist('backtestsymbols[]')
-    print(size)
+    backtest = BackTest.objects.first()
+    backtest.backtestsize_id = request.POST.get('size')
+    backtest.timeframe_id  = request.POST.get('timeframe')
+    backtest.interval_id  = request.POST.get('interval')
+    backtest.save()
+
+    tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
+    backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
+
+    BackTestOHLC.objects.all().delete()
+    BackTestSymbol.objects.filter(backtest_id = backtest.id).delete()
+    for i in backtestsymbols:
+        new = BackTestSymbol(backtest_id= backtest.id, symbol_id=i)
+        new.save()
+
+        backtest_symbol = Symbol.objects.filter(id=i).first()
+        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, 2000))
+        ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+
+        bulk_list = list()
+        for j, data in ohlc_data.iterrows():
+            bulk_list.append(
+                BackTestOHLC(symbol_id=i,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
+        BackTestOHLC.objects.bulk_create(bulk_list)   
+
     data = {
-        'fuckpython':'',
+        'backtestsymbols': '',
     }
+
     return JsonResponse(data)
