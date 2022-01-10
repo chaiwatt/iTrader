@@ -4,7 +4,7 @@ import pandas as pd
 import MetaTrader5 as mt5
 from django.http import JsonResponse
 from json import dumps
-from .models import CurrentView,Symbol,TimeFrame,BackTest
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol
 import requests
 symbol = 'USDJPY'
 #symbol = 'EURUSD'
@@ -168,19 +168,23 @@ def backtest(request):
         print("initialize() failed")
         mt5.shutdown()
 
-    mt5.login(login,password,server)
+    # mt5.login(login,password,server)
 
-    account_info = mt5.account_info()
+    # account_info = mt5.account_info()
     # print(account_info)
 
     backtest = BackTest.objects.first()
     tf = TimeFrame.objects.get(id = backtest.timeframe_id)
 
     backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
-    _symbol = Symbol.objects.get(id = backtest.symbol_id)
+    firstbacktestsymbol = BackTestSymbol.objects.first()
+    _symbol = Symbol.objects.get(id = firstbacktestsymbol.symbol_id)
     backtestsymbol = _symbol.name
+
+    backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
+   
     
-    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 500))
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 200))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
     ohlcs = []
     for i, data in ohlc_data.iterrows():
@@ -205,5 +209,16 @@ def backtest(request):
         'resData': data,
         'symbols':Symbol.objects.filter(status="1"),
         'timeframes':TimeFrame.objects.all(),
-        'backtest':backtest
+        'backtestsizes':BackTestSize.objects.all(),
+        'backtest':backtest,
+        'backtestsymbols' : backtestsymbols
     })
+
+def createbacktest(request):
+    size = request.POST.get('size')
+    timeframe = request.POST.get('timeframe')
+    print(timeframe)
+    data = {
+        'fuckpython':'',
+    }
+    return JsonResponse(data)

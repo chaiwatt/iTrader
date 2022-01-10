@@ -138,23 +138,29 @@
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form>
+                    <form >
+                        {% csrf_token %}
                       <div class="card-body">
                           <div class="row">
-                              <div class="col-md-6">
-                                <div class="form-group"  >
-                                    <label for="symbol">Symbol</label>
-                                    <select class="form-control" name="selectedSymbol" id="symbol">
-                                        {% for symbol in symbols %}
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Symbol</label>
+                                    <select class="select2bs4 select2-hidden-accessible" multiple="" name="selectedSymbol" id="symbols" data-placeholder="Select symbol" style="width: 100%;" data-select2-id="23" tabindex="-1" aria-hidden="true">
+                                      {% for symbol in symbols %}
                                             <option value="{{ symbol.id }}"
-                                            {% if backtest.symbol_id  == symbol.id %}
-                                                selected
-                                            {% endif %}
-                                            >{{ symbol.name }}</option>
+                                                {% for backtestsymbol in backtestsymbols %}
+                                                    {% if backtestsymbol.symbol_id  == symbol.id %}
+                                                        selected
+                                                    {% endif %}
+                                                {% endfor %}
+                                                >{{ symbol.name }}
+                                            </option>
                                         {% endfor %}
                                     </select>
-                                </div>
+                                    
+                                  </div>
                               </div>
+
                               <div class="col-md-6">
                                 <div class="form-group"> 
                                     <label for="timeframe">Time frame</label>
@@ -170,16 +176,18 @@
                                 </div>
                               </div>
                               <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="startbar">Start bar</label>
-                                    <input type="text" class="form-control" id="startbar" value="{{ backtest.startbar }}">
-                                  </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="barrange">Bar range</label>
-                                    <input type="text" class="form-control" id="barrange" value="{{ backtest.barrange }}">
-                                  </div>
+                                <div class="form-group"> 
+                                    <label for="timeframe">Back test size</label>
+                                    <select class="form-control" name="backtestSize" id="backtestSize" >
+                                        {% for backtestsize in backtestsizes %}
+                                            <option value="{{ backtestsize.id }}"
+                                                {% if backtest.backtestsize_id  == backtestsize.id %}
+                                                    selected
+                                                {% endif %}
+                                            >{{ backtestsize.size }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                               </div>
                               <div class="col-md-6">
                                 <div class="form-group">
@@ -198,7 +206,7 @@
                       <!-- /.card-body -->
       
                       <div class="card-footer ">
-                        <button type="submit" class="btn btn-primary float-right">Save Setting</button>
+                        <button type="submit" id="btnSaveSetting" class="btn btn-primary float-right">Save Setting</button>
                       </div>
                     </form>
                   </div>
@@ -211,6 +219,17 @@
       </div>
       <!-- /.content -->
       <script>
+
+
+        // //Initialize Select2 Elements
+        $('.select2').select2();
+
+        // //Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        })
+
+
 
         var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
@@ -1064,7 +1083,39 @@
             canndleStickChartZoom.resize();
         }
 
+        $(document).on("click","#btnSaveSetting",function() {
+            var selectedSymbols = [];    
+            $("#symbols :selected").each(function(){
+                selectedSymbols.push($(this).val()); 
+            });
+            // console.log(selectedSymbols);
+            addBackTestSetting(selectedSymbols,1,500,500).then(data => {
+        
+            }).catch(error => {})
+        });
 
+        function addBackTestSetting(symbols,timeframe,size,interval){
+            // return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'createbacktest' %}",
+                    // headers: {"X-CSRF-TOKEN": $("input[name=csrfmiddlewaretoken]").val() },
+                    data: {
+                        backtestsymbols : symbols,
+                        timeframe : timeframe,
+                        size : size,
+                        interval : interval,
+                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                    },
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            // })
+        }
 
     </script>
 

@@ -13,24 +13,32 @@ class Symbol(models.Model):
         db_table = "symbols" 
 
 class SymbolData(models.Model):
-    symbol_id=models.CharField(max_length=200)
-    timeframe_id=models.CharField(max_length=200)
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
     class Meta:  
         db_table = "symbol_datas" 
 
 class CurrentView(models.Model):
-    symbol_id=models.CharField(max_length=200)
-    timeframe_id=models.CharField(max_length=200)
-
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
     class Meta:  
         db_table = "current_views"
 
-class BackTest(models.Model):
-    symbol_id=models.CharField(max_length=200)
-    timeframe_id=models.CharField(max_length=200)
-    startbar=models.CharField(max_length=200)
-    barrange=models.CharField(max_length=200)
-    interval=models.CharField(max_length=200)
-
+class BackTestSize(models.Model):
+    size=models.IntegerField()
     class Meta:  
-        db_table = "back_tests"        
+        db_table = "backtest_sizes"     
+
+class BackTest(models.Model):
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
+    backtestsize=models.ForeignKey(BackTestSize, on_delete=models.CASCADE)
+    interval=models.IntegerField()
+    class Meta:  
+        db_table = "back_tests"      
+
+class BackTestSymbol(models.Model):
+    backtest=models.ForeignKey(BackTest, on_delete=models.CASCADE)
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    class Meta:  
+        db_table = "back_test_symbols"              
+ 
