@@ -290,10 +290,8 @@
                     url: "{% url 'getohlc' %}",
                     success: function (response){
                         createData(response);
-                        console.log(response);
                     },
                     error: function(response){
-                        console.log("Error occured")
                         location.reload(true);
                     }
                 })
