@@ -22,6 +22,7 @@ urlpatterns = [
     path('',views.index,name='index'),
     path('getohlc',views.getohlc,name='getohlc'),
     path('createbacktest',views.createbacktest ,name='createbacktest'),
+    path('deletebacktest',views.deletebacktest ,name='deletebacktest'),
     path('backtest',views.backtest,name='backtest'),
     path('getSymbolData',views.getSymbolData,name='getSymbolData'),
     path('lineNotification',views.lineNotification,name='lineNotification'),

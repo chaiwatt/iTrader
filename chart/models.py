@@ -69,6 +69,7 @@ class BackTestSymbol(models.Model):
         db_table = "back_test_symbols"
 
 class BackTestOHLC(models.Model):
+    backtest=models.ForeignKey(BackTest, on_delete=models.CASCADE)
     symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
     date=models.DateTimeField()
     open=models.FloatField()

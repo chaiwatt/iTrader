@@ -8,6 +8,7 @@ from django.db.models import Q
 from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
 import requests
 symbol = 'USDJPY'
+from django.utils import timezone
 #symbol = 'EURUSD'
 timeframe = 'M1';
 dataframe = mt5.TIMEFRAME_M1
@@ -228,20 +229,27 @@ def backtest(request):
     })
 
 def createbacktest(request):
+    
+    # now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    # print(now)
     backtestsymbols = request.POST.getlist('backtestsymbols[]')
-    backtest = BackTest.objects.first()
-    backtest.backtestsize_id = request.POST.get('size')
-    backtest.timeframe_id  = request.POST.get('timeframe')
-    backtest.interval_id  = request.POST.get('interval')
-    backtest.save()
+    print(backtestsymbols)
+    # backtest = BackTest.objects.first()
+    # backtest.backtestsize_id = request.POST.get('size')
+    # backtest.timeframe_id  = request.POST.get('timeframe')
+    # backtest.interval_id  = request.POST.get('interval')
+    # backtest.save()
+
+    newBackTest = BackTest(code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
+    newBackTest.save()
 
     tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
     backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
 
-    BackTestOHLC.objects.all().delete()
-    BackTestSymbol.objects.filter(backtest_id = backtest.id).delete()
+    # BackTestOHLC.objects.all().delete()
+    # BackTestSymbol.objects.filter(backtest_id = backtest.id).delete()
     for i in backtestsymbols:
-        new = BackTestSymbol(backtest_id= backtest.id, symbol_id=i)
+        new = BackTestSymbol(backtest_id= newBackTest.id, symbol_id=i)
         new.save()
 
         backtest_symbol = Symbol.objects.filter(id=i).first()
@@ -251,9 +259,18 @@ def createbacktest(request):
         bulk_list = list()
         for j, data in ohlc_data.iterrows():
             bulk_list.append(
-                BackTestOHLC(symbol_id=i,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
+                BackTestOHLC(backtest_id=newBackTest.id,symbol_id=i,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
         BackTestOHLC.objects.bulk_create(bulk_list)   
 
+    data = {
+        'backtestsymbols': '',
+    }
+
+    return JsonResponse(data)
+
+def deletebacktest(request):
+    BackTest.objects.all().delete()
+    # print('here')
     data = {
         'backtestsymbols': '',
     }
