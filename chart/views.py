@@ -4,28 +4,32 @@ import pandas as pd
 import MetaTrader5 as mt5
 from django.http import JsonResponse
 from json import dumps
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol,BackTestInterval,BackTestOHLC
+from django.db.models import Q
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
 import requests
 symbol = 'USDJPY'
 #symbol = 'EURUSD'
 timeframe = 'M1';
 dataframe = mt5.TIMEFRAME_M1
 
-login = 25006371
-password = 'g(gpG4/hO%Z@'
-server = 'demo.mt5tickmill.com'
+# login = 25006371
+# password = 'g(gpG4/hO%Z@'
+# server = 'demo.mt5tickmill.com'
 
 # Create your views here.
 def index(request):
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+
     if not mt5.initialize():
         print("initialize() failed")
         mt5.shutdown()
 
-    mt5.login(login,password,server)
+    mt5.login(myaccount.login,myaccount.password,myaccount.server)
 
-    account_info = mt5.account_info()
-    # print(account_info)
-
+    accountinfo = mt5.account_info()
+    
     currentview = CurrentView.objects.first()
     tf = TimeFrame.objects.get(id = currentview.timeframe_id)
     timeframe = tf.name
@@ -63,9 +67,11 @@ def index(request):
     data = dumps(data)
     return render(request,'index.html',{
         'resData': data,
-        'symbols':Symbol.objects.filter(status="1"),
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
-        'currentview':currentview
+        'currentview':currentview,
+        'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
+        'accountinfo' : accountinfo
     })
 
 def getohlc(request):  
@@ -105,6 +111,8 @@ def getohlc(request):
     return JsonResponse(data)
 
 def getSymbolData(request):
+    setting = Setting.objects.first()
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
     currentview = CurrentView.objects.first()
     currentview.symbol_id = request.POST['selectedSymbol']
     currentview.timeframe_id = request.POST['selectedTimeframe']
@@ -148,7 +156,7 @@ def getSymbolData(request):
 
     return redirect('/',{
         'resData': data,
-        'symbols':Symbol.objects.filter(status="1"),
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all()
     })
 def lineNotification(request):
@@ -168,51 +176,55 @@ def backtest(request):
         print("initialize() failed")
         mt5.shutdown()
 
+    setting = Setting.objects.first()
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
     # mt5.login(login,password,server)
 
-    # account_info = mt5.account_info()
+    accountinfo = mt5.account_info()
     # print(account_info)
 
-    backtest = BackTest.objects.first()
-    tf = TimeFrame.objects.get(id = backtest.timeframe_id)
+    # backtest = BackTest.objects.first()
+    # tf = TimeFrame.objects.get(id = backtest.timeframe_id)
 
-    backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
-    firstbacktestsymbol = BackTestSymbol.objects.first()
-    _symbol = Symbol.objects.get(id = firstbacktestsymbol.symbol_id)
-    backtestsymbol = _symbol.name
+    # backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
+    # firstbacktestsymbol = BackTestSymbol.objects.first()
+    # _symbol = Symbol.objects.get(id = firstbacktestsymbol.symbol_id)
+    # backtestsymbol = _symbol.name
 
-    backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
+    # backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
     backtestintervals = BackTestInterval.objects.all()
     
-    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 200))
-    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
-    ohlcs = []
-    for i, data in ohlc_data.iterrows():
-        ohlc = {
-            'time':data['time'].strftime('%Y-%m-%d %H:%M:%S'),
-            'open':data['open'] ,
-            'high':data['high'],
-            'low':data['low'] ,
-            'close':data['close'], 
-            'tick':data['tick_volume']
-        }
-        ohlcs.append(ohlc)
+    # ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 200))
+    # ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    # ohlcs = []
+    # for i, data in ohlc_data.iterrows():
+    #     ohlc = {
+    #         'time':data['time'].strftime('%Y-%m-%d %H:%M:%S'),
+    #         'open':data['open'] ,
+    #         'high':data['high'],
+    #         'low':data['low'] ,
+    #         'close':data['close'], 
+    #         'tick':data['tick_volume']
+    #     }
+    #     ohlcs.append(ohlc)
 
-    data = {
-        'symbol':_symbol.name,
-        'series':ohlcs, 
-        'timeframe':tf.name
-    }
+    # data = {
+    #     'symbol':_symbol.name,
+    #     'series':ohlcs, 
+    #     'timeframe':tf.name
+    # }
 
-    data = dumps(data)
+    # data = dumps(data)
     return render(request,'backtest.html',{
-        'resData': data,
-        'symbols':Symbol.objects.filter(status="1"),
+        # 'resData': data,
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
-        'backtest':backtest,
-        'backtestsymbols' : backtestsymbols,
-        'backtestintervals':backtestintervals
+        # 'backtest':backtest,
+        # 'backtestsymbols' : backtestsymbols,
+        'backtestintervals':backtestintervals,
+        'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
+        'accountinfo' : accountinfo
     })
 
 def createbacktest(request):
