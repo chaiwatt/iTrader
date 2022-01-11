@@ -2,13 +2,15 @@ from django.shortcuts import render,redirect
 from datetime import datetime
 import pandas as pd
 import MetaTrader5 as mt5
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
 from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
+from django.core import serializers
+
 #symbol = 'EURUSD'
 timeframe = 'M1';
 dataframe = mt5.TIMEFRAME_M1
@@ -229,12 +231,15 @@ def backtest(request):
     })
 
 def createbacktest(request):
+
     btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 120
 
     backtestsymbols = request.POST.getlist('backtestsymbols[]')
 
     newBackTest = BackTest(code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
     newBackTest.save()
+
+    backtestid = newBackTest.id
 
     tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
     backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
@@ -256,14 +261,13 @@ def createbacktest(request):
         BackTestOHLC.objects.bulk_create(bulk_list)   
 
     data = {
-        'backtestsymbols': '',
+        'backtest': serializers.serialize('json', BackTest.objects.filter(id = backtestid))
     }
 
     return JsonResponse(data)
 
 def deletebacktest(request):
     BackTest.objects.all().delete()
-    # print('here')
     data = {
         'backtestsymbols': '',
     }

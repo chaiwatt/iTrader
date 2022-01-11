@@ -1115,7 +1115,7 @@
                 confirmButtonText: 'OK'
                 }).then((result) => {
                 if (result.isConfirmed) {
-                  
+                    
                     addBackTestSetting(selectedSymbols,$('#backtesttimeframe').val(),$('#backtestSize').val(),$('#interval').val()).then(data => {
                         Swal.fire({
                             position: 'middle-end',
@@ -1124,7 +1124,7 @@
                             showConfirmButton: false,
                             timer: 1500
                         }).then(function (result) {
-                            // alert('ok');
+                            console.log(JSON.parse(data.backtest)[0].fields)
                         })
                     }).catch(error => {})
                 }
@@ -1132,7 +1132,6 @@
         });
 
         function addBackTestSetting(symbols,timeframe,size,interval){
-           
             return new Promise((resolve, reject) => {
                 data = {
                     backtestsymbols: symbols,
@@ -1165,7 +1164,7 @@
         
         $(document).on("click","#deletebacktest",function() {
             deleteBacktest().then(data => {
-
+                alert('done');
             }).catch(error => {})
         })
 
