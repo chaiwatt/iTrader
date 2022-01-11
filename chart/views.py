@@ -269,7 +269,7 @@ def createbacktest(request):
 def deletebacktest(request):
     BackTest.objects.all().delete()
     data = {
-        'backtestsymbols': '',
+        'result': '',
     }
 
     return JsonResponse(data)
