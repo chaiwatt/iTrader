@@ -240,14 +240,12 @@
             theme: 'bootstrap4'
         })
 
-
-
         var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         
-        var responseData = [] ;// JSON.parse("{{resData|escapejs}}"); 
+        var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
         var data = []
         var axisData = [];
         var MacdArr = [];

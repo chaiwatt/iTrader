@@ -59,6 +59,7 @@ class BackTest(models.Model):
     timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
     backtestsize=models.ForeignKey(BackTestSize, on_delete=models.CASCADE)
     interval=models.ForeignKey(BackTestInterval, on_delete=models.CASCADE)
+    status=models.CharField(max_length=1, default = 0)
     class Meta:
         db_table = "back_tests"
 

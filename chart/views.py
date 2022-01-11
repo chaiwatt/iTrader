@@ -229,16 +229,9 @@ def backtest(request):
     })
 
 def createbacktest(request):
-    
-    # now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    # print(now)
+    btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 120
+
     backtestsymbols = request.POST.getlist('backtestsymbols[]')
-    print(backtestsymbols)
-    # backtest = BackTest.objects.first()
-    # backtest.backtestsize_id = request.POST.get('size')
-    # backtest.timeframe_id  = request.POST.get('timeframe')
-    # backtest.interval_id  = request.POST.get('interval')
-    # backtest.save()
 
     newBackTest = BackTest(code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
     newBackTest.save()
@@ -253,7 +246,7 @@ def createbacktest(request):
         new.save()
 
         backtest_symbol = Symbol.objects.filter(id=i).first()
-        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, 2000))
+        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))
         ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
 
         bulk_list = list()
