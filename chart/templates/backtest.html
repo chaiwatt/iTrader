@@ -263,6 +263,8 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         })
+        var backtestTimer;
+        var backtestTimerInterval = 500;
         var testRange = 250;
         var count = 0;
         var _rawData = [];
@@ -1302,35 +1304,59 @@
                 return
             }
             let _count = count++;
-
             let arraySet = _rawData.slice(_count,_count + testRange)
-
             createData(arraySet);
-            
         })
 
+        $(document).on("click","#autotest",function() {
+            let selectedOption = $('#selectedBacktestJob option:selected');
+            if(selectedOption.val() === '') {
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'please select Job!',
+                    })
+                
+                resetCounter();
+                return
+            }
 
+            if(_rawData.length === 0) return 
 
-        function jogTest(id){
-            // return new Promise((resolve, reject) => {
-            //     data = {
-            //         id: id,
-            //         csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
-            //     }
-            //     $.ajax({
-            //         type: 'POST',
-            //         url: "{% url 'jogtest' %}",
-            //         dataType : "json",
-            //         data: data,
-            //         success: function(data) {
-            //             resolve(data)
-            //         },
-            //         error: function(error) {
-            //             reject(error)
-            //         },
-            //     })
-            // })
+            if (this.classList.contains('start')) {
+                this.classList.remove('start');
+                this.textContent = "Auto Test";
+                clearInterval(backtestTimer);
+            } else {
+                this.classList.add('start');
+                this.textContent = "Stop";
+                autoTest();
+            }
+        })
+
+        function autoTest(){
+            function testing(){
+                if(count == _rawData.length  - testRange +1 ){
+                    clearInterval(backtestTimer);
+                    // $('#autotest').classList.remove('start');
+                    $('#autotest').removeClass('start');
+                    $('#autotest').text("Auto Test") ;
+                    resetCounter();
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Finished',
+                        text: 'Back testing is finished!',
+                    })
+                    return
+                }
+                let _count = count++;
+                let arraySet = _rawData.slice(_count,_count + testRange)
+                createData(arraySet);
+            }
+            backtestTimer = setInterval(testing,backtestTimerInterval);
+            var c = 0;
         }
+
 
         function resetCounter(){
             count = 0;
@@ -1348,8 +1374,9 @@
             getBacktestJob(selectedOption.val()).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 // console.log(JSON.parse(data.ohlcs));
+                // backtestTimerInterval = backtest.interval
                 _rawData =  createRawData(data.ohlcs);
-                console.log(_rawData)  ;
+                // console.log(backtest)  ;
 
                 JSON.parse(data.symbols).forEach(symbol_item => {
                     let _selectText = '';
@@ -1386,6 +1413,7 @@
 
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
+                backtestTimerInterval = parseInt($('#interval option:selected').text());
             }).catch(error => {})
         })
 
@@ -1409,6 +1437,8 @@
                 })
             })
         }
+
+        
     </script>
 
 {% endblock %} 
