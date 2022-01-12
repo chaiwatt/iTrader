@@ -262,7 +262,8 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         })
-
+        var count = 0;
+        var rawData = [];
         var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
@@ -1194,6 +1195,7 @@
 
         
         $(document).on("click","#deleteallbacktest",function() {
+            resetCounter()
             if($('#selectedBacktestJob > option').length < 2) return
             Swal.fire({
                 title: 'Delete All?',
@@ -1213,6 +1215,7 @@
                             timer: 1500
                         }).then(function (result) {
                             renderBacktestJobLists(data.backtestjobs)
+                            // window.location.href = window.location.href
                         })
                     }).catch(error => {})
                 }
@@ -1239,6 +1242,7 @@
        }
 
        $(document).on("click","#deletebacktest",function() {
+            resetCounter()
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') return
             Swal.fire({
@@ -1288,35 +1292,50 @@
        }
        
        $(document).on("click","#jogtest",function() {
+            
             let selectedOption = $('#selectedBacktestJob option:selected');
-            if(selectedOption.val() === '') return
-            jogTest(selectedOption.val()).then(data => {
-                // alert('done');
-            }).catch(error => {})
+            if(selectedOption.val() === '') {
+                resetCounter();
+                return
+            }
+            if(rawData.length === 0) return 
+            let _count = count++;
+            console.log(_count + ' ' + rawData[_count]);
+                // let selectedOption = $('#selectedBacktestJob option:selected');
+                // if(selectedOption.val() === '') return
+                // jogTest(selectedOption.val()).then(data => {
+                //     // alert('done');
+                // }).catch(error => {})
         })
 
         function jogTest(id){
-            return new Promise((resolve, reject) => {
-                data = {
-                    id: id,
-                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'jogtest' %}",
-                    dataType : "json",
-                    data: data,
-                    success: function(data) {
-                        resolve(data)
-                    },
-                    error: function(error) {
-                        reject(error)
-                    },
-                })
-            })
+            // return new Promise((resolve, reject) => {
+            //     data = {
+            //         id: id,
+            //         csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+            //     }
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: "{% url 'jogtest' %}",
+            //         dataType : "json",
+            //         data: data,
+            //         success: function(data) {
+            //             resolve(data)
+            //         },
+            //         error: function(error) {
+            //             reject(error)
+            //         },
+            //     })
+            // })
+        }
+
+        function resetCounter(){
+            count = 0;
+            rawData = [];
         }
 
         $(document).on("change","#selectedBacktestJob",function() {
+            resetCounter()
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') return
             let html_symbol = ``
@@ -1326,7 +1345,7 @@
             getBacktestJob(selectedOption.val()).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 // console.log(JSON.parse(data.ohlcs));
-                console.log(createRawData(data.ohlcs));
+                rawData = createRawData(data.ohlcs);
 
                 JSON.parse(data.symbols).forEach(symbol_item => {
                     let _selectText = '';
@@ -1383,7 +1402,6 @@
                 })
             })
         }
-
     </script>
 
 {% endblock %} 
