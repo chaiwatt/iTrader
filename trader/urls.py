@@ -29,4 +29,5 @@ urlpatterns = [
     path('backtest',views.backtest,name='backtest'),
     path('getSymbolData',views.getSymbolData,name='getSymbolData'),
     path('lineNotification',views.lineNotification,name='lineNotification'),
+    path('symbolsetting',views.symbolsetting,name='symbolsetting'),
 ]

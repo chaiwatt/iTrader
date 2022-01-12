@@ -310,3 +310,6 @@ def jogtest(request):
         
     }
     return JsonResponse(data)
+
+def symbolsetting(request):
+    return render(request,'symbol.html') 
