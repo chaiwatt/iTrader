@@ -1,5 +1,13 @@
     var upColor = '#00da3c';
     var downColor = '#ec0000';
+
+    function createRawData(backtestOhlc){
+        var _data = []
+        JSON.parse(backtestOhlc).forEach(ohlc => {
+            _data.push(Object.seal([ohlc.fields.open,ohlc.fields.close,ohlc.fields.low,ohlc.fields.high]))
+        });
+        return _data;
+    }
     
     function getData(rawData) {
         var _data = []

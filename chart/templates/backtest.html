@@ -1325,7 +1325,9 @@
             let html_interval = ``
             getBacktestJob(selectedOption.val()).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
-                
+                // console.log(JSON.parse(data.ohlcs));
+                console.log(createRawData(data.ohlcs));
+
                 JSON.parse(data.symbols).forEach(symbol_item => {
                     let _selectText = '';
                     if(symbol_item.pk == backtest.symbol) {_selectText = 'selected'}
