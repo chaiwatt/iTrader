@@ -333,8 +333,7 @@
 
         function createData(response){
             _forexData = response;
-            // $("#timeframe").html(response.timeframe);
-            // $("#symbol").html(response.symbol);
+          
             
             data = getData(_forexData);
             closedPrice = getClosedPrice(_forexData);
@@ -1119,18 +1118,6 @@
         }
 
         $(document).on("click","#btnSaveSetting",function() {
-            // var selectedSymbols = [];    
-            // $("#symbols :selected").each(function(){
-            //     selectedSymbols.push($(this).val()); 
-            // });
-            // if(selectedSymbols.length == 0){
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Oops...',
-            //         text: 'please select symbol!',
-            //     })
-            //     return;  
-            // }
             Swal.fire({
                 title: 'Create Job?',
                 text: "Confirm to create new job!",
@@ -1319,7 +1306,6 @@
 
             createData(arraySet);
             
-            // console.log(arraySet[0][0] + ' ' + arraySet[1][0] + ' ' + arraySet[2][0] + ' ' + arraySet[3][0]+ ' ' + arraySet[119][0] )
         })
 
 
@@ -1396,6 +1382,9 @@
                 $('#backtesttimeframe').html(html_timeframe);
                 $('#backtestSize').html(html_backtestsize);
                 $('#interval').html(html_interval);
+
+                $("#timeframe").html($('#backtesttimeframe option:selected').text());
+                $("#symbol").html($('#symbols option:selected').text());
             }).catch(error => {})
         })
 
