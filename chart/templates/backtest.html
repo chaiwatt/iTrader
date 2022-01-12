@@ -262,9 +262,9 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         })
-        var testRange = 120;
+        var testRange = 250;
         var count = 0;
-        var rawData = [];
+        var _rawData = [];
         var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
@@ -332,9 +332,9 @@
         });
 
         function createData(response){
-            _forexData = response.series;
-            $("#timeframe").html(response.timeframe);
-            $("#symbol").html(response.symbol);
+            _forexData = response;
+            // $("#timeframe").html(response.timeframe);
+            // $("#symbol").html(response.symbol);
             
             data = getData(_forexData);
             closedPrice = getClosedPrice(_forexData);
@@ -1215,8 +1215,8 @@
                             showConfirmButton: false,
                             timer: 1500
                         }).then(function (result) {
-                            renderBacktestJobLists(data.backtestjobs)
-                            // window.location.href = window.location.href
+                            // renderBacktestJobLists(data.backtestjobs)
+                            window.location.href = window.location.href
                         })
                     }).catch(error => {})
                 }
@@ -1293,7 +1293,6 @@
        }
        
        $(document).on("click","#jogtest",function() {
-           
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -1305,8 +1304,8 @@
                 resetCounter();
                 return
             }
-            if(rawData.length === 0) return 
-            if(count == rawData.length  - testRange +1 ){
+            if(_rawData.length === 0) return 
+            if(count == _rawData.length  - testRange +1 ){
                 Swal.fire({
                     icon: 'info',
                     title: 'Finished',
@@ -1315,10 +1314,15 @@
                 return
             }
             let _count = count++;
-            // console.log(_count + ' ' + rawData[_count]);
-            let arraySet = rawData.slice(_count,_count+testRange)
-            console.log(arraySet[0][0] + ' ' + arraySet[1][0] + ' ' + arraySet[2][0] + ' ' + arraySet[3][0]+ ' ' + arraySet[119][0] )
+
+            let arraySet = _rawData.slice(_count,_count + testRange)
+
+            createData(arraySet);
+            
+            // console.log(arraySet[0][0] + ' ' + arraySet[1][0] + ' ' + arraySet[2][0] + ' ' + arraySet[3][0]+ ' ' + arraySet[119][0] )
         })
+
+
 
         function jogTest(id){
             // return new Promise((resolve, reject) => {
@@ -1343,7 +1347,7 @@
 
         function resetCounter(){
             count = 0;
-            rawData = [];
+            _rawData = [];
         }
 
         $(document).on("change","#selectedBacktestJob",function() {
@@ -1357,7 +1361,8 @@
             getBacktestJob(selectedOption.val()).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 // console.log(JSON.parse(data.ohlcs));
-                rawData = createRawData(data.ohlcs);
+                _rawData =  createRawData(data.ohlcs);
+                console.log(_rawData)  ;
 
                 JSON.parse(data.symbols).forEach(symbol_item => {
                     let _selectText = '';

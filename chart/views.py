@@ -237,7 +237,7 @@ def backtest(request):
 
 def createbacktest(request):
 
-    btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 120
+    btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 250
 
     backtestsymbol = request.POST.get('backtestsymbol')
 

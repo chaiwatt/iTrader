@@ -4,45 +4,61 @@
     function createRawData(backtestOhlc){
         var _data = []
         JSON.parse(backtestOhlc).forEach(ohlc => {
-            _data.push(Object.seal([ohlc.fields.open,ohlc.fields.close,ohlc.fields.low,ohlc.fields.high]))
+            _data.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                })
         });
         return _data;
     }
     
-    function getData(rawData) {
+    function getData(_arr) {
         var _data = []
-        rawData.forEach((item) => {
+        _arr.forEach((item) => {
             _data.push(Object.seal([item.open,item.close,item.low,item.high]))
         });
         return _data;
     }
-    function getClosedPrice(rawData) {
+
+    function getSampleData(_arr) {
+        var _data = []
+        _arr.forEach((item) => {
+            _data.push(Object.seal([item.open,item.close,item.low,item.high]))
+        });
+        return _data;
+    }
+
+    function getClosedPrice(_arr) {
         var _closedprice = []
-        rawData.forEach((item) => {
+        _arr.forEach((item) => {
             _closedprice.push(item.close)
         });
         return _closedprice;
     }
 
-    function getLowPrice(rawData) {
+    function getLowPrice(_arr) {
         var _lowprice = []
-        rawData.forEach((item) => {
+        _arr.forEach((item) => {
             _lowprice.push(item.low)
         });
         return _lowprice;
     }
 
-    function getHighPrice(rawData) {
+    function getHighPrice(_arr) {
         var _highprice = []
-        rawData.forEach((item) => {
+        _arr.forEach((item) => {
             _highprice.push(item.high)
         });
         return _highprice;
     }
 
-    function getDateLabel(rawData) {
+    function getDateLabel(_arr) {
         var _dateLabel = []
-        rawData.forEach((item) => {
+        _arr.forEach((item) => {
             _dateLabel.push(item.time)
         });
         return _dateLabel;

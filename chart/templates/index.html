@@ -295,11 +295,12 @@
                         location.reload(true);
                     }
                 })
-             },2000)
+             },60000)
         });
 
         function createData(response){
             _forexData = response.series;
+            console.log(_forexData)
             askPrice = Number(response.price['ask']);
             bidPrice = Number(response.price['bid']);
             $("#ask").html(askPrice.toFixed(3));
