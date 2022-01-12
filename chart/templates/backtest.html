@@ -262,7 +262,7 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         })
-        var initialCount = 0;
+        var testRange = 120;
         var count = 0;
         var rawData = [];
         var slopeSpec = 0.00001;
@@ -1293,7 +1293,7 @@
        }
        
        $(document).on("click","#jogtest",function() {
-           let testRange = 5;
+           
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -1306,7 +1306,7 @@
                 return
             }
             if(rawData.length === 0) return 
-            if(count == rawData.length - initialCount - testRange +1 ){
+            if(count == rawData.length  - testRange +1 ){
                 Swal.fire({
                     icon: 'info',
                     title: 'Finished',
@@ -1316,8 +1316,8 @@
             }
             let _count = count++;
             // console.log(_count + ' ' + rawData[_count]);
-            let arraySet = rawData.slice(_count+initialCount,_count+initialCount+testRange)
-            console.log(arraySet[0][0] + ' ' + arraySet[1][0] + ' ' + arraySet[2][0] + ' ' + arraySet[3][0]+ ' ' + arraySet[4][0] )
+            let arraySet = rawData.slice(_count,_count+testRange)
+            console.log(arraySet[0][0] + ' ' + arraySet[1][0] + ' ' + arraySet[2][0] + ' ' + arraySet[3][0]+ ' ' + arraySet[119][0] )
         })
 
         function jogTest(id){
