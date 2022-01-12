@@ -141,20 +141,6 @@
                           <div class="row">
                               <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>Symbol</label>
-                                    <!-- <select class="select2bs4 select2-hidden-accessible" name="selectedSymbol" id="symbols" data-placeholder="Select symbol" style="width: 100%;" data-select2-id="23" tabindex="-1" aria-hidden="true">
-                                      {% for symbol in symbols %}
-                                            <option value="{{ symbol.id }}"
-                                                {% for backtestsymbol in backtestsymbols %}
-                                                    {% if backtestsymbol.symbol_id  == symbol.id %}
-                                                        selected
-                                                    {% endif %}
-                                                {% endfor %}
-                                                >{{ symbol.name }}
-                                            </option>
-                                        {% endfor %}
-                                    </select> -->
-
                                     <div class="form-group">
                                         <label>Symbol</label>
                                         <select class="form-control"  name="selectedSymbol" id="symbols" >
@@ -1155,7 +1141,7 @@
                     
                     addBackTestSetting($('#symbols').val(),$('#backtesttimeframe').val(),$('#backtestSize').val(),$('#interval').val()).then(data => {
                         Swal.fire({
-                            position: 'middle-end',
+                            //position: 'top-end',
                             icon: 'success',
                             html: `<h2>Job name <br><strong> ${JSON.parse(data.backtest)[0].fields.code} </strong> <br>has been created<h2>`,
                             showConfirmButton: false,
@@ -1208,6 +1194,7 @@
 
         
         $(document).on("click","#deleteallbacktest",function() {
+            if($('#selectedBacktestJob > option').length < 2) return
             Swal.fire({
                 title: 'Delete All?',
                 text: "Confirm to delete all jobs!",
@@ -1219,13 +1206,12 @@
                 if (result.isConfirmed) {
                     deleteAllBacktest().then(data => {
                         Swal.fire({
-                            position: 'middle-end',
+                            //position: 'top-end',
                             icon: 'success',
-                            title: 'All Jobs has been deleleted',
+                            title: 'All Jobs have been deleted',
                             showConfirmButton: false,
                             timer: 1500
                         }).then(function (result) {
-                            // $('#selectedBacktestJob option').remove();
                             renderBacktestJobLists(data.backtestjobs)
                         })
                     }).catch(error => {})
@@ -1266,9 +1252,9 @@
                 if (result.isConfirmed) {
                     deleteBacktest(selectedOption.val()).then(data => {
                         Swal.fire({
-                            position: 'middle-end',
+                            //position: 'top-end',
                             icon: 'success',
-                            title: 'Job has been saved',
+                            title: 'Job has been deleted',
                             showConfirmButton: false,
                             timer: 1500
                         }).then(function (result) {
