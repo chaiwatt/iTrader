@@ -186,7 +186,8 @@ def backtest(request):
     accountinfo = mt5.account_info()
     # print(account_info)
 
-    # backtest = BackTest.objects.first()
+    backtest = BackTest.objects.last()
+    # print(backtest.code)
     # tf = TimeFrame.objects.get(id = backtest.timeframe_id)
 
     # backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
@@ -194,7 +195,10 @@ def backtest(request):
     # _symbol = Symbol.objects.get(id = firstbacktestsymbol.symbol_id)
     # backtestsymbol = _symbol.name
 
-    # backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
+    backtestsymbols = None
+    if backtest != None:
+         backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
+
     backtestintervals = BackTestInterval.objects.all()
     
     # ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 200))
@@ -223,11 +227,12 @@ def backtest(request):
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
-        # 'backtest':backtest,
-        # 'backtestsymbols' : backtestsymbols,
+        'backtest':backtest,
+        'backtestsymbols' : backtestsymbols,
         'backtestintervals':backtestintervals,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
-        'accountinfo' : accountinfo
+        'accountinfo' : accountinfo,
+        'backtestjobs' : BackTest.objects.all().order_by("-id")
     })
 
 def createbacktest(request):
@@ -261,15 +266,28 @@ def createbacktest(request):
         BackTestOHLC.objects.bulk_create(bulk_list)   
 
     data = {
-        'backtest': serializers.serialize('json', BackTest.objects.filter(id = backtestid))
+        'backtest': serializers.serialize('json', BackTest.objects.filter(id = backtestid)),
+        'backtestjobs' : serializers.serialize('json', BackTest.objects.all().order_by("-id")), 
     }
 
     return JsonResponse(data)
 
-def deletebacktest(request):
+def deleteallbacktest(request):
     BackTest.objects.all().delete()
     data = {
         'result': '',
     }
+    return JsonResponse(data)
 
+def deletebacktest(request):
+    BackTest.objects.filter(id = request.POST.get('id')).delete()
+    data = {
+        'backtestjobs' :  serializers.serialize('json', BackTest.objects.all().order_by("-id")), 
+    }
+    return JsonResponse(data)
+
+def jogtest(request):
+    data = {
+        'backtestjobs' :  serializers.serialize('json', BackTest.objects.all().order_by("-id")), 
+    }
     return JsonResponse(data)
