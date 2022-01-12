@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestSymbol,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -195,9 +195,9 @@ def backtest(request):
     # _symbol = Symbol.objects.get(id = firstbacktestsymbol.symbol_id)
     # backtestsymbol = _symbol.name
 
-    backtestsymbols = None
-    if backtest != None:
-         backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
+    # backtestsymbols = None
+    # if backtest != None:
+    #      backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
 
     backtestintervals = BackTestInterval.objects.all()
     
@@ -228,7 +228,7 @@ def backtest(request):
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
         'backtest':backtest,
-        'backtestsymbols' : backtestsymbols,
+        # 'backtestsymbols' : backtestsymbols,
         'backtestintervals':backtestintervals,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
@@ -239,9 +239,11 @@ def createbacktest(request):
 
     btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 120
 
-    backtestsymbols = request.POST.getlist('backtestsymbols[]')
+    backtestsymbol = request.POST.get('backtestsymbol')
 
-    newBackTest = BackTest(code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
+    # print(backtestsymbol)
+
+    newBackTest = BackTest(symbol_id= backtestsymbol,code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
     newBackTest.save()
 
     backtestid = newBackTest.id
@@ -251,19 +253,19 @@ def createbacktest(request):
 
     # BackTestOHLC.objects.all().delete()
     # BackTestSymbol.objects.filter(backtest_id = backtest.id).delete()
-    for i in backtestsymbols:
-        new = BackTestSymbol(backtest_id= newBackTest.id, symbol_id=i)
-        new.save()
+    # for i in backtestsymbols:
+    # new = BackTestSymbol(backtest_id= newBackTest.id, symbol_id=i)
+    # new.save()
 
-        backtest_symbol = Symbol.objects.filter(id=i).first()
-        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))
-        ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    backtest_symbol = Symbol.objects.filter(id=backtestsymbol).first()
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
 
-        bulk_list = list()
-        for j, data in ohlc_data.iterrows():
-            bulk_list.append(
-                BackTestOHLC(backtest_id=newBackTest.id,symbol_id=i,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
-        BackTestOHLC.objects.bulk_create(bulk_list)   
+    bulk_list = list()
+    for j, data in ohlc_data.iterrows():
+        bulk_list.append(
+            BackTestOHLC(backtest_id=newBackTest.id,symbol_id=backtestsymbol,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
+    BackTestOHLC.objects.bulk_create(bulk_list)   
 
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = backtestid)),
@@ -275,7 +277,7 @@ def createbacktest(request):
 def deleteallbacktest(request):
     BackTest.objects.all().delete()
     data = {
-        'result': '',
+        'backtestjobs' :  serializers.serialize('json', BackTest.objects.all().order_by("-id")), 
     }
     return JsonResponse(data)
 
@@ -286,8 +288,23 @@ def deletebacktest(request):
     }
     return JsonResponse(data)
 
-def jogtest(request):
+def getbacktestjob(request):
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+    print('myaccount.broker_id')
     data = {
-        'backtestjobs' :  serializers.serialize('json', BackTest.objects.all().order_by("-id")), 
+        'backtest': serializers.serialize('json', BackTest.objects.filter(id = request.POST.get('id'))),
+        'symbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
+        'timeframes': serializers.serialize('json', TimeFrame.objects.all()),
+        'intervals': serializers.serialize('json', BackTestInterval.objects.all()),
+        'backtestsizes': serializers.serialize('json', BackTestSize.objects.all()),
+    }
+    return JsonResponse(data)    
+
+def jogtest(request):
+    id = request.POST.get('id')
+    data = {
+        'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
     }
     return JsonResponse(data)

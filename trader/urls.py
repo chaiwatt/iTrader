@@ -23,6 +23,7 @@ urlpatterns = [
     path('getohlc',views.getohlc,name='getohlc'),
     path('createbacktest',views.createbacktest ,name='createbacktest'),
     path('deletebacktest',views.deletebacktest ,name='deletebacktest'),
+    path('getbacktestjob',views.getbacktestjob ,name='getbacktestjob'),
     path('deleteallbacktest',views.deleteallbacktest ,name='deleteallbacktest'),
     path('jogtest',views.jogtest ,name='jogtest'),
     path('backtest',views.backtest,name='backtest'),

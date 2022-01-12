@@ -56,6 +56,7 @@ class BackTestSize(models.Model):
 
 class BackTest(models.Model):
     code=models.CharField(max_length=100)
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
     timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
     backtestsize=models.ForeignKey(BackTestSize, on_delete=models.CASCADE)
     interval=models.ForeignKey(BackTestInterval, on_delete=models.CASCADE)
@@ -63,11 +64,11 @@ class BackTest(models.Model):
     class Meta:
         db_table = "back_tests"
 
-class BackTestSymbol(models.Model):
-    backtest=models.ForeignKey(BackTest, on_delete=models.CASCADE)
-    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
-    class Meta:  
-        db_table = "back_test_symbols"
+# class BackTestSymbol(models.Model):
+#     backtest=models.ForeignKey(BackTest, on_delete=models.CASCADE)
+#     symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+#     class Meta:  
+#         db_table = "back_test_symbols"
 
 class BackTestOHLC(models.Model):
     backtest=models.ForeignKey(BackTest, on_delete=models.CASCADE)
