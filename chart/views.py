@@ -315,4 +315,19 @@ def jogtest(request):
     return JsonResponse(data)
 
 def symbolsetting(request):
-    return render(request,'symbol.html') 
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+    return render(request,'symbol.html',{
+        'symbols':Symbol.objects.filter(broker_id=myaccount.broker_id),
+    }) 
+
+def changesymbolstatus(request):
+    id = request.POST.get('id')
+    symbol = Symbol.objects.filter(id = id).first()
+    symbol.status = request.POST['status']
+    symbol.save()
+    data = {
+        'backtest': serializers.serialize('json', Symbol.objects.filter(id = id)),
+    }
+    return JsonResponse(data)

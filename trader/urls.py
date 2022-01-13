@@ -24,6 +24,7 @@ urlpatterns = [
     path('createbacktest',views.createbacktest ,name='createbacktest'),
     path('deletebacktest',views.deletebacktest ,name='deletebacktest'),
     path('getbacktestjob',views.getbacktestjob ,name='getbacktestjob'),
+    path('changesymbolstatus',views.changesymbolstatus ,name='changesymbolstatus'),
     path('deleteallbacktest',views.deleteallbacktest ,name='deleteallbacktest'),
     path('jogtest',views.jogtest ,name='jogtest'),
     path('backtest',views.backtest,name='backtest'),
