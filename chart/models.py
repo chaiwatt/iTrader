@@ -81,3 +81,22 @@ class BackTestOHLC(models.Model):
     tick=models.FloatField()
     class Meta:
         db_table = "back_test_ohlcs"
+
+
+class TestSpec(models.Model):
+    spec_type=models.CharField(max_length=10)
+    aligator_trend=models.CharField(max_length=10)
+    ma5_slope=models.FloatField()
+    ma5_std=models.FloatField()
+    ma8_slope=models.FloatField()
+    ma8_std=models.FloatField()
+    ma13_slope=models.FloatField()
+    ma13_std=models.FloatField()
+    ma100_slope=models.FloatField()
+    macd_cross=models.CharField(max_length=10)
+    macd_trend=models.CharField(max_length=10)
+    rsi=models.FloatField()
+    sma100_arrow_above=models.BooleanField()
+    sma100_arrow_below=models.BooleanField()
+    class Meta:
+        db_table = "test_specs"
