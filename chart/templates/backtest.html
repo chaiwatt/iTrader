@@ -330,7 +330,8 @@
         var ssma5STD = 0;
         var ssma8STD = 0;
         var ssma13STD = 0;
-
+        var dataResult = null
+        var sma100ArrowLevel = null
         $( document ).ready(function () {   
 
             //  setInterval(function(){
@@ -418,6 +419,13 @@
 
             sma100Trend = isUpTrend(regressiveEq[0],data,dataMA100,20,slopeSpec)
 
+            sma100ArrowLevel = {
+                sma100_arrow_below : sma100ArrowBelow(data,dataMA100,20),
+                sma100_arrow_above : sma100ArrowAbove(data,dataMA100,20),
+            }
+
+            // console.log(sma100ArrowLevel)
+
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
 
@@ -432,7 +440,8 @@
 
             isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
-            setDom()
+            dataResult = setDom()
+            // console.log(dataResult);
               
             canndleStickChart.setOption({
                 series : [
@@ -645,7 +654,6 @@
      
                 let sumssmaTrend = markLineCordSsma5[0][1] + markLineCordSsma8[0][1] + markLineCordSsma13[0][1] - markLineCordSsma5[1][1] - markLineCordSsma8[1][1] - markLineCordSsma13[1][1]
                 if(sumssmaTrend < 0){
-                    // console.log(sumssmaTrend);
                     ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-up ml-1'>";
                 }else{
                     ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-down ml-1'>";
@@ -717,9 +725,31 @@
                 }else{
                     ssma13ShowTrend.innerHTML = "MA13 <i class='fas fa-arrow-down mr-1'></i>";
                 }
-                
-            }
+                _result = {
+                    macd_value : MacdCrossData[3],
+                    macd_trend : (MacdCrossData[0]) ? 'up' : 'down',
+                    macd_cross : (MacdCrossData[1]) ? 'above' : 'below',
+                    ma100_slope : regressiveEq[0].toFixed(8),
+                    ma100_save_zone : regressiveEq[0].toFixed(8),
+                    ma5_slope : regressiveEqSmma5[0].toFixed(6),
+                    ma5_value : Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1].toFixed(4),
+                    ma5_std : ssma5STD.toFixed(5),
 
+                    ma8_slope : regressiveEqSmma8[0].toFixed(6),
+                    ma8_value : Smoth_SSMA8Arr[Smoth_SSMA8Arr.length-1].toFixed(4),
+                    ma8_std : ssma8STD.toFixed(5),
+                    ma13_slope : regressiveEqSmma13[0].toFixed(6),
+                    ma13_value : Smoth_SSMA13Arr[Smoth_SSMA13Arr.length-1].toFixed(4),
+                    ma13_std : ssma13STD.toFixed(5),
+                    aligator_trend : (sumssmaTrend < 0) ? 'up' : 'down',
+                    rsi : RSIArr[RSIArr.length-1],
+                    sma_arrow : sma100ArrowLevel
+                }
+                return _result;
+            }
+            // ssma5Slope.innerHTML = regressiveEqSmma5[0].toFixed(6)
+            //     ssma8Slope.innerHTML = regressiveEqSmma8[0].toFixed(6)
+            //     ssma13Slope.innerHTML = regressiveEqSmma13[0].toFixed(6)
         }
 
         option = {
@@ -1332,6 +1362,7 @@
             let _count = count++;
             let arraySet = _rawData.slice(_count,_count + testRange)
             createData(arraySet);
+            console.log(dataResult);
         })
 
         $(document).on("click","#autotest",function() {

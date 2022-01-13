@@ -193,8 +193,7 @@
         if(macd[macd.length-1] > signal[signal.length-1]){ 
             for(var i = macd.length-1 ; i > 0 ; i--){
                 if(macd[i] < signal[i]){
-                    if(macd[i] < 0){
-                        
+                    if(macd[i] < 0){       
                         crossAbove = false
                     }
                     crossIndex = i;
@@ -206,7 +205,6 @@
             for(var i = macd.length-1 ; i > 0 ; i--){
                 if(macd[i] > signal[i]){
                     if(macd[i] < 0){
-                        
                         crossAbove = false
                     }
                     crossIndex = i;
@@ -214,7 +212,7 @@
                 }
             }
         }
-        return [isUp,crossAbove,crossIndex+1]
+        return [isUp,crossAbove,crossIndex+1,macd[macd.length-1]]
     }
 
     function genRegressionLine(_data,nRange){
@@ -284,6 +282,24 @@
         }else{
             return [tmp, false]
         }
+    }
+
+    function sma100ArrowBelow(_data,sma100,nRange){
+        for(var i = _data.length-nRange ; i < _data.length ; i++ ){
+            if(sma100[i] > _data[i][2]){
+                return false
+            }        
+        }
+        return true;
+    }
+
+    function sma100ArrowAbove(_data,sma100,nRange){   
+        for(var i = _data.length-nRange ; i < _data.length ; i++ ){
+            if(sma100[i] < _data[i][3]){
+                return false
+            }        
+        }
+        return true;
     }
 
     function isSssmaSequence(ssma5,ssma8,ssma13){

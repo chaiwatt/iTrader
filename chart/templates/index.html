@@ -282,6 +282,7 @@
         var ssma5STD = 0;
         var ssma8STD = 0;
         var ssma13STD = 0;
+        var result = null;
 
         $( document ).ready(function () {   
              setInterval(function(){
@@ -300,7 +301,7 @@
 
         function createData(response){
             _forexData = response.series;
-            console.log(_forexData)
+            // console.log(_forexData)
             askPrice = Number(response.price['ask']);
             bidPrice = Number(response.price['bid']);
             $("#ask").html(askPrice.toFixed(3));
@@ -386,7 +387,8 @@
 
             isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
-            setDom()
+            result = setDom()
+            console.log(result);
               
             canndleStickChart.setOption({
                 series : [
@@ -581,7 +583,6 @@
                 const ssma13ShowSTD = document.querySelector('#ssma13STD')
 
                 const rsiShow = document.querySelector('#rsiShow')
-
                 const ssma13ShowAllTrending = document.querySelector('#ssma13ShowAllTrending')
 
                 ssma5Slope.innerHTML = regressiveEqSmma5[0].toFixed(6)
@@ -595,16 +596,13 @@
                 ssma5ShowSTD.innerHTML = ssma5STD.toFixed(5)
                 ssma8ShowSTD.innerHTML = ssma8STD.toFixed(5)
                 ssma13ShowSTD.innerHTML = ssma13STD.toFixed(5)
-
      
                 let sumssmaTrend = markLineCordSsma5[0][1] + markLineCordSsma8[0][1] + markLineCordSsma13[0][1] - markLineCordSsma5[1][1] - markLineCordSsma8[1][1] - markLineCordSsma13[1][1]
                 if(sumssmaTrend < 0){
-                    // console.log(sumssmaTrend);
                     ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-up ml-1'>";
                 }else{
                     ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-down ml-1'>";
                 }
-
                 
                  if(RSIArr[RSIArr.length-1] >= 70){
                     rsiShow.innerHTML = "Over Bought (" + RSIArr[RSIArr.length-1].toFixed(3) + ")"
@@ -671,9 +669,21 @@
                 }else{
                     ssma13ShowTrend.innerHTML = "MA13 <i class='fas fa-arrow-down mr-1'></i>";
                 }
-                
-            }
 
+                _result = {
+                    macd_value : 0,
+                    macd_trend : 0,
+                    macd_cross : 'up',
+                    ma100_slope : 0,
+                    ma5_slope : 0,
+                    ma8_slope : 0,
+                    ma13_slope : 0,
+                    aligator_trend : 'up',
+                    rsi : 0
+                }
+                // console.log(MacdCrossData)
+                return _result;
+            }
         }
 
         option = {
@@ -1088,8 +1098,6 @@
             macdChart.resize();
             canndleStickChartZoom.resize();
         }
-
-
 
     </script>
 
