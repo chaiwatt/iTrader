@@ -6,7 +6,7 @@ from django.http import JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
 from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
-import requests
+# import requests
 symbol = 'USDJPY'
 from django.utils import timezone
 from django.core import serializers
