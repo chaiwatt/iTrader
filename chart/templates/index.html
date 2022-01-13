@@ -282,7 +282,9 @@
         var ssma5STD = 0;
         var ssma8STD = 0;
         var ssma13STD = 0;
-        var result = null;
+
+        var dataResult = null
+        var sma100ArrowLevel = null
 
         $( document ).ready(function () {   
              setInterval(function(){
@@ -291,12 +293,13 @@
                     url: "{% url 'getohlc' %}",
                     success: function (response){
                         createData(response);
+                        console.log(dataResult);
                     },
                     error: function(response){
                         location.reload(true);
                     }
                 })
-             },2000)
+             },60000)
         });
 
         function createData(response){
@@ -373,6 +376,11 @@
 
             sma100Trend = isUpTrend(regressiveEq[0],data,dataMA100,20,slopeSpec)
 
+            sma100ArrowLevel = {
+                sma100_arrow_below : sma100ArrowBelow(data,dataMA100,20),
+                sma100_arrow_above : sma100ArrowAbove(data,dataMA100,20),
+            }
+
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
 
@@ -387,8 +395,8 @@
 
             isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
-            result = setDom()
-            console.log(result);
+            dataResult = setDom()
+            console.log(dataResult);
               
             canndleStickChart.setOption({
                 series : [
@@ -589,9 +597,13 @@
                 ssma8Slope.innerHTML = regressiveEqSmma8[0].toFixed(6)
                 ssma13Slope.innerHTML = regressiveEqSmma13[0].toFixed(6)
 
-                latestSsma5.innerHTML = Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1].toFixed(4)
-                latestSsma8.innerHTML = Smoth_SSMA8Arr[Smoth_SSMA8Arr.length-1].toFixed(4)
-                latestSsma13.innerHTML = Smoth_SSMA13Arr[Smoth_SSMA13Arr.length-1].toFixed(4)
+                let _latestSsma5 = Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1];
+                let _latestSsma8 = Smoth_SSMA8Arr[Smoth_SSMA8Arr.length-1];
+                let _latestSsma13 = Smoth_SSMA13Arr[Smoth_SSMA13Arr.length-1];
+
+                latestSsma5.innerHTML = _latestSsma5.toFixed(4)
+                latestSsma8.innerHTML = _latestSsma8.toFixed(4)
+                latestSsma13.innerHTML = _latestSsma13.toFixed(4)
 
                 ssma5ShowSTD.innerHTML = ssma5STD.toFixed(5)
                 ssma8ShowSTD.innerHTML = ssma8STD.toFixed(5)
@@ -670,18 +682,29 @@
                     ssma13ShowTrend.innerHTML = "MA13 <i class='fas fa-arrow-down mr-1'></i>";
                 }
 
-                _result = {
-                    macd_value : 0,
-                    macd_trend : 0,
-                    macd_cross : 'up',
-                    ma100_slope : 0,
-                    ma5_slope : 0,
-                    ma8_slope : 0,
-                    ma13_slope : 0,
-                    aligator_trend : 'up',
-                    rsi : 0
+                let ssma8PercentDiffssma5 = Math.abs((_latestSsma8 - _latestSsma5)*100/_latestSsma8);
+                let ssma8PercentDiffssma13 = Math.abs((_latestSsma8 - _latestSsma13)*100/_latestSsma8);
+
+            _result = {
+                    macd_value : MacdCrossData[3],
+                    macd_trend : (MacdCrossData[0]) ? 'up' : 'down',
+                    macd_cross : (MacdCrossData[1]) ? 'above' : 'below',
+                    ma100_slope : regressiveEq[0].toFixed(10),
+                    ma5_slope : regressiveEqSmma5[0].toFixed(10),
+                    ma5_value : _latestSsma5.toFixed(10),
+                    ma5_std : ssma5STD.toFixed(10),
+                    ma8_slope : regressiveEqSmma8[0].toFixed(10),
+                    ma8_value : _latestSsma8.toFixed(10),
+                    ma8_std : ssma8STD.toFixed(10),
+                    ma13_slope : regressiveEqSmma13[0].toFixed(10),
+                    ma13_value : _latestSsma13.toFixed(10),
+                    ma13_std : ssma13STD.toFixed(10),
+                    aligator_trend : (sumssmaTrend < 0) ? 'up' : 'down',
+                    rsi : RSIArr[RSIArr.length-1],
+                    ssma8_percent_diff_ssma5 : ssma8PercentDiffssma5,
+                    ssma8_percent_diff_ssma13 : ssma8PercentDiffssma13,
+                    sma_arrow : sma100ArrowLevel,
                 }
-                // console.log(MacdCrossData)
                 return _result;
             }
         }

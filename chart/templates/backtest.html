@@ -250,6 +250,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Report</h3>
+                       
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -261,6 +262,86 @@
                         </div>
                     </div>
                 </div>
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Buy Test Spec</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MA100 Slope</td>
+                                <td> > {{ buytestspec.ma100_slope }}</td>
+                            </tr>
+                            <tr>
+                                <td>MA100 Arrow Below</td>
+                                <td>{{ buytestspec.ma100_arrow_below }}</td>
+                            </tr>
+                            <tr>
+                                <td>MA100 Arrow Above</td>
+                                <td>{{ buytestspec.ma100_arrow_above }}</td>
+                            </tr>
+                            <tr>
+                                <td>MACD Trend</td>
+                                <td>{{ buytestspec.macd_trend }}</td>
+                            </tr>
+                            <tr>
+                                <td>MACD Cross</td>
+                                <td>{{ buytestspec.macd_cross }}</td>
+                            </tr>
+                            <tr>
+                                <td>RSI</td>
+                                <td> > {{ buytestspec.rsi }}</td>
+                            </tr>
+                          <tr>
+                            <td>Aligator Trend</td>
+                            <td>{{ buytestspec.aligator_trend }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA5 Slope</td>
+                            <td> > {{ buytestspec.ma5_slope }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA5 STD</td>
+                            <td> > {{ buytestspec.ma5_std }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA8 Slope</td>
+                            <td> > {{ buytestspec.ma8_slope }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA8 STD</td>
+                            <td> > {{ buytestspec.ma8_std }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA13 Slope</td>
+                            <td> > {{ buytestspec.ma13_slope }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA13 STD</td>
+                            <td> > {{ buytestspec.ma13_std }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA8 Percent SSMA5</td>
+                            <td> > {{ buytestspec.ma8_percent_diff_ma5 }}</td>
+                          </tr>
+                          <tr>
+                            <td>SSMA8 Percent SSMA13</td>
+                            <td> > {{ buytestspec.ma8_percent_diff_ma13 }}</td>
+                          </tr>
+        
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
             </div>
             <!-- /.col-md-6 -->
           </div>

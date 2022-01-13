@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,TestSpec
 # import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -190,43 +190,12 @@ def backtest(request):
     # print(account_info)
 
     backtest = BackTest.objects.last()
-    # print(backtest.code)
-    # tf = TimeFrame.objects.get(id = backtest.timeframe_id)
-
-    # backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
-    # firstbacktestsymbol = BackTestSymbol.objects.first()
-    # _symbol = Symbol.objects.get(id = firstbacktestsymbol.symbol_id)
-    # backtestsymbol = _symbol.name
-
-    # backtestsymbols = None
-    # if backtest != None:
-    #      backtestsymbols = BackTestSymbol.objects.filter(backtest_id = backtest.id)
+   
 
     backtestintervals = BackTestInterval.objects.all()
     
-    # ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtestsymbol, backtestdataframe, 0, 200))
-    # ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
-    # ohlcs = []
-    # for i, data in ohlc_data.iterrows():
-    #     ohlc = {
-    #         'time':data['time'].strftime('%Y-%m-%d %H:%M:%S'),
-    #         'open':data['open'] ,
-    #         'high':data['high'],
-    #         'low':data['low'] ,
-    #         'close':data['close'], 
-    #         'tick':data['tick_volume']
-    #     }
-    #     ohlcs.append(ohlc)
 
-    # data = {
-    #     'symbol':_symbol.name,
-    #     'series':ohlcs, 
-    #     'timeframe':tf.name
-    # }
-
-    # data = dumps(data)
     return render(request,'backtest.html',{
-        # 'resData': data,
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
@@ -235,7 +204,8 @@ def backtest(request):
         'backtestintervals':backtestintervals,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
-        'backtestjobs' : BackTest.objects.all().order_by("-id")
+        'backtestjobs' : BackTest.objects.all().order_by("-id"),
+        'buytestspec' : TestSpec.objects.first()
     })
 
 def createbacktest(request):

@@ -93,10 +93,13 @@ class TestSpec(models.Model):
     ma13_slope=models.FloatField()
     ma13_std=models.FloatField()
     ma100_slope=models.FloatField()
+    ma100_arrow_above=models.BooleanField(default=False)
+    ma100_arrow_below=models.BooleanField(default=True)
     macd_cross=models.CharField(max_length=10)
     macd_trend=models.CharField(max_length=10)
     rsi=models.FloatField()
-    sma100_arrow_above=models.BooleanField()
-    sma100_arrow_below=models.BooleanField()
+    ma8_percent_diff_ma5=models.FloatField()
+    ma8_percent_diff_ma13=models.FloatField()
     class Meta:
         db_table = "test_specs"
+
