@@ -295,7 +295,7 @@
                         location.reload(true);
                     }
                 })
-             },60000)
+             },2000)
         });
 
         function createData(response){
@@ -308,6 +308,7 @@
             $("#timeframe").html(response.price['timeframe']);
             $("#symbol").html(response.symbol);
             data = getData(_forexData);
+            // console.log(data)
             closedPrice = getClosedPrice(_forexData);
             lowPrice = getLowPrice(_forexData);
             highPrice = getHighPrice(_forexData);
@@ -598,7 +599,7 @@
      
                 let sumssmaTrend = markLineCordSsma5[0][1] + markLineCordSsma8[0][1] + markLineCordSsma13[0][1] - markLineCordSsma5[1][1] - markLineCordSsma8[1][1] - markLineCordSsma13[1][1]
                 if(sumssmaTrend < 0){
-                    console.log(sumssmaTrend);
+                    // console.log(sumssmaTrend);
                     ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-up ml-1'>";
                 }else{
                     ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-down ml-1'>";

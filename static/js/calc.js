@@ -3,7 +3,7 @@
 
     function createRawData(backtestOhlc){
         var _data = []
-        JSON.parse(backtestOhlc).forEach(ohlc => {
+        JSON.parse(backtestOhlc).forEach((ohlc,key) => {
             _data.push({
                     time: ohlc.fields.date,
                     open: ohlc.fields.open,
@@ -11,6 +11,7 @@
                     low: ohlc.fields.low,
                     high: ohlc.fields.high,
                     tick: ohlc.fields.tick,
+                    index: ohlc.pk,
                 })
         });
         return _data;
@@ -18,16 +19,26 @@
     
     function getData(_arr) {
         var _data = []
-        _arr.forEach((item) => {
-            _data.push(Object.seal([item.open,item.close,item.low,item.high]))
+        _arr.forEach((item,key) => {
+            let _index = item.index;
+            if(typeof _index === "undefined"){
+                _index = item.id;
+            }
+            _data.push(Object.seal([
+                item.open,
+                item.close,
+                item.low,
+                item.high,
+                _index,
+            ]))
         });
         return _data;
     }
 
     function getSampleData(_arr) {
         var _data = []
-        _arr.forEach((item) => {
-            _data.push(Object.seal([item.open,item.close,item.low,item.high]))
+        _arr.forEach((item,key) => {
+            _data.push(Object.seal([item.open,item.close,item.low,item.high,key]))
         });
         return _data;
     }

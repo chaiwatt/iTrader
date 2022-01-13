@@ -52,7 +52,8 @@ def index(request):
             'high':data['high'],
             'low':data['low'] ,
             'close':data['close'], 
-            'tick':data['tick_volume']
+            'tick':data['tick_volume'],
+            'id':i
         }
         ohlcs.append(ohlc)
 
@@ -96,7 +97,8 @@ def getohlc(request):
             'high':data['high'],
             'low':data['low'] ,
             'close':data['close'], 
-            'tick':data['tick_volume']
+            'tick':data['tick_volume'],
+            'id':i
         }
         ohlcs.append(ohlc)
 
@@ -140,7 +142,8 @@ def getSymbolData(request):
             'high':data['high'],
             'low':data['low'] ,
             'close':data['close'], 
-            'tick':data['tick_volume']
+            'tick':data['tick_volume'],
+            'id':i
         }
         ohlcs.append(ohlc)
 
