@@ -1,0 +1,284 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Symbol setting</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active">Symbol setting</li>
+              </ol>
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content-header -->
+  
+      <!-- Main content -->
+      <div class="content">
+        <div class="container-fluid">
+          
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Buy Test Spec</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                  <div class="card-body">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma100_slope">MA100 Slope</label>
+                          <input type="text" class="form-control" id="ma100_slope" value="{{ buytestspec.ma100_slope }}" >
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma100_arrow_below">MA100 Arrow Under</label>
+                          <select class="form-control" id="ma100_arrow_below">
+                              <option value="1" 
+                                {% if buytestspec.ma100_arrow_below == 1 %}
+                                    selected
+                                {% endif %}
+                                >True</option>
+                              <option value="0"
+                               {% if buytestspec.ma100_arrow_below == 0 %}
+                                    selected
+                                {% endif %}
+                              >False</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="macd_trend">MACD Trend</label>
+                          <select class="form-control" id="macd_trend">
+                              <option value="up"
+                              {% if buytestspec.macd_trend == 'up' %}
+                                  selected
+                              {% endif %}
+                              >Up</option>
+                              <option value="down"
+                              {% if buytestspec.macd_trend == 'down' %}
+                                  selected
+                              {% endif %}
+                              >Down</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="macd_cross">MACD Cross</label>
+                          <select class="form-control" id="macd_cross">
+                              <option value="above"
+                              {% if buytestspec.macd_cross == 'above' %}
+                                  selected
+                              {% endif %}
+                              >Above</option>
+                              <option value="below"
+                              {% if buytestspec.macd_cross == 'below' %}
+                                  selected
+                              {% endif %}
+                              >Below</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="rsi">RSI</label>
+                          <input type="text" class="form-control" id="rsi" value="{{ buytestspec.rsi }}">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ssma3line_uptrend">SSMA 3 Line Up Trend</label>
+                          <select class="form-control" id="ssma3line_uptrend">
+                              <option value="1"
+                              {% if buytestspec.ssma3line_uptrend == 1 %}
+                                  selected
+                              {% endif %}
+                              >True</option>
+                              <option value="0"
+                              {% if buytestspec.ssma3line_uptrend == 0 %}
+                                  selected
+                              {% endif %}
+                              >False</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="aligator_trend">Aligator Trend</label>
+                          <select class="form-control" id="aligator_trend">
+                              <option value="up"
+                              {% if buytestspec.aligator_trend == 'up' %}
+                                  selected
+                              {% endif %}
+                              >Up</option>
+                              <option value="down"
+                              {% if buytestspec.aligator_trend == 'down' %}
+                                  selected
+                              {% endif %}
+                              >Down</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma5_slope">SSMA5 Slope</label>
+                          <input type="text" class="form-control" id="ma5_slope" value="{{ buytestspec.ma5_slope }}">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma8_slope">SSMA8 Slope</label>
+                          <input type="text" class="form-control" id="ma8_slope" value="{{ buytestspec.ma8_slope }}">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma13_slope">SSMA13 Slope</label>
+                          <input type="text" class="form-control" id="ma13_slope" value="{{ buytestspec.ma13_slope }}">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma5_std">SSMA5 STD</label>
+                          <input type="text" class="form-control" id="ma5_std" value="{{ buytestspec.ma5_std }}">
+                        </div>
+                      </div>
+                 
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma8_std">SSMA8 STD</label>
+                          <input type="text" class="form-control" id="ma8_std" value="{{ buytestspec.ma8_std }}">
+                        </div>
+                      </div>
+                 
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma13_std">SSMA13 STD</label>
+                          <input type="text" class="form-control" id="ma13_std" value="{{ buytestspec.ma13_std }}">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma8_percent_diff_ma5">SSMA8 Percent To SSMA5</label>
+                          <input type="text" class="form-control" id="ma8_percent_diff_ma5" value="{{ buytestspec.ma8_percent_diff_ma5 }}">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="ma8_percent_diff_ma13">SSMA8 Percent To SSMA13</label>
+                          <input type="text" class="form-control" id="ma8_percent_diff_ma13" value="{{ buytestspec.ma8_percent_diff_ma13 }}">
+                        </div>
+                      </div>
+                    </div>
+                   
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="button" id="btnSaveBuyTestSpec" class="btn btn-success  float-right">Save</button>
+                  </div>
+              </div>
+  
+            </div>
+            <div class="col-lg-6">
+              <div class="card card-info">
+                <div class="card-header">
+                  <h3 class="card-title">Sell Test Spec</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="ma100_sell_slope">MA100 Slope</label>
+                      <input type="text" class="form-control" id="ma100_sell_slope" >
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              </div>
+  
+            </div>
+     
+          </div>
+          <!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content -->
+
+      <script>
+        $(document).on("click","#btnSaveBuyTestSpec",function() {
+          saveBuyTestSpec($('#ma100_slope').val(),
+              $('#ma100_arrow_below').val(),
+              $('#macd_trend').val(),
+              $('#macd_cross').val(),
+              $('#rsi').val(),
+              $('#ssma3line_uptrend').val(),
+              $('#aligator_trend').val(),
+              $('#ma5_slope').val(),
+              $('#ma8_slope').val(),
+              $('#ma13_slope').val(),
+              $('#ma5_std').val(),
+              $('#ma8_std').val(),
+              $('#ma13_std').val(),
+              $('#ma8_percent_diff_ma5').val(),
+              $('#ma8_percent_diff_ma13').val()
+          ).then(data => {
+                toastr.info(`Buy Test spec has been updated`)
+            }).catch(error => {})
+        })
+
+        function saveBuyTestSpec(ma100_slope,ma100_arrow_below,macd_trend,macd_cross,rsi,ssma3line_uptrend,aligator_trend,ma5_slope,ma8_slope,ma13_slope,ma5_std,ma8_std,ma13_std,ma8_percent_diff_ma5,ma8_percent_diff_ma13){
+            return new Promise((resolve, reject) => {
+                data = {
+                    ma100_slope: ma100_slope,
+                    ma100_arrow_below : ma100_arrow_below,
+                    macd_trend : macd_trend,
+                    macd_cross : macd_cross,
+                    rsi : rsi,
+                    ssma3line_uptrend : ssma3line_uptrend,
+                    aligator_trend : aligator_trend,
+                    ma5_slope : ma5_slope,
+                    ma8_slope : ma8_slope,
+                    ma13_slope : ma13_slope,
+                    ma5_std : ma5_std,
+                    ma8_std : ma8_std,
+                    ma13_std : ma13_std,
+                    ma8_percent_diff_ma5 : ma8_percent_diff_ma5,
+                    ma8_percent_diff_ma13 : ma8_percent_diff_ma13,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'savebuytestspec' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+      </script>
+
+ 
+{% endblock %} 

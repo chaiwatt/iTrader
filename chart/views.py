@@ -308,3 +308,49 @@ def changesymbolstatus(request):
         'backtest': serializers.serialize('json', Symbol.objects.filter(id = id)),
     }
     return JsonResponse(data)
+
+def spec(request):
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    mt5.login(myaccount.login,myaccount.password,myaccount.server)
+
+    accountinfo = mt5.account_info()
+    
+    print(accountinfo)
+
+    return render(request,'spec.html',{
+        'accountinfo' : accountinfo,
+        'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
+        'buytestspec':TestSpec.objects.filter(id = 1).first(),
+    })  
+
+def savebuytestspec(request):
+    # print(request.POST.get('ma8_percent_diff_ma13'))
+    buyTestSpec = TestSpec.objects.filter(id = 1).first()
+    buyTestSpec.aligator_trend = request.POST['aligator_trend']
+    buyTestSpec.ma5_slope = request.POST['ma5_slope']
+
+    buyTestSpec.ma5_std = request.POST['ma5_std']
+    buyTestSpec.ma8_slope = request.POST['ma8_slope']
+    buyTestSpec.ma8_std = request.POST['ma8_std']
+    buyTestSpec.ma13_slope = request.POST['ma13_slope']
+    buyTestSpec.ma13_std = request.POST['ma13_std']
+    buyTestSpec.ma100_slope = request.POST['ma100_slope']
+    buyTestSpec.ma100_arrow_below = request.POST['ma100_arrow_below']
+    buyTestSpec.macd_cross = request.POST['macd_cross']
+    buyTestSpec.macd_trend = request.POST['macd_trend']
+    buyTestSpec.rsi = request.POST['rsi']
+    buyTestSpec.ma8_percent_diff_ma5 = request.POST['ma8_percent_diff_ma5']
+    buyTestSpec.ma8_percent_diff_ma13 = request.POST['ma8_percent_diff_ma13']
+    buyTestSpec.ssma3line_uptrend = request.POST['ssma3line_uptrend']
+    buyTestSpec.save()
+    data = {
+        'backtest': serializers.serialize('json', TestSpec.objects.filter(id = 1)),
+    }
+    return JsonResponse(data)     
