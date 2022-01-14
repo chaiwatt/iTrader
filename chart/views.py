@@ -201,6 +201,8 @@ def backtest(request):
 
     backtestintervals = BackTestInterval.objects.all()
     
+    
+    
 
     return render(request,'backtest.html',{
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
@@ -223,19 +225,18 @@ def createbacktest(request):
 
     # print(backtestsymbol)
 
-    newBackTest = BackTest(symbol_id= backtestsymbol,code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
+    tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
+    backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
+
+    symbol = Symbol.objects.filter(id = backtestsymbol).first()
+
+    newBackTest = BackTest(symbol_id= backtestsymbol,timeframename= tf.name,symbolname= symbol.name,code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
     newBackTest.save()
 
     backtestid = newBackTest.id
 
-    tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
-    backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
 
-    # BackTestOHLC.objects.all().delete()
-    # BackTestSymbol.objects.filter(backtest_id = backtest.id).delete()
-    # for i in backtestsymbols:
-    # new = BackTestSymbol(backtest_id= newBackTest.id, symbol_id=i)
-    # new.save()
+
 
     backtest_symbol = Symbol.objects.filter(id=backtestsymbol).first()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))

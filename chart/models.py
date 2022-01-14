@@ -56,8 +56,10 @@ class BackTestSize(models.Model):
 
 class BackTest(models.Model):
     code=models.CharField(max_length=100)
+    symbolname=models.CharField(max_length=100, default = None)
     symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
     timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
+    timeframename=models.CharField(max_length=100, default = None)
     backtestsize=models.ForeignKey(BackTestSize, on_delete=models.CASCADE)
     interval=models.ForeignKey(BackTestInterval, on_delete=models.CASCADE)
     status=models.CharField(max_length=1, default = 0)

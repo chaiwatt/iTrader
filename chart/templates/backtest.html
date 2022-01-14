@@ -139,7 +139,7 @@
                                     <select class="form-control" name="selectedBacktestJob" id="selectedBacktestJob" >
                                         <option value="">== select job ==</option>
                                         {% for backtestjob in backtestjobs %}
-                                            <option value="{{ backtestjob.id }}">{{ backtestjob.code }}</option>
+                                            <option value="{{ backtestjob.id }}">{{ backtestjob.symbolname }} {{ backtestjob.timeframename }} {{ backtestjob.code }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -1250,7 +1250,7 @@
                         Swal.fire({
                             //position: 'top-end',
                             icon: 'success',
-                            html: `<h2>Job name <br><strong> ${JSON.parse(data.backtest)[0].fields.code} </strong> <br>has been created<h2>`,
+                            html: `<h2>Job name <br><strong>${JSON.parse(data.backtest)[0].fields.symbolname} ${JSON.parse(data.backtest)[0].fields.timeframename} ${JSON.parse(data.backtest)[0].fields.code}</strong> <br>has been created<h2>`,
                             showConfirmButton: false,
                             timer: 2000
                         }).then(function (result) {
@@ -1264,7 +1264,7 @@
         function renderBacktestJobLists(jobs){
             let html = `<option value="">== select job ==</option>`;
             JSON.parse(jobs).forEach(job => {
-                html += `<option value="${job.pk}">${job.fields.code}</option>`
+                html += `<option value="${job.pk}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
             });
             $('#selectedBacktestJob').html(html);
         }
