@@ -269,8 +269,14 @@
                     url: "{% url 'savebuytestspec' %}",
                     dataType : "json",
                     data: data,
+                    beforeSend: function(){
+                        $('#loader').show();
+                    },
                     success: function(data) {
                         resolve(data)
+                    },
+                    complete:function(data){
+                        $('#loader').hide();
                     },
                     error: function(error) {
                         reject(error)
