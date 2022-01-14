@@ -449,7 +449,7 @@
 
             ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
-            dataResult = setDom()
+            dataResult = createResult()
             // console.log(dataResult);
             showValue(dataResult, JSON.parse('{{ buytestspec|escapejs }}'))
               
@@ -619,8 +619,6 @@
 
             function showValue(reading,rawSpec){
                 buyTestSpec = rawSpec[0].fields;
-                // console.log(reading)
-                // console.log(buyTestSpec)
 
                 const ele_spec_ma100_slope = document.querySelector('#td_spec_ma100_slope')
                 const ele_reading_ma100_slope = document.querySelector('#td_reading_ma100_slope')
@@ -778,7 +776,7 @@
                 }
             }
             
-            function setDom(){
+            function createResult(){
                 let _latestSsma5 = Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1];
                 let _latestSsma8 = Smoth_SSMA8Arr[Smoth_SSMA8Arr.length-1];
                 let _latestSsma13 = Smoth_SSMA13Arr[Smoth_SSMA13Arr.length-1];
