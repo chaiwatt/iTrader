@@ -81,7 +81,8 @@ def index(request):
         'timeframes':TimeFrame.objects.all(),
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
-        'accountinfo' : accountinfo
+        'accountinfo' : accountinfo,
+        'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
     })
 
 def getohlc(request):  
