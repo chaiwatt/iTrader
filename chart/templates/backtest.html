@@ -273,68 +273,91 @@
                           <tr>
                             <th>Parameter</th>
                             <th>Spec</th>
+                            <th>Value</th>
                           </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>MA100 Slope</td>
-                                <td> > {{ buytestspec.ma100_slope }}</td>
+                                <td id="td_spec_ma100_slope"></td>
+                                <td id="td_reading_ma100_slope"></td>
                             </tr>
                             <tr>
                                 <td>MA100 Arrow Below</td>
-                                <td>{{ buytestspec.ma100_arrow_below }}</td>
+                                <td id="td_spec_sma100_arrow_below"></td>
+                                <td id="td_reading_sma100_arrow_below"></td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td>MA100 Arrow Above</td>
-                                <td>{{ buytestspec.ma100_arrow_above }}</td>
-                            </tr>
+                                <td id="td_spec_sma100_arrow_above"></td>
+                                <td id="td_reading_sma100_arrow_above"></td>
+                            </tr> -->
                             <tr>
                                 <td>MACD Trend</td>
-                                <td>{{ buytestspec.macd_trend }}</td>
+                                <td id="td_spec_macd_trend"></td>
+                                <td id="td_reading_macd_trend"></td>
                             </tr>
                             <tr>
                                 <td>MACD Cross</td>
-                                <td>{{ buytestspec.macd_cross }}</td>
+                                <td id="td_spec_macd_cross"></td>
+                                <td id="td_reading_macd_cross"></td>
                             </tr>
                             <tr>
                                 <td>RSI</td>
-                                <td> > {{ buytestspec.rsi }}</td>
+                                <td id="td_spec_rsi"></td>
+                                <td id="td_reading_rsi"></td>
                             </tr>
+                            <tr>
+                                <td>SSMA 3 Line Up Trend</td>
+                                <td id="td_spec_ssma3line_uptrend"></td>
+                                <td id="td_reading_ssma3line_uptrend"></td>
+                            </tr>
+                  
+                         
                           <tr>
                             <td>Aligator Trend</td>
-                            <td>{{ buytestspec.aligator_trend }}</td>
+                            <td id="td_spec_aligator_trend"></td>
+                            <td id="td_reading_aligator_trend"></td>
                           </tr>
                           <tr>
                             <td>SSMA5 Slope</td>
-                            <td> > {{ buytestspec.ma5_slope }}</td>
+                            <td id="td_spec_ssma5_slope"></td>
+                            <td id="td_reading_ssma5_slope"></td>
                           </tr>
                           <tr>
                             <td>SSMA5 STD</td>
-                            <td> > {{ buytestspec.ma5_std }}</td>
+                            <td id="td_spec_ssma5_std"></td>
+                            <td id="td_reading_ssma5_std"></td>
                           </tr>
                           <tr>
                             <td>SSMA8 Slope</td>
-                            <td> > {{ buytestspec.ma8_slope }}</td>
+                            <td id="td_spec_ssma8_slope"></td>
+                            <td id="td_reading_ssma8_slope"></td>
                           </tr>
                           <tr>
                             <td>SSMA8 STD</td>
-                            <td> > {{ buytestspec.ma8_std }}</td>
+                            <td id="td_spec_ssma8_std"></td>
+                            <td id="td_reading_ssma8_std"></td>
                           </tr>
                           <tr>
                             <td>SSMA13 Slope</td>
-                            <td> > {{ buytestspec.ma13_slope }}</td>
+                            <td id="td_spec_ssma13_slope"></td>
+                            <td id="td_reading_ssma13_slope"></td>
                           </tr>
                           <tr>
                             <td>SSMA13 STD</td>
-                            <td> > {{ buytestspec.ma13_std }}</td>
+                            <td id="td_spec_ssma13_std"></td>
+                            <td id="td_reading_ssma13_std"></td>
                           </tr>
                           <tr>
                             <td>SSMA8 Percent To SSMA5</td>
-                            <td> > {{ buytestspec.ma8_percent_diff_ma5 }}</td>
+                            <td id="td_spec_ssma8_diff_sma5"></td>
+                            <td id="td_reading_ssma8_diff_sma5"></td>
                           </tr>
                           <tr>
                             <td>SSMA8 Percent To SSMA13</td>
-                            <td> > {{ buytestspec.ma8_percent_diff_ma13 }}</td>
+                            <td id="td_spec_ssma8_diff_sma13"></td>
+                            <td id="td_reading_ssma8_diff_sma13"></td>
                           </tr>
         
                         </tbody>
@@ -368,7 +391,7 @@
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
-        
+        var buyTestSpec = null ;//"{{buytestspec|escapejs}}"; //'{{data|escapejs}}';
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
         var data = []
         var axisData = [];
@@ -401,7 +424,7 @@
         var markMA100LineCord = [];
         var MarkMA100Slope  = [];
         var sma100Trend = [];
-        var isSsmaSequencing = false;
+        var ssma3LineOrder = null;
         var markLineCordSsma5 = []
         var markLineCordSsma8 = []
         var markLineCordSsma13 = []
@@ -414,7 +437,6 @@
         var dataResult = null
         var sma100ArrowLevel = null
         $( document ).ready(function () {   
-
             //  setInterval(function(){
             //     $.ajax({
             //         type: 'GET',
@@ -433,8 +455,7 @@
 
         function createData(response){
             _forexData = response;
-          
-            
+        
             data = getData(_forexData);
             // console.log(data)
             closedPrice = getClosedPrice(_forexData);
@@ -514,10 +535,11 @@
             regressiveEqSmma13 = genRegressionLine(Smoth_SSMA13Arr,5)
             markLineCordSsma13 = getCoord(regressiveEqSmma13,Smoth_SSMA13Arr.length-1-5,Smoth_SSMA13Arr.length-1,5)
 
-            isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
+            ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
             dataResult = setDom()
             // console.log(dataResult);
+            showValue(dataResult, JSON.parse('{{ buytestspec|escapejs }}'))
               
             canndleStickChart.setOption({
                 series : [
@@ -683,6 +705,169 @@
 
             });
 
+            function showValue(reading,rawSpec){
+                buyTestSpec = rawSpec[0].fields;
+                // console.log(reading)
+                // console.log(buyTestSpec)
+
+                const ele_spec_ma100_slope = document.querySelector('#td_spec_ma100_slope')
+                const ele_reading_ma100_slope = document.querySelector('#td_reading_ma100_slope')
+
+                const ele_spec_sma100_arrow_below = document.querySelector('#td_spec_sma100_arrow_below')
+                const ele_reading_sma100_arrow_below = document.querySelector('#td_reading_sma100_arrow_below')
+
+                const ele_spec_sma100_arrow_above = document.querySelector('#td_spec_sma100_arrow_above')
+                const ele_reading_sma100_arrow_above = document.querySelector('#td_reading_sma100_arrow_above')
+
+                const ele_spec_macd_trend = document.querySelector('#td_spec_macd_trend')
+                const ele_reading_macd_trend = document.querySelector('#td_reading_macd_trend')
+                
+                const ele_spec_macd_cross = document.querySelector('#td_spec_macd_cross')
+                const ele_reading_macd_cross = document.querySelector('#td_reading_macd_cross')
+
+                const ele_spec_rsi = document.querySelector('#td_spec_rsi')
+                const ele_reading_rsi = document.querySelector('#td_reading_rsi')
+
+                const ele_spec_ssma3line_uptrend = document.querySelector('#td_spec_ssma3line_uptrend')
+                const ele_reading_ssma3line_uptrend = document.querySelector('#td_reading_ssma3line_uptrend')
+
+                
+                const ele_spec_aligator_trend = document.querySelector('#td_spec_aligator_trend')
+                const ele_reading_aligator_trend = document.querySelector('#td_reading_aligator_trend')
+
+                const ele_spec_ssma5_slope = document.querySelector('#td_spec_ssma5_slope')
+                const ele_reading_ssma5_slope = document.querySelector('#td_reading_ssma5_slope')
+
+                const ele_spec_ssma5_std = document.querySelector('#td_spec_ssma5_std')
+                const ele_reading_ssma5_std = document.querySelector('#td_reading_ssma5_std')
+
+                const ele_spec_ssma8_slope = document.querySelector('#td_spec_ssma8_slope')
+                const ele_reading_ssma8_slope = document.querySelector('#td_reading_ssma8_slope')
+
+                const ele_spec_ssma8_std = document.querySelector('#td_spec_ssma8_std')
+                const ele_reading_ssma8_std = document.querySelector('#td_reading_ssma8_std')
+
+                const ele_spec_ssma13_slope = document.querySelector('#td_spec_ssma13_slope')
+                const ele_reading_ssma13_slope = document.querySelector('#td_reading_ssma13_slope')
+
+                const ele_spec_ssma13_std = document.querySelector('#td_spec_ssma13_std')
+                const ele_reading_ssma13_std = document.querySelector('#td_reading_ssma13_std')
+
+                const ele_spec_ssma8_diff_sma5 = document.querySelector('#td_spec_ssma8_diff_sma5')
+                const ele_reading_ssma8_diff_sma5 = document.querySelector('#td_reading_ssma8_diff_sma5')
+
+                const ele_spec_ssma8_diff_sma13 = document.querySelector('#td_spec_ssma8_diff_sma13')
+                const ele_reading_ssma8_diff_sma13 = document.querySelector('#td_reading_ssma8_diff_sma13')
+                
+
+                ele_spec_ma100_slope.innerHTML = buyTestSpec.ma100_slope;
+                if (reading.ma100_slope > buyTestSpec.ma100_slope){
+                    ele_reading_ma100_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma100_slope).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ma100_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma100_slope).toFixed(6)}</span>`;
+                }
+
+                ele_spec_sma100_arrow_below.innerHTML = buyTestSpec.ma100_arrow_below;
+                if (reading.sma_arrow.sma100_arrow_below === buyTestSpec.ma100_arrow_below){
+                    ele_reading_sma100_arrow_below.innerHTML = `<span class="badge bg-success" >${reading.sma_arrow.sma100_arrow_below}</span>`;
+                }else{
+                    ele_reading_sma100_arrow_below.innerHTML = `<span class="badge bg-danger" >${reading.sma_arrow.sma100_arrow_below}</span>`;
+                }
+
+                ele_spec_macd_trend.innerHTML = buyTestSpec.macd_trend;
+                if (reading.macd_trend === buyTestSpec.macd_trend){
+                    ele_reading_macd_trend.innerHTML = `<span class="badge bg-success" >${reading.macd_trend}</span>`;
+                }else{
+                    ele_reading_macd_trend.innerHTML = `<span class="badge bg-danger" >${reading.macd_trend}</span>`;
+                }
+
+                ele_spec_macd_cross.innerHTML = buyTestSpec.macd_cross;
+                if (reading.macd_cross === buyTestSpec.macd_cross){
+                    ele_reading_macd_cross.innerHTML = `<span class="badge bg-success" >${reading.macd_cross}</span>`;
+                }else{
+                    ele_reading_macd_cross.innerHTML = `<span class="badge bg-danger" >${reading.macd_cross}</span>`;
+                }
+
+                ele_spec_rsi.innerHTML = buyTestSpec.rsi;
+                if (reading.rsi < buyTestSpec.rsi){
+                    ele_reading_rsi.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.rsi).toFixed(3)}</span>`;
+                }else{
+                    ele_reading_rsi.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.rsi).toFixed(3)}</span>`;
+                }
+
+                ele_spec_ssma3line_uptrend.innerHTML = buyTestSpec.ssma3line_uptrend;
+                if (reading.ssma3line_order.aligator_order_uptrend === buyTestSpec.ssma3line_uptrend){
+                    ele_reading_ssma3line_uptrend.innerHTML = `<span class="badge bg-success" >${reading.ssma3line_order.aligator_order_uptrend}</span>`;
+                }else{
+                    ele_reading_ssma3line_uptrend.innerHTML = `<span class="badge bg-danger" >${reading.ssma3line_order.aligator_order_uptrend}</span>`;
+                }
+                
+                ele_spec_aligator_trend.innerHTML = buyTestSpec.aligator_trend;
+                if (reading.aligator_trend === buyTestSpec.aligator_trend){
+                    ele_reading_aligator_trend.innerHTML = `<span class="badge bg-success" >${reading.aligator_trend}</span>`;
+                }else{
+                    ele_reading_aligator_trend.innerHTML = `<span class="badge bg-danger" >${reading.aligator_trend}</span>`;
+                }
+
+                ele_spec_ssma5_slope.innerHTML = buyTestSpec.ma5_slope;
+                if (reading.ma5_slope > buyTestSpec.ma5_slope){
+                    ele_reading_ssma5_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma5_slope).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma5_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma5_slope).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma5_std.innerHTML = buyTestSpec.ma5_std;
+                if (reading.ma5_std > buyTestSpec.ma5_std){
+                    ele_reading_ssma5_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma5_std).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma5_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma5_std).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma8_slope.innerHTML = buyTestSpec.ma8_slope;
+                if (reading.ma8_slope > buyTestSpec.ma8_slope){
+                    ele_reading_ssma8_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma8_slope).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma8_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma8_slope).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma8_std.innerHTML = buyTestSpec.ma8_std;
+                if (reading.ma8_std > buyTestSpec.ma8_std){
+                    ele_reading_ssma8_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma8_std).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma8_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma8_std).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma13_slope.innerHTML = buyTestSpec.ma13_slope;
+                if (reading.ma13_slope > buyTestSpec.ma13_slope){
+                    ele_reading_ssma13_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma13_slope).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma13_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma13_slope).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma13_std.innerHTML = buyTestSpec.ma13_std;
+                if (reading.ma13_std > buyTestSpec.ma13_std){
+                    ele_reading_ssma13_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma13_std).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma13_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma13_std).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma8_diff_sma5.innerHTML = buyTestSpec.ma8_percent_diff_ma5;
+                if (reading.ssma8_percent_diff_ssma5 > buyTestSpec.ma8_percent_diff_ma5){
+                    ele_reading_ssma8_diff_sma5.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ssma8_percent_diff_ssma5).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma8_diff_sma5.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ssma8_percent_diff_ssma5).toFixed(6)}</span>`;
+                }
+
+                ele_spec_ssma8_diff_sma13.innerHTML = buyTestSpec.ma8_percent_diff_ma13;
+                if (reading.ssma8_percent_diff_ssma13 > buyTestSpec.ma8_percent_diff_ma13){
+                    ele_reading_ssma8_diff_sma13.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ssma8_percent_diff_ssma13).toFixed(6)}</span>`;
+                }else{
+                    ele_reading_ssma8_diff_sma13.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ssma8_percent_diff_ssma13).toFixed(6)}</span>`;
+                }
+
+ 
+            }
+
             function setDom(){
                 const slopeLabel = document.querySelector('#slopeLabel')
                 const slopeShow = document.querySelector('#slopeShow')
@@ -779,7 +964,7 @@
                     macdShowCross.innerHTML = "Cross <i class='fas fa-sort-down ml-1'></i>";
                 }
 
-                if(isSsmaSequencing == true ){
+                if(ssma3LineOrder.aligator_order_uptrend == true ){
                     ssmaShow.style.backgroundColor = "#00bc8c"
                     ssmaShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
                 }else{
@@ -827,6 +1012,7 @@
                     ssma8_percent_diff_ssma5 : ssma8PercentDiffssma5,
                     ssma8_percent_diff_ssma13 : ssma8PercentDiffssma13,
                     sma_arrow : sma100ArrowLevel,
+                    ssma3line_order : ssma3LineOrder,
                 }
                 return _result;
             }

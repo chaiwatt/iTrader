@@ -302,11 +302,18 @@
         return true;
     }
 
-    function isSssmaSequence(ssma5,ssma8,ssma13){
-        if((ssma5[ssma5.length-1] > ssma8[ssma8.length-1]) && (ssma5[ssma5.length-1] > ssma13[ssma13.length-1])){
-            return true
+    function getSsma3LineOrder(ssma5,ssma8,ssma13){
+        // isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
+        let isUpTrend = false;
+        let isDownTrend = false;
+        if((ssma5[ssma5.length-1] > ssma8[ssma8.length-1]) && (ssma8[ssma8.length-1] > ssma13[ssma13.length-1])){
+            isUpTrend = true
         }
-        return false
+
+        if((ssma5[ssma5.length-1] < ssma8[ssma8.length-1]) && (ssma8[ssma8.length-1] < ssma13[ssma13.length-1])){
+            isDownTrend = true
+        }
+        return {'aligator_order_uptrend': isUpTrend, 'aligator_order_downtrend': isDownTrend}
     }
 
     function StandardDeviationCalc(_array,nRange) {

@@ -40,6 +40,12 @@ def index(request):
     _symbol = Symbol.objects.get(id = currentview.symbol_id)
     symbol = _symbol.name
     
+    # symbol_info=mt5.symbol_info(symbol)
+    # print (symbol_info)
+
+    # lasttick=mt5.symbol_info_tick(symbol)
+    # print(lasttick)
+    
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
@@ -205,7 +211,7 @@ def backtest(request):
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
         'backtestjobs' : BackTest.objects.all().order_by("-id"),
-        'buytestspec' : TestSpec.objects.first()
+        'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
     })
 
 def createbacktest(request):

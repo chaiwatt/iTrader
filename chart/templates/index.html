@@ -272,7 +272,7 @@
         var markMA100LineCord = [];
         var MarkMA100Slope  = [];
         var sma100Trend = [];
-        var isSsmaSequencing = false;
+        var ssma3LineOrder = null;
         var markLineCordSsma5 = []
         var markLineCordSsma8 = []
         var markLineCordSsma13 = []
@@ -393,7 +393,7 @@
             
             // MarkMA100Slope = sma100Trend[0];
 
-            isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
+            ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
             dataResult = setDom()
             console.log(dataResult);
@@ -656,7 +656,7 @@
                     macdShowCross.innerHTML = "Cross <i class='fas fa-sort-down ml-1'></i>";
                 }
 
-                if(isSsmaSequencing == true ){
+                if(ssma3LineOrder.aligator_order_uptrend == true ){
                     ssmaShow.style.backgroundColor = "#00bc8c"
                     ssmaShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
                 }else{
@@ -684,7 +684,7 @@
 
                 let ssma8PercentDiffssma5 = Math.abs((_latestSsma8 - _latestSsma5)*100/_latestSsma8);
                 let ssma8PercentDiffssma13 = Math.abs((_latestSsma8 - _latestSsma13)*100/_latestSsma8);
-
+                
             _result = {
                     macd_value : MacdCrossData[3],
                     macd_trend : (MacdCrossData[0]) ? 'up' : 'down',
@@ -704,6 +704,7 @@
                     ssma8_percent_diff_ssma5 : ssma8PercentDiffssma5,
                     ssma8_percent_diff_ssma13 : ssma8PercentDiffssma13,
                     sma_arrow : sma100ArrowLevel,
+                    ssma3line_order : ssma3LineOrder,
                 }
                 return _result;
             }

@@ -100,6 +100,8 @@ class TestSpec(models.Model):
     rsi=models.FloatField()
     ma8_percent_diff_ma5=models.FloatField()
     ma8_percent_diff_ma13=models.FloatField()
+    ssma3line_uptrend=models.BooleanField(default=True)
+    ssma3line_downtrend=models.BooleanField(default=False)
     class Meta:
         db_table = "test_specs"
 
