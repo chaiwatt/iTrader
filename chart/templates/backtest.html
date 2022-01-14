@@ -22,58 +22,7 @@
       <!-- Main content -->
       <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3 col-sm-6 col-12">
-                    <div class="info-box" style="background: #00bc8c " id="macdShow">
-                      <span class="info-box-icon" id="macdShowIcon"><i class="fas fa-arrow-circle-up"></i></span>
-                      <div class="info-box-content">
-                        <span class="info-box-text">MACD</span>
-                        <span class="info-box-number" ><span id="macdShowTrend">Trend: <i class="fas fa-arrow-up mr-1"></i> </span> | <span id="macdShowCross">Cross: <i class="fas fa-arrow-down ml-1"></i></span></span>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-12">
-                  <div class="info-box" style="background: #00bc8c " id="slopeShow">
-                    <span class="info-box-icon" id="slopeShowIcon"><i class="fas fa-arrow-circle-up"></i></span>
-                    <div class="info-box-content">
-                      <span class="info-box-text">MA100 Slope <span id="slopeShowSpec"></span> </span>
-                      <span class="info-box-number" id="slopeLabel" ></span>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-12">
-                  <div class="info-box" style="background: #00bc8c " id="ssmaShow">
-                    <span class="info-box-icon" id="ssmaShowIcon"><i class="fas fa-arrow-circle-up"></i></span>
-      
-                    <div class="info-box-content">
-                      <span class="info-box-text">Aligator State</span>
-                      <span class="info-box-number" ><span id="ssma5ShowTrend">MA5: <i class="fas fa-arrow-up mr-1"></i> </span> | <span id="ssma8ShowTrend">MA8: <i class="fas fa-arrow-up mr-1"></i> </span> | <span id="ssma13ShowTrend">MA13: <i class="fas fa-arrow-up mr-1"></i> </span> | <span id="ssma13ShowAllTrending">Trending <i class="fas fa-exchange-alt ml-1"></i> </span></span>
-      
-                  
-                    </div>
-                    <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-12">
-                  <div class="info-box bg-info">
-                    <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
-      
-                    <div class="info-box-content">
-                      <span class="info-box-text">RSI</span>
-                      <span class="info-box-number"><span id="rsiShow"></span></span>
-      
-                 
-                    </div>
-                    <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
-              </div>
+     
           <div class="row">
             <div class="col-lg-9">
               <div class="card">
@@ -89,48 +38,6 @@
             </div>
             <!-- /.col-md-6 -->
             <div class="col-lg-3">
-         
-                <!-- </div> -->
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Standard Deviation</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Line</th>                                   
-                                <th>Value</th>
-                                <th>Slope</th>
-                                <th>STD 5 bars</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td><span class="badge" style="font-size: 14px;background: #2f4554;width: 60px;">SMA5</span></td>
-                                <td><span id="latestSsma5"></span></td>
-                                <td><span id="ssma5Slope"></span></td>
-                                <td><span id="ssma5STD"></span></td>
-                              </tr>
-                              <tr>
-                                <td><span class="badge" style="font-size: 14px;background: #61a0a8;width: 60px;">SMA8</span></td>
-                                <td><span id="latestSsma8"></span></td>
-                                <td><span id="ssma8Slope"></span></td>
-                                <td><span id="ssma8STD"></span></td>
-                              </tr>
-                              <tr>
-                                <td><span class="badge" style="font-size: 14px;background: #d48265;width: 60px;">SMA13</span></td>
-                                <td><span id="latestSsma13"></span></td>
-                                <td><span id="ssma13Slope"></span></td>
-                                <td><span id="ssma13STD"></span></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                        
         
                 <div class="card">
                     <div class="card-header">
@@ -867,127 +774,12 @@
             }
             
             function setDom(){
-                const slopeLabel = document.querySelector('#slopeLabel')
-                const slopeShow = document.querySelector('#slopeShow')
-                const slopeShowIcon = document.querySelector('#slopeShowIcon')
-                
-                const macdShow = document.querySelector('#macdShow')
-                const macdShowIcon = document.querySelector('#macdShowIcon')
-
-                const macdShowTrend = document.querySelector('#macdShowTrend')
-                const macdShowCross = document.querySelector('#macdShowCross')
-
-                const slopeShowSpec = document.querySelector('#slopeShowSpec')
-
-                const ssmaShow = document.querySelector('#ssmaShow')
-                const ssmaShowIcon = document.querySelector('#ssmaShowIcon')
-
-                const latestSsma5 = document.querySelector('#latestSsma5')
-                const latestSsma8 = document.querySelector('#latestSsma8')
-                const latestSsma13 = document.querySelector('#latestSsma13')
-
-                const ssma5Slope = document.querySelector('#ssma5Slope')
-                const ssma8Slope = document.querySelector('#ssma8Slope')
-                const ssma13Slope = document.querySelector('#ssma13Slope')
-
-                const ssma5ShowSTD = document.querySelector('#ssma5STD')
-                const ssma8ShowSTD = document.querySelector('#ssma8STD')
-                const ssma13ShowSTD = document.querySelector('#ssma13STD')
-
-                const rsiShow = document.querySelector('#rsiShow')
-
-                const ssma13ShowAllTrending = document.querySelector('#ssma13ShowAllTrending')
-
-                ssma5Slope.innerHTML = regressiveEqSmma5[0].toFixed(6)
-                ssma8Slope.innerHTML = regressiveEqSmma8[0].toFixed(6)
-                ssma13Slope.innerHTML = regressiveEqSmma13[0].toFixed(6)
-
                 let _latestSsma5 = Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1];
                 let _latestSsma8 = Smoth_SSMA8Arr[Smoth_SSMA8Arr.length-1];
                 let _latestSsma13 = Smoth_SSMA13Arr[Smoth_SSMA13Arr.length-1];
 
-                latestSsma5.innerHTML = _latestSsma5.toFixed(4)
-                latestSsma8.innerHTML = _latestSsma8.toFixed(4)
-                latestSsma13.innerHTML = _latestSsma13.toFixed(4)
-
-                ssma5ShowSTD.innerHTML = ssma5STD.toFixed(5)
-                ssma8ShowSTD.innerHTML = ssma8STD.toFixed(5)
-                ssma13ShowSTD.innerHTML = ssma13STD.toFixed(5)
-     
                 let sumssmaTrend = markLineCordSsma5[0][1] + markLineCordSsma8[0][1] + markLineCordSsma13[0][1] - markLineCordSsma5[1][1] - markLineCordSsma8[1][1] - markLineCordSsma13[1][1]
-                if(sumssmaTrend < 0){
-                    ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-up ml-1'>";
-                }else{
-                    ssma13ShowAllTrending.innerHTML = "Trending <i class='fas fa-arrow-down ml-1'>";
-                }
-
-                
-                 if(RSIArr[RSIArr.length-1] >= 70){
-                    rsiShow.innerHTML = "Over Bought (" + RSIArr[RSIArr.length-1].toFixed(3) + ")"
-                 }else if(RSIArr[RSIArr.length-1] <= 30){
-                    rsiShow.innerHTML = "Over Sold (" + RSIArr[RSIArr.length-1].toFixed(3) + ")"
-                 }else{
-                    rsiShow.innerHTML = "In Range (" + RSIArr[RSIArr.length-1].toFixed(3) + ")"
-                 }
-
-                slopeLabel.innerHTML = regressiveEq[0].toFixed(8)
-                slopeShowSpec.innerHTML = "(@spec " + slopeSpec +")"
-
-                if(sma100Trend[1] == true){
-                    slopeShow.style.backgroundColor = "#00bc8c"
-                    slopeShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
-                }else{
-                    slopeShow.style.backgroundColor = "#e74c3c"
-                    slopeShowIcon.innerHTML = regressiveEq[0]
-                    slopeShowIcon.innerHTML = "<i class='fas fa-arrow-circle-down'>";
-                }
-
-                if(MacdCrossData[0] == true && MacdCrossData[1] == true){
-                    macdShow.style.backgroundColor = "#00bc8c"
-                    macdShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
-                }else{
-                    macdShow.style.backgroundColor = "#e74c3c"
-                    macdShowIcon.innerHTML = "<i class='fas fa-arrow-circle-down'>";
-                }
-
-                if(MacdCrossData[0] == true ){
-                    macdShowTrend.innerHTML = "Trend <i class='fas fa-arrow-up mr-1'></i>";
-                }else{
-                    macdShowTrend.innerHTML = "Trend <i class='fas fa-arrow-down mr-1'></i>";
-                }
-
-                if(MacdCrossData[1] == true ){
-                    macdShowCross.innerHTML = "Cross <i class='fas fa-sort-up ml-1'></i>";
-                }else{
-                    macdShowCross.innerHTML = "Cross <i class='fas fa-sort-down ml-1'></i>";
-                }
-
-                if(ssma3LineOrder.aligator_order_uptrend == true ){
-                    ssmaShow.style.backgroundColor = "#00bc8c"
-                    ssmaShowIcon.innerHTML = "<i class='fas fa-arrow-circle-up'>";
-                }else{
-                    ssmaShow.style.backgroundColor = "#e74c3c"
-                    ssmaShowIcon.innerHTML = "<i class='fas fa-arrow-circle-down'>";
-                }
-
-                if(regressiveEqSmma5[0] > 0 ){
-                    ssma5ShowTrend.innerHTML = "MA5 <i class='fas fa-arrow-up mr-1'></i>";
-                }else{
-                    ssma5ShowTrend.innerHTML = "MA5 <i class='fas fa-arrow-down mr-1'></i>";
-                }
-
-                if(regressiveEqSmma8[0] > 0 ){
-                    ssma8ShowTrend.innerHTML = "MA8 <i class='fas fa-arrow-up mr-1'></i>";
-                }else{
-                    ssma8ShowTrend.innerHTML = "MA8 <i class='fas fa-arrow-down mr-1'></i>";
-                }
-
-                if(regressiveEqSmma13[0] > 0 ){
-                    ssma13ShowTrend.innerHTML = "MA13 <i class='fas fa-arrow-up mr-1'></i>";
-                }else{
-                    ssma13ShowTrend.innerHTML = "MA13 <i class='fas fa-arrow-down mr-1'></i>";
-                }
-
+          
                 let ssma8PercentDiffssma5 = Math.abs((_latestSsma8 - _latestSsma5)*100/_latestSsma8);
                 let ssma8PercentDiffssma13 = Math.abs((_latestSsma8 - _latestSsma13)*100/_latestSsma8);
 
