@@ -283,7 +283,7 @@
                                 <td id="td_reading_ma100_slope"></td>
                             </tr>
                             <tr>
-                                <td>MA100 Arrow Below</td>
+                                <td>MA100 Arrow Under</td>
                                 <td id="td_spec_sma100_arrow_below"></td>
                                 <td id="td_reading_sma100_arrow_below"></td>
                             </tr>
@@ -762,9 +762,9 @@
 
                 ele_spec_ma100_slope.innerHTML = buyTestSpec.ma100_slope;
                 if (reading.ma100_slope > buyTestSpec.ma100_slope){
-                    ele_reading_ma100_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma100_slope).toFixed(6)}</span>`;
+                    ele_reading_ma100_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma100_slope).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ma100_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma100_slope).toFixed(6)}</span>`;
+                    ele_reading_ma100_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma100_slope).toFixed(8)}</span>`;
                 }
 
                 ele_spec_sma100_arrow_below.innerHTML = buyTestSpec.ma100_arrow_below;
@@ -811,63 +811,61 @@
 
                 ele_spec_ssma5_slope.innerHTML = buyTestSpec.ma5_slope;
                 if (reading.ma5_slope > buyTestSpec.ma5_slope){
-                    ele_reading_ssma5_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma5_slope).toFixed(6)}</span>`;
+                    ele_reading_ssma5_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma5_slope).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma5_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma5_slope).toFixed(6)}</span>`;
+                    ele_reading_ssma5_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma5_slope).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma5_std.innerHTML = buyTestSpec.ma5_std;
                 if (reading.ma5_std > buyTestSpec.ma5_std){
-                    ele_reading_ssma5_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma5_std).toFixed(6)}</span>`;
+                    ele_reading_ssma5_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma5_std).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma5_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma5_std).toFixed(6)}</span>`;
+                    ele_reading_ssma5_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma5_std).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma8_slope.innerHTML = buyTestSpec.ma8_slope;
                 if (reading.ma8_slope > buyTestSpec.ma8_slope){
-                    ele_reading_ssma8_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma8_slope).toFixed(6)}</span>`;
+                    ele_reading_ssma8_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma8_slope).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma8_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma8_slope).toFixed(6)}</span>`;
+                    ele_reading_ssma8_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma8_slope).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma8_std.innerHTML = buyTestSpec.ma8_std;
                 if (reading.ma8_std > buyTestSpec.ma8_std){
-                    ele_reading_ssma8_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma8_std).toFixed(6)}</span>`;
+                    ele_reading_ssma8_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma8_std).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma8_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma8_std).toFixed(6)}</span>`;
+                    ele_reading_ssma8_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma8_std).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma13_slope.innerHTML = buyTestSpec.ma13_slope;
                 if (reading.ma13_slope > buyTestSpec.ma13_slope){
-                    ele_reading_ssma13_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma13_slope).toFixed(6)}</span>`;
+                    ele_reading_ssma13_slope.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma13_slope).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma13_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma13_slope).toFixed(6)}</span>`;
+                    ele_reading_ssma13_slope.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma13_slope).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma13_std.innerHTML = buyTestSpec.ma13_std;
                 if (reading.ma13_std > buyTestSpec.ma13_std){
-                    ele_reading_ssma13_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma13_std).toFixed(6)}</span>`;
+                    ele_reading_ssma13_std.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ma13_std).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma13_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma13_std).toFixed(6)}</span>`;
+                    ele_reading_ssma13_std.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ma13_std).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma8_diff_sma5.innerHTML = buyTestSpec.ma8_percent_diff_ma5;
                 if (reading.ssma8_percent_diff_ssma5 > buyTestSpec.ma8_percent_diff_ma5){
-                    ele_reading_ssma8_diff_sma5.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ssma8_percent_diff_ssma5).toFixed(6)}</span>`;
+                    ele_reading_ssma8_diff_sma5.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ssma8_percent_diff_ssma5).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma8_diff_sma5.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ssma8_percent_diff_ssma5).toFixed(6)}</span>`;
+                    ele_reading_ssma8_diff_sma5.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ssma8_percent_diff_ssma5).toFixed(8)}</span>`;
                 }
 
                 ele_spec_ssma8_diff_sma13.innerHTML = buyTestSpec.ma8_percent_diff_ma13;
                 if (reading.ssma8_percent_diff_ssma13 > buyTestSpec.ma8_percent_diff_ma13){
-                    ele_reading_ssma8_diff_sma13.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ssma8_percent_diff_ssma13).toFixed(6)}</span>`;
+                    ele_reading_ssma8_diff_sma13.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.ssma8_percent_diff_ssma13).toFixed(8)}</span>`;
                 }else{
-                    ele_reading_ssma8_diff_sma13.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ssma8_percent_diff_ssma13).toFixed(6)}</span>`;
+                    ele_reading_ssma8_diff_sma13.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.ssma8_percent_diff_ssma13).toFixed(8)}</span>`;
                 }
-
- 
             }
-
+            
             function setDom(){
                 const slopeLabel = document.querySelector('#slopeLabel')
                 const slopeShow = document.querySelector('#slopeShow')
