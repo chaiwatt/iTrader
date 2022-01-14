@@ -234,11 +234,13 @@
                     </div>
                     <!-- /.card-body -->
                   </div>
+
+                  <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button>
         
             </div>
             <!-- /.col-md-6 -->
           </div>
-          <!-- /.row -->
+          <!-- /.row -->+-
         </div><!-- /.container-fluid -->
       </div>
       <!-- /.content -->
@@ -1184,12 +1186,10 @@
             ]
         };
 
-
         canndleStickChart.setOption(option);
         macdChart.setOption(option_macd);
         canndleStickChartZoom.setOption(option_zoom);
     
-       
         echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom]);
         createData(responseData);
         window.onresize = function () {
@@ -1197,6 +1197,34 @@
             macdChart.resize();
             canndleStickChartZoom.resize();
         }
+
+        $(document).on('click','#sendLineNotify', function(){
+            lineNotification('ทดสอบการส่งไลน์').then(data => {
+                alert('done');
+            }).catch(error => {})
+        })
+
+        function lineNotification(message){   
+           return new Promise((resolve, reject) => {
+                data = {
+                    message: message,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+               $.ajax({
+                   type: 'POST',
+                   url: "{% url 'lineNotification' %}",
+                   dataType : "json",
+                   data: data,
+                   success: function(data) {
+                       resolve(data)
+                   },
+                   error: function(error) {
+                       reject(error)
+                   },
+               })
+           })
+       }
+
 
     </script>
 

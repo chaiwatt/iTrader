@@ -2,11 +2,11 @@ from django.shortcuts import render,redirect
 from datetime import datetime
 import pandas as pd
 import MetaTrader5 as mt5
-from django.http import JsonResponse,HttpResponse
+from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
 from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,TestSpec
-# import requests
+import requests
 symbol = 'USDJPY'
 from django.utils import timezone
 from django.core import serializers
@@ -173,16 +173,27 @@ def getSymbolData(request):
         'timeframes':TimeFrame.objects.all()
     })
 def lineNotification(request):
-    message = 'ทดสอบ'
-    payload = {'message':message}
-    return _lineNotify(payload)
-
-
-def _lineNotify(payload,file=None):
+    print('hello')
+    # message = 'ทดสอบ'
+    payload = {
+        'message':request.POST['message']
+    }
     url = 'https://notify-api.line.me/api/notify'
     token = 'p59HvOJlVFphWeUtCUmWTfyI5vLbWEUJoHiJXLgdELM'
     headers = {'Authorization':'Bearer '+token}
-    return requests.post(url, headers=headers , data = payload, files=file)    
+    result = requests.post(url, headers=headers , data = payload, files=None)    
+    data = {
+        'data':'nothing',
+    }
+    return JsonResponse(data)
+
+
+# def _lineNotify(payload,file=None):
+#     url = 'https://notify-api.line.me/api/notify'
+#     token = 'p59HvOJlVFphWeUtCUmWTfyI5vLbWEUJoHiJXLgdELM'
+#     headers = {'Authorization':'Bearer '+token}
+#     result = requests.post(url, headers=headers , data = payload, files=file)    
+#     return HttpRequest(None)
 
 def backtest(request):
     if not mt5.initialize():
@@ -200,8 +211,6 @@ def backtest(request):
    
 
     backtestintervals = BackTestInterval.objects.all()
-    
-    
     
 
     return render(request,'backtest.html',{
@@ -234,9 +243,6 @@ def createbacktest(request):
     newBackTest.save()
 
     backtestid = newBackTest.id
-
-
-
 
     backtest_symbol = Symbol.objects.filter(id=backtestsymbol).first()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))
