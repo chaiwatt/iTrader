@@ -381,6 +381,7 @@
             SSMA13Arr = SSMA_Calc(closedPrice,13);
             SSMA20Arr = SSMA_Calc(closedPrice,20);
             SSMA50Arr = SSMA_Calc(closedPrice,50);
+            SSMA100Arr = SSMA_Calc(closedPrice,100);
             RSI = RS(closedPrice,14);
 
             Smoth_SSMA5 = SSMA_BARESMOTH(SSMA5Arr,3);
@@ -388,6 +389,7 @@
             Smoth_SSMA13 = SSMA_BARESMOTH(SSMA13Arr,3);
             Smoth_SSMA20 = SSMA_BARESMOTH(SSMA20Arr,3);
             Smoth_SSMA50 = SSMA_BARESMOTH(SSMA50Arr,3);
+            // Smoth_SSMA100 = SSMA_BARESMOTH(SSMA100Arr,3);
 
             SIGNAL = EMACalc(MACD,9);
             HISTOGRAM = HistogramCalc(SIGNAL,MACD,9);
@@ -400,12 +402,12 @@
             var nullSmoth_SSMA13 = Array(closedPrice.length - Smoth_SSMA13.length).fill(null);
             var nullSmoth_SSMA20 = Array(closedPrice.length - Smoth_SSMA20.length).fill(null);
             var nullSmoth_SSMA50 = Array(closedPrice.length - Smoth_SSMA50.length).fill(null);
+            var nullSmoth_SSMA100 = Array(closedPrice.length - SSMA100Arr.length).fill(null);
             var nullRS = Array(closedPrice.length - RSI.length).fill(null);
 
             RSIArr = nullRS.concat(RSI); 
 
-            dataMA200 = calculateMA(200, data);
-            dataMA100 = calculateMA(100, data);
+     
 
             MacdArr = nullForMACD.concat(MACD); 
             SignalArr = nullForSIGNAL.concat(SIGNAL); 
@@ -415,7 +417,10 @@
             Smoth_SSMA8Arr = nullSmoth_SSMA8.concat(Smoth_SSMA8); 
             Smoth_SSMA13Arr = nullSmoth_SSMA13.concat(Smoth_SSMA13); 
             Smoth_SSMA20Arr = nullSmoth_SSMA20.concat(Smoth_SSMA20); 
-            Smoth_SSMA50Arr = nullSmoth_SSMA8.concat(Smoth_SSMA50); 
+            Smoth_SSMA50Arr = nullSmoth_SSMA50.concat(Smoth_SSMA50); 
+
+            dataMA200 = calculateMA(200, data);
+            dataMA100 = calculateMA(100, data);  // nullSmoth_SSMA100.concat(SSMA100Arr);  
 
             MacdCrossData = getMacdCross(MacdArr,SignalArr)
   
