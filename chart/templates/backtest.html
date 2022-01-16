@@ -300,7 +300,7 @@
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         var buyTestSpec = null ;//"{{buytestspec|escapejs}}"; //'{{data|escapejs}}';
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
-        var specs = JSON.parse('{{ specs|escapejs }}');
+        var entryspecs = JSON.parse('{{ entryspecs|escapejs }}');
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -359,69 +359,70 @@
             //         }
             //     })
             //  },20000)
-
-            let testresult = checkResult(specs);
-            (testresult) ? console.log('PASS') : console.log('FAIL') 
+console.log(entryspecs)
+            let findentryPoint = checkPoint(entryspecs,1); //1 = entry, 2 = exit
+            (findentryPoint) ? console.log('PASS') : console.log('FAIL') 
 
         });
 
-        function checkResult(_specs){
+        function checkPoint(_specs,_type){
             let exampleEligatorReading = 'up';
             let exampleMa5_SlopeReading = 0.00051;
             let exampleMa5_StdReading = 0.011;
 
             let readValue = [
                 {
-                    name: 'aligator_trend',
+                    parameter: 'aligator_trend',
                     reading: exampleEligatorReading
                 },
                 {
-                    name: 'ma5_slope',
+                    parameter: 'ma5_slope',
                     reading: exampleMa5_SlopeReading
                 },
                 {
-                    name: 'ma5_std',
+                    parameter: 'ma5_std',
                     reading: exampleMa5_StdReading
                 },
                 {
-                    name: 'ma8_slope',
+                    parameter: 'ma8_slope',
                     reading: 0.001
                 },
                 {
-                    name: 'ma8_std',
+                    parameter: 'ma8_std',
                     reading: 0.001
                 },
                 {
-                    name: 'ma13_slope',
+                    parameter: 'ma13_slope',
                     reading: 0.001
                 },
                 {
-                    name: 'ma13_std',
+                    parameter: 'ma13_std',
                     reading: 0.001
                 },
-            ]
-
+            ];
+            
             checkBoolean = true
             _specs.forEach(spec => {
-               console.log(spec.fields) 
-               let findSpec = readValue.find(x => x.name === spec.fields.parameter)
-               if (findSpec.length !== 0){
-                //    console.log(findSpec.name + ' ' + findSpec.reading)
+                let value_type = spec.fields.entry_value;
+                if(_type == 2) value_type = spec.fields.exit_value;
+            //    console.log(spec.fields.parameter) 
+               let findSpec = readValue.find(x => x.parameter === spec.fields.parameter)
+               if (typeof findSpec !== 'undefined'){
                   if(spec.fields.parameter_type == 'equal'){
-                    if (findSpec.reading !== spec.fields.value) {
-                        console.log(findSpec.name + ' not equal')
+                    if (findSpec.reading !== value_type) {
+                        console.log(findSpec.parameter + ' not equal')
                         checkBoolean = false
                         return
                     }
                   }else if(spec.fields.parameter_type == 'greater'){
-                    if(findSpec.reading < spec.fields.value) {
-                        console.log(findSpec.name + ' not lessthan')
+                    if(findSpec.reading < value_type) {
+                        console.log(findSpec.parameter + ' not lessthan')
                         checkBoolean = false
                         return
                     }
                   }else if(spec.fields.parameter_type == 'lessthan'){
-                    if(findSpec.reading > spec.fields.value) {
-                        console.log(findSpec.name + ' not grater')
+                    if(findSpec.reading > value_type) {
+                        console.log(findSpec.parameter + ' not grater')
                         checkBoolean = false
                         return
                     }

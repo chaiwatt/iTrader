@@ -224,7 +224,8 @@ def backtest(request):
         'accountinfo' : accountinfo,
         'backtestjobs' : BackTest.objects.all().order_by("-id"),
         'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
-        'specs' : serializers.serialize('json', Spec.objects.all()), 
+        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1)), 
+        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2)), 
     })
 
 def createbacktest(request):

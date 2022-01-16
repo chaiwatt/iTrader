@@ -109,9 +109,12 @@ class TestSpec(models.Model):
 
         
 class Spec(models.Model):
-    parameter=models.CharField(max_length=10)
-    value=models.CharField(max_length=10)
-    parameter_type=models.CharField(max_length=10)
+    name=models.CharField(max_length=100)
+    parameter=models.CharField(max_length=100)
+    entry_value=models.CharField(max_length=20)
+    exit_value=models.CharField(max_length=20)
+    parameter_type=models.CharField(max_length=20)
+    spec_type=models.CharField(max_length=1, default=1)
     class Meta:
         db_table = "specs"
 
