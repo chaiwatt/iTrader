@@ -300,6 +300,7 @@
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         var buyTestSpec = null ;//"{{buytestspec|escapejs}}"; //'{{data|escapejs}}';
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
+        var specs = JSON.parse('{{ specs|escapejs }}');
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -358,7 +359,77 @@
             //         }
             //     })
             //  },20000)
+
+            let testresult = checkResult(specs);
+            (testresult) ? console.log('PASS') : console.log('FAIL') 
+
         });
+
+        function checkResult(_specs){
+            let exampleEligatorReading = 'up';
+            let exampleMa5_SlopeReading = 0.00051;
+            let exampleMa5_StdReading = 0.011;
+
+            let readValue = [
+                {
+                    name: 'aligator_trend',
+                    reading: exampleEligatorReading
+                },
+                {
+                    name: 'ma5_slope',
+                    reading: exampleMa5_SlopeReading
+                },
+                {
+                    name: 'ma5_std',
+                    reading: exampleMa5_StdReading
+                },
+                {
+                    name: 'ma8_slope',
+                    reading: 0.001
+                },
+                {
+                    name: 'ma8_std',
+                    reading: 0.001
+                },
+                {
+                    name: 'ma13_slope',
+                    reading: 0.001
+                },
+                {
+                    name: 'ma13_std',
+                    reading: 0.001
+                },
+            ]
+
+            checkBoolean = true
+            _specs.forEach(spec => {
+               console.log(spec.fields) 
+               let findSpec = readValue.find(x => x.name === spec.fields.parameter)
+               if (findSpec.length !== 0){
+                //    console.log(findSpec.name + ' ' + findSpec.reading)
+                  if(spec.fields.parameter_type == 'equal'){
+                    if (findSpec.reading !== spec.fields.value) {
+                        console.log(findSpec.name + ' not equal')
+                        checkBoolean = false
+                        return
+                    }
+                  }else if(spec.fields.parameter_type == 'greater'){
+                    if(findSpec.reading < spec.fields.value) {
+                        console.log(findSpec.name + ' not lessthan')
+                        checkBoolean = false
+                        return
+                    }
+                  }else if(spec.fields.parameter_type == 'lessthan'){
+                    if(findSpec.reading > spec.fields.value) {
+                        console.log(findSpec.name + ' not grater')
+                        checkBoolean = false
+                        return
+                    }
+                  }
+               }
+            });
+            return checkBoolean;
+        }
 
         function createData(response){
             _forexData = response;

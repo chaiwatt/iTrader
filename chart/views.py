@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,TestSpec
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,TestSpec,Spec
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -218,12 +218,13 @@ def backtest(request):
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
         'backtest':backtest,
-        # 'backtestsymbols' : backtestsymbols,
+        'specs' : serializers.serialize('json', Spec.objects.all()), 
         'backtestintervals':backtestintervals,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
         'backtestjobs' : BackTest.objects.all().order_by("-id"),
         'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
+        'specs' : serializers.serialize('json', Spec.objects.all()), 
     })
 
 def createbacktest(request):
@@ -329,7 +330,7 @@ def spec(request):
 
     accountinfo = mt5.account_info()
     
-    print(accountinfo)
+    # print(accountinfo)
 
     return render(request,'spec.html',{
         'accountinfo' : accountinfo,

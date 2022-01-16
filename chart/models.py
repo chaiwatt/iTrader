@@ -107,3 +107,11 @@ class TestSpec(models.Model):
     class Meta:
         db_table = "test_specs"
 
+        
+class Spec(models.Model):
+    parameter=models.CharField(max_length=10)
+    value=models.CharField(max_length=10)
+    parameter_type=models.CharField(max_length=10)
+    class Meta:
+        db_table = "specs"
+
