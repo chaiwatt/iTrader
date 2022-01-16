@@ -174,7 +174,6 @@
                     <div class="card-header">
                       <h3 class="card-title">Entry Point Test Spec</h3>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body p-0">
                       <table class="table table-sm">
                         <thead>
@@ -195,8 +194,33 @@
                         </tbody>
                       </table>
                     </div>
-                    <!-- /.card-body -->
-                  </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Exit Point Test Spec</h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>   
+                            {% for spec in exitspecobjects %}
+                                <tr>
+                                    <td>{{spec.name}}</td>
+                                    <td id="td_spec_{{spec_exit.parameter}}">{{spec.exit_value}}</td>
+                                    <td id="td_reading_{{spec_exit.parameter}}"></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
             </div>
             <!-- /.col-md-6 -->
           </div>
@@ -226,6 +250,7 @@
         
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
         var entryspecs = JSON.parse('{{ entryspecs|escapejs }}');
+        var exitspecs = JSON.parse('{{ exitspecs|escapejs }}');
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -269,6 +294,8 @@
         var ssma13STD = 0;
         var dataResult = null
         var sma100ArrowLevel = null
+        var foundEntryPoint = false;
+
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -383,6 +410,15 @@
             
             setDom(dataResult, entryspecs,1)
             // showReadingAndSpec(dataResult, entryspecs);
+
+            if(foundEntryPoint === false){  
+                foundEntryPoint = findEntryPoint(dataResult, entryspecs)
+            }else{
+               console.log(findExitPoint(dataResult, exitspecs));
+               if(findExitPoint(dataResult, exitspecs)) {
+                    foundEntryPoint = false
+               } 
+            }
 
 
             canndleStickChart.setOption({
@@ -553,8 +589,63 @@
 
             }
 
+            function findEntryPoint(_reading,_rawSpec){
+                let result = true;
+                _rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.entry_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.entry_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+                                if(reading.reading > spec.fields.entry_value){
+                                    result = false ;
+                                    return
+                                }
+                            }
+                        }
+                    }
+                });
+                return result;
+            }
+
+            function findExitPoint(_reading,_rawSpec){
+                let result = true;
+                _rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.exit_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.exit_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+                                if(reading.reading > spec.fields.exit_value){
+                                    result = false ;
+                                    return
+                                }
+                            }
+                        }
+                    }
+                });
+                return result;
+            }
+
             function setDom(_reading,_rawSpec,_type){
-                // console.log(_rawSpec)
                 _rawSpec.forEach(spec => {
                     // console.log(spec.fields.parameter)
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
@@ -567,7 +658,6 @@
                                 }else{
                                     dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
                                 }
-                                
                             }else{ 
                                 if(spec.fields.compare_reverse == 1){
                                     if(reading.reading > spec.fields.entry_value){
@@ -583,11 +673,7 @@
                                     }
                                 }
                             }
-
                         }
-
-  
-
                     }
                 });
             }
