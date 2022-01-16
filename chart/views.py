@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,TestSpec,Spec
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -82,7 +82,7 @@ def index(request):
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
-        'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
+        # 'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
         'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1)), 
         'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1)), 
@@ -226,7 +226,7 @@ def backtest(request):
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
         'backtestjobs' : BackTest.objects.all().order_by("-id"),
-        'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
+        # 'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
         'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1)), 
         'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1)), 
@@ -342,36 +342,12 @@ def spec(request):
     return render(request,'spec.html',{
         'accountinfo' : accountinfo,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
-        'buytestspec':TestSpec.objects.filter(id = 1).first(),
+        # 'buytestspec':TestSpec.objects.filter(id = 1).first(),
         'entryspecobjectss' : Spec.objects.filter(spec_type = 1), 
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1)), 
         'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2)), 
     })  
 
-def savebuytestspec(request):
-    # print(request.POST.get('ma8_percent_diff_ma13'))
-    buyTestSpec = TestSpec.objects.filter(id = 1).first()
-    buyTestSpec.aligator_trend = request.POST['aligator_trend']
-    buyTestSpec.ma5_slope = request.POST['ma5_slope']
-
-    buyTestSpec.ma5_std = request.POST['ma5_std']
-    buyTestSpec.ma8_slope = request.POST['ma8_slope']
-    buyTestSpec.ma8_std = request.POST['ma8_std']
-    buyTestSpec.ma13_slope = request.POST['ma13_slope']
-    buyTestSpec.ma13_std = request.POST['ma13_std']
-    buyTestSpec.ma100_slope = request.POST['ma100_slope']
-    buyTestSpec.ma100_arrow_below = request.POST['ma100_arrow_below']
-    buyTestSpec.macd_cross = request.POST['macd_cross']
-    buyTestSpec.macd_trend = request.POST['macd_trend']
-    buyTestSpec.rsi = request.POST['rsi']
-    buyTestSpec.ma8_percent_diff_ma5 = request.POST['ma8_percent_diff_ma5']
-    buyTestSpec.ma8_percent_diff_ma13 = request.POST['ma8_percent_diff_ma13']
-    buyTestSpec.ssma3line_uptrend = request.POST['ssma3line_uptrend']
-    buyTestSpec.save()
-    data = {
-        'backtest': serializers.serialize('json', TestSpec.objects.filter(id = 1)),
-    }
-    return JsonResponse(data)     
 
 def changespecusage(request):
     id = request.POST.get('id')

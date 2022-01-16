@@ -222,7 +222,7 @@
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
-        var buyTestSpec = null ;//"{{buytestspec|escapejs}}"; //'{{data|escapejs}}';
+        
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
         var entryspecs = JSON.parse('{{ entryspecs|escapejs }}');
         var data = []
@@ -379,7 +379,7 @@
 
             dataResult = createResult()
             // console.log(dataResult);
-            // showValue(dataResult, JSON.parse('{{ buytestspec|escapejs }}'))
+            
             setDom(dataResult, entryspecs,1)
             // showReadingAndSpec(dataResult, entryspecs);
 
