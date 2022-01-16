@@ -83,6 +83,9 @@ def index(request):
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
         'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
+        'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
+        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1)), 
+        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1)), 
     })
 
 def getohlc(request):  
@@ -224,8 +227,9 @@ def backtest(request):
         'accountinfo' : accountinfo,
         'backtestjobs' : BackTest.objects.all().order_by("-id"),
         'buytestspec' : serializers.serialize('json', TestSpec.objects.filter(id = 1)),  
-        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1)), 
-        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2)), 
+        'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
+        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1)), 
+        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1)), 
     })
 
 def createbacktest(request):
@@ -333,10 +337,15 @@ def spec(request):
     
     # print(accountinfo)
 
+
+
     return render(request,'spec.html',{
         'accountinfo' : accountinfo,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'buytestspec':TestSpec.objects.filter(id = 1).first(),
+        'entryspecobjectss' : Spec.objects.filter(spec_type = 1), 
+        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1)), 
+        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2)), 
     })  
 
 def savebuytestspec(request):
@@ -363,3 +372,23 @@ def savebuytestspec(request):
         'backtest': serializers.serialize('json', TestSpec.objects.filter(id = 1)),
     }
     return JsonResponse(data)     
+
+def changespecusage(request):
+    id = request.POST.get('id')
+    spec = Spec.objects.filter(id = id).first()
+    spec.status = request.POST['status']
+    spec.save()
+    data = {
+        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1)),
+    }
+    return JsonResponse(data)
+
+def changespecentrypointvalue(request):
+    id = request.POST.get('id')
+    spec = Spec.objects.filter(id = id).first()
+    spec.entry_value = request.POST['value']
+    spec.save()
+    data = {
+        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1)),
+    }
+    return JsonResponse(data)

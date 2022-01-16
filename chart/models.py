@@ -114,6 +114,8 @@ class Spec(models.Model):
     entry_value=models.CharField(max_length=20)
     exit_value=models.CharField(max_length=20)
     parameter_type=models.CharField(max_length=20)
+    compare_reverse=models.CharField(max_length=1, default = 1)
+    status=models.CharField(max_length=1, default = 1)
     spec_type=models.CharField(max_length=1, default=1)
     class Meta:
         db_table = "specs"
