@@ -359,79 +359,11 @@
             //         }
             //     })
             //  },20000)
-console.log(entryspecs)
-            let findentryPoint = checkPoint(entryspecs,1); //1 = entry, 2 = exit
-            (findentryPoint) ? console.log('PASS') : console.log('FAIL') 
+
 
         });
 
-        function checkPoint(_specs,_type){
-            let exampleEligatorReading = 'up';
-            let exampleMa5_SlopeReading = 0.00051;
-            let exampleMa5_StdReading = 0.011;
-
-            let readValue = [
-                {
-                    parameter: 'aligator_trend',
-                    reading: exampleEligatorReading
-                },
-                {
-                    parameter: 'ma5_slope',
-                    reading: exampleMa5_SlopeReading
-                },
-                {
-                    parameter: 'ma5_std',
-                    reading: exampleMa5_StdReading
-                },
-                {
-                    parameter: 'ma8_slope',
-                    reading: 0.001
-                },
-                {
-                    parameter: 'ma8_std',
-                    reading: 0.001
-                },
-                {
-                    parameter: 'ma13_slope',
-                    reading: 0.001
-                },
-                {
-                    parameter: 'ma13_std',
-                    reading: 0.001
-                },
-            ];
-            
-            checkBoolean = true
-            _specs.forEach(spec => {
-                let value_type = spec.fields.entry_value;
-                if(_type == 2) value_type = spec.fields.exit_value;
-            //    console.log(spec.fields.parameter) 
-               let findSpec = readValue.find(x => x.parameter === spec.fields.parameter)
-               if (typeof findSpec !== 'undefined'){
-                  if(spec.fields.parameter_type == 'equal'){
-                    if (findSpec.reading !== value_type) {
-                        console.log(findSpec.parameter + ' not equal')
-                        checkBoolean = false
-                        return
-                    }
-                  }else if(spec.fields.parameter_type == 'greater'){
-                    if(findSpec.reading < value_type) {
-                        console.log(findSpec.parameter + ' not lessthan')
-                        checkBoolean = false
-                        return
-                    }
-                  }else if(spec.fields.parameter_type == 'lessthan'){
-                    if(findSpec.reading > value_type) {
-                        console.log(findSpec.parameter + ' not grater')
-                        checkBoolean = false
-                        return
-                    }
-                  }
-               }
-            });
-            return checkBoolean;
-        }
-
+   
         function createData(response){
             _forexData = response;
         
@@ -524,6 +456,10 @@ console.log(entryspecs)
             dataResult = createResult()
             // console.log(dataResult);
             showValue(dataResult, JSON.parse('{{ buytestspec|escapejs }}'))
+
+            // console.log(entryspecs)
+            // let findentryPoint = checkPoint(entryspecs,1,dataResult); //1 = entry, 2 = exit
+            // (findentryPoint) ? console.log('PASS') : console.log('FAIL') 
               
             canndleStickChart.setOption({
                 series : [
@@ -881,6 +817,74 @@ console.log(entryspecs)
                 }
                 return _result;
             }
+
+            function checkPoint(_specs,_type,reading){
+                let exampleEligatorReading = 'up';
+                let exampleMa5_SlopeReading = 0.00051;
+                let exampleMa5_StdReading = 0.011;
+
+                let readValue = [
+                    {
+                        parameter: 'aligator_trend',
+                        reading: exampleEligatorReading
+                    },
+                    {
+                        parameter: 'ma5_slope',
+                        reading: exampleMa5_SlopeReading
+                    },
+                    {
+                        parameter: 'ma5_std',
+                        reading: exampleMa5_StdReading
+                    },
+                    {
+                        parameter: 'ma8_slope',
+                        reading: 0.001
+                    },
+                    {
+                        parameter: 'ma8_std',
+                        reading: 0.001
+                    },
+                    {
+                        parameter: 'ma13_slope',
+                        reading: 0.001
+                    },
+                    {
+                        parameter: 'ma13_std',
+                        reading: 0.001
+                    },
+                ];
+                
+                checkBoolean = true
+                _specs.forEach(spec => {
+                    let value_type = spec.fields.entry_value;
+                    if(_type == 2) value_type = spec.fields.exit_value;
+                //    console.log(spec.fields.parameter) 
+                let findSpec = readValue.find(x => x.parameter === spec.fields.parameter)
+                if (typeof findSpec !== 'undefined'){
+                    if(spec.fields.parameter_type == 'equal'){
+                        if (findSpec.reading !== value_type) {
+                            console.log(findSpec.parameter + ' not equal')
+                            checkBoolean = false
+                            return
+                        }
+                    }else if(spec.fields.parameter_type == 'greater'){
+                        if(findSpec.reading < value_type) {
+                            console.log(findSpec.parameter + ' not lessthan')
+                            checkBoolean = false
+                            return
+                        }
+                    }else if(spec.fields.parameter_type == 'lessthan'){
+                        if(findSpec.reading > value_type) {
+                            console.log(findSpec.parameter + ' not grater')
+                            checkBoolean = false
+                            return
+                        }
+                    }
+                }
+                });
+                return checkBoolean;
+            }
+
         }
 
         option = {
