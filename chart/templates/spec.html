@@ -42,61 +42,32 @@
             </div>
           </div>
           <div class="row">
+            {% csrf_token %}
             <div class="col-lg-6">
 
               <div class="card card-success">
                 <div class="card-header">
                   <h3 class="card-title">Entry Point Spec</h3>
-                  {% csrf_token %}
+                  
                 </div>
-                <!-- /.card-header -->
                 <div class="card-body p-0">
                   <table class="table table-sm">
                     <thead>
                       <tr>
-                        <th>Usage</th>
-                        <th>Parameter</th>
-                        <th>Spec</th>
+                        <th>Symbol</th>
+                        <th  style="text-align: right;">Detail</th>
                       </tr>
                     </thead>
-                    <tbody>   
-                        {% for spec in entryspecobjectss %}
-                            <tr>
-                              <td class="align-middle">
-                                <div class="icheck-primary d-inline">
-                                    <input type="checkbox" class="specusage" data-name="{{ spec.name }}" data-type="compare" id="{{spec.id}}"
-                                    {% if spec.status == '1' %}
-                                    checked
-                                    {% endif %}
-                                    
-                                    >
-                                        <label for="{{spec.id}}">
-                                    </label>
-                                </div>
-                              </td>
-                           
-                                <td class="align-middle">{{spec.name}}</td>
-                                <td >
-                                  {% if spec.parameter_type == 'compare' %}
-                                    <input type="text" data-id="{{spec.id}}" class="form-control specentrypointvalue" value="{{spec.entry_value}}" >
-                                  {% else %}
-                                
-                                      <select class="form-control specentrypointvalue" data-id="{{spec.id}}" data-type="equal">
-                                          <option value="{{spec.entry_value}}" 
-                                            >{{spec.entry_value}}</option>
-                                          <option value="{{spec.exit_value}}"
-                                          >{{spec.exit_value}}</option>
-                                      </select>
-                                  
-                                  {% endif %}
-                                  
-                                </td>
-                            </tr>
-                        {% endfor %}
+                    <tbody> 
+                      {% for symbol in symbols %}
+                      <tr>
+                        <td class="align-middle">{{symbol.name}}</td>
+                        <td class="align-middle "><button type="button" class="btn btn-info float-right editentryspec" data-name="{{symbol.name}}" data-id="{{symbol.id}}" data-toggle="modal" >Edit</button></td>
+                      </tr>
+                      {% endfor %}
                     </tbody>
-                  </table>
+                    </table>
                 </div>
-                <!-- /.card-body -->
               </div>
 
   
@@ -128,6 +99,42 @@
           </div>
           <!-- /.row -->
         </div><!-- /.container-fluid -->
+
+
+        <div class="modal fade" id="specModal">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="modal_header"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Usage</th>
+                      <th>Parameter</th>
+                      <th>Spec</th>
+                    </tr>
+                  </thead>
+                  <tbody id="spectable">  
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer justify-content-right">
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
       </div>
       <!-- /.content -->
 
@@ -136,16 +143,18 @@
         $(document).on('change', '.specusage', function(e) {
               console.log('ok');
               let status = ($(this).is(":checked")) ? 1:0  
-              console.log(status)
-              changeSpecUsage($(this).attr("id"),status).then(data => {
+              // console.log($(this).data('symbol'))
+              // return;
+              changeSpecUsage($(this).attr("id"),status,$(this).data('symbol')).then(data => {
                   toastr.info(`Spec ${$(this).data('name')} usage status has been updated`)
               }).catch(error => {})
           })
 
-          function changeSpecUsage(id,status){  
+          function changeSpecUsage(id,status,symbol){  
               data = {
                     id: id,
                     status: status,
+                    symbol: symbol,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 } 
             return new Promise((resolve, reject) => {
@@ -166,18 +175,16 @@
 
           
           $(document).on('change', '.specentrypointvalue', function(e) {
-              // console.log($(this).val());
-              // let status = ($(this).is(":checked")) ? 1:0  
-              // console.log(status)
-              changeSpecEntryPointValue($(this).data('id'),$(this).val()).then(data => {
+              changeSpecEntryPointValue($(this).data('id'),$(this).val(),$(this).data('symbol')).then(data => {
                   toastr.info(`Spec ${$(this).data('name')} value status has been updated`)
               }).catch(error => {})
           })
 
-          function changeSpecEntryPointValue(id,value){  
+          function changeSpecEntryPointValue(id,value,symbol){  
               data = {
                     id: id,
                     value: value,
+                    symbol: symbol,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 } 
             return new Promise((resolve, reject) => {
@@ -215,11 +222,6 @@
                   }).catch(error => {})
                 }
             })
-              // let status = ($(this).is(":checked")) ? 1:0  
-              // console.log(status)
-              // changeSpecEntryPointValue($(this).data('id'),$(this).val()).then(data => {
-              //     toastr.info(`Spec ${$(this).data('name')} value status has been updated`)
-              // }).catch(error => {})
           })
 
           function cloneSpec(id){  
@@ -248,6 +250,75 @@
                 })
             })
           }
+
+                              
+          $(document).on('click', '.editentryspec', function(e) {   
+              let symbolid = $(this).data('id')
+              let html = '';
+              if(symbolid === '') return;
+              console.log(symbolid);
+              getEntrySpec(symbolid).then(data => {
+                    JSON.parse(data.spec).forEach(spec => {
+                      let chkStatus = 'checked';
+                      let specInputValue = `<input type="text" data-id="${spec.pk}" data-symbol="${spec.fields.symbol}" class="form-control specentrypointvalue" value="${spec.fields.entry_value}" >`;
+                      if(spec.fields.parameter_type === 'equal'){
+                        specInputValue = `<select class="form-control specentrypointvalue" data-symbol="${spec.fields.symbol}" data-id="${spec.pk}" data-type="equal">
+                                          <option value="${spec.fields.entry_value}" 
+                                            >${spec.fields.entry_value}</option>
+                                          <option value="${spec.fields.exit_value}"
+                                          >${spec.fields.exit_value}</option>
+                                      </select>`
+                      }
+                      if(spec.fields.status !== '1') chkStatus = ''
+                      html += `
+                        <tr>
+                          <td class="align-middle">
+                            <div class="icheck-primary d-inline">
+                                  <input type="checkbox" class="specusage" data-symbol="${spec.fields.symbol}" data-name="${spec.fields.name}" data-type="compare" id="${spec.pk}" ${chkStatus}>
+                                      <label for="${spec.pk}">
+                                  </label>
+                              </div>
+                            </td>
+                          <td>${spec.fields.name}</td>
+                          <td>${specInputValue}</td>
+                        </tr>`
+                        // html += `<option value="${job.pk}"  data-id="${job.pk}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
+                    });
+
+                    $('#spectable').html(html);
+                    $('#modal_header').html($(this).data('name'));
+                    $('#specModal').modal('show')
+              }).catch(error => {})
+           
+          })
+
+          function getEntrySpec(id){  
+              data = {
+                    id: id,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                } 
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'getentryspec' %}",
+                    dataType : "json",
+                    data: data,
+                    beforeSend: function(){
+                        $('#loader').show();
+                    },
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    complete:function(data){
+                        $('#loader').hide();
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+          }
+
       </script>
 
  

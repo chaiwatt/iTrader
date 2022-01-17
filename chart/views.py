@@ -348,7 +348,7 @@ def spec(request):
     return render(request,'spec.html',{
         'accountinfo' : accountinfo,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
-        'symbols':Symbol.objects.filter(id__in = ids),
+        'symbols':Symbol.objects.filter(id__in = ids,status=1),
         'entryspecobjectss' : Spec.objects.filter(spec_type = 1), 
         'exitspecobjects' : Spec.objects.filter(spec_type = 2), 
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1)), 
@@ -358,7 +358,8 @@ def spec(request):
 
 def changespecusage(request):
     id = request.POST.get('id')
-    spec = Spec.objects.filter(id = id).first()
+    symbolid = request.POST.get('symbol')
+    spec = Spec.objects.filter(id = id,symbol_id=symbolid).first()
     spec.status = request.POST['status']
     spec.save()
     data = {
@@ -368,9 +369,18 @@ def changespecusage(request):
 
 def changespecentrypointvalue(request):
     id = request.POST.get('id')
-    spec = Spec.objects.filter(id = id).first()
+    symbolid = request.POST.get('symbol')
+    val = request.POST['value'];
+    print(val)
+    spec = Spec.objects.filter(id = id,symbol_id=symbolid).first()
+   
+    if spec.parameter_type == 'equal':
+       if spec.exit_value ==  val:
+          spec.exit_value = spec.entry_value
+          
     spec.entry_value = request.POST['value']
     spec.save()
+
     data = {
         'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1, status=1)),
     }
@@ -405,3 +415,11 @@ def clonespec(request):
         'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1, symbol_id=symbolid, status=1)),
     }
     return JsonResponse(data)
+
+def getentryspec(request):
+    symbolid = request.POST.get('id')
+    data = {
+        'spec': serializers.serialize('json', Spec.objects.filter(spec_type = 1, symbol_id=symbolid)),
+    }
+    return JsonResponse(data)
+

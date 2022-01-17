@@ -27,6 +27,7 @@ urlpatterns = [
     path('spec',views.spec ,name='spec'),
     path('changespecusage',views.changespecusage ,name='changespecusage'),
     path('clonespec',views.clonespec ,name='clonespec'),
+    path('getentryspec',views.getentryspec ,name='getentryspec'),
     path('changespecentrypointvalue',views.changespecentrypointvalue ,name='changespecentrypointvalue'),
     path('changesymbolstatus',views.changesymbolstatus ,name='changesymbolstatus'),
     path('deleteallbacktest',views.deleteallbacktest ,name='deleteallbacktest'),
