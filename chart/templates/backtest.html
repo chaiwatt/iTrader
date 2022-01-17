@@ -172,7 +172,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header">
-                      <h3 class="card-title">Entry Point Test Spec</h3>
+                      <h3 class="card-title">Entry Point Test Spec <span id="symbolname"></span></h3>
                     </div>
                     <div class="card-body p-0">
                       <table class="table table-sm">
@@ -183,14 +183,14 @@
                             <th>Value</th>
                           </tr>
                         </thead>
-                        <tbody>   
-                            {% for spec in entryspecobjectss %}
+                        <tbody  id="entry_point_spec_table">   
+                            <!-- {% for spec in entryspecobjectss %}
                                 <tr>
                                     <td>{{spec.name}}</td>
-                                    <td id="td_spec_{{spec.parameter}}">{{spec.entry_value}}</td>
+                                    <td id="td_spec_{{spec.parameter}}"></td>
                                     <td id="td_reading_{{spec.parameter}}"></td>
                                 </tr>
-                            {% endfor %}
+                            {% endfor %} -->
                         </tbody>
                       </table>
                     </div>
@@ -209,14 +209,14 @@
                             <th>Value</th>
                           </tr>
                         </thead>
-                        <tbody>   
-                            {% for spec in exitspecobjects %}
+                        <tbody id="exit_point_spec_table">   
+                            <!-- {% for spec in exitspecobjects %}
                                 <tr>
                                     <td>{{spec.name}}</td>
                                     <td id="td_spec_{{spec_exit.parameter}}">{{spec.exit_value}}</td>
                                     <td id="td_reading_{{spec_exit.parameter}}"></td>
                                 </tr>
-                            {% endfor %}
+                            {% endfor %} -->
                         </tbody>
                       </table>
                     </div>
@@ -1266,7 +1266,7 @@
         function renderBacktestJobLists(jobs){
             let html = `<option value="">== select job ==</option>`;
             JSON.parse(jobs).forEach(job => {
-                html += `<option value="${job.pk}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
+                html += `<option value="${job.pk}"  data-id="${job.pk}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
             });
             $('#selectedBacktestJob').html(html);
         }
@@ -1505,11 +1505,12 @@
             let html_timeframe = ``
             let html_backtestsize = ``
             let html_interval = ``
-            // console.log($(this).data('id'))
+            let html_entrypoint_testspecs = ``
+
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 let specs = JSON.parse(data.specs);
-                console.log(specs)
+
                 if(specs.length == 0) {
                     Swal.fire({
                         icon: 'error',
@@ -1518,6 +1519,14 @@
                     })
                 }
                 _rawData =  createRawData(data.ohlcs);
+
+                specs.forEach(spec_item => {
+                    html_entrypoint_testspecs += `<tr>
+                        <td>${ spec_item.fields.name}</td>
+                        <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                        <td id="td_reading_${spec_item.fields.parameter}"></td>
+                        </tr>`;
+                });
 
                 JSON.parse(data.symbols).forEach(symbol_item => {
                     let _selectText = '';
@@ -1546,12 +1555,13 @@
                     if(interval_item.pk == backtest.interval) _selectText = 'selected'
                     html_interval += `<option value="${interval_item.pk}" ${_selectText}>${interval_item.fields.interval}</option>`
                 });
-
+                
+                $('#symbolname').html(`(${$(this).find(':selected').data('name')})`);
                 $('#symbols').html(html_symbol);
                 $('#backtesttimeframe').html(html_timeframe);
                 $('#backtestSize').html(html_backtestsize);
                 $('#interval').html(html_interval);
-
+                $('#entry_point_spec_table').html(html_entrypoint_testspecs);
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());

@@ -26,8 +26,8 @@ urlpatterns = [
     path('getbacktestjob',views.getbacktestjob ,name='getbacktestjob'),
     path('spec',views.spec ,name='spec'),
     path('changespecusage',views.changespecusage ,name='changespecusage'),
+    path('clonespec',views.clonespec ,name='clonespec'),
     path('changespecentrypointvalue',views.changespecentrypointvalue ,name='changespecentrypointvalue'),
-
     path('changesymbolstatus',views.changesymbolstatus ,name='changesymbolstatus'),
     path('deleteallbacktest',views.deleteallbacktest ,name='deleteallbacktest'),
     path('jogtest',views.jogtest ,name='jogtest'),

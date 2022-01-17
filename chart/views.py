@@ -294,7 +294,7 @@ def getbacktestjob(request):
         'intervals': serializers.serialize('json', BackTestInterval.objects.all()),
         'backtestsizes': serializers.serialize('json', BackTestSize.objects.all()),
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
-        'specs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid)),
+        'specs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1)),
     }
     return JsonResponse(data)    
 
@@ -339,12 +339,16 @@ def spec(request):
     
     # print(accountinfo)
 
+    # ids = Spec.objects.all().values_list('symbol_id', flat=True).distinct('symbol_id')
+    ids = Spec.objects.all().values('symbol_id').distinct()
+    print(ids)
+    print(Symbol.objects.filter(id__in = ids))
 
 
     return render(request,'spec.html',{
         'accountinfo' : accountinfo,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
-        # 'buytestspec':TestSpec.objects.filter(id = 1).first(),
+        'symbols':Symbol.objects.filter(id__in = ids),
         'entryspecobjectss' : Spec.objects.filter(spec_type = 1), 
         'exitspecobjects' : Spec.objects.filter(spec_type = 2), 
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1)), 
@@ -358,7 +362,7 @@ def changespecusage(request):
     spec.status = request.POST['status']
     spec.save()
     data = {
-        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1)),
+        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1, status=1)),
     }
     return JsonResponse(data)
 
@@ -368,6 +372,36 @@ def changespecentrypointvalue(request):
     spec.entry_value = request.POST['value']
     spec.save()
     data = {
-        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1)),
+        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1, status=1)),
+    }
+    return JsonResponse(data)
+
+def clonespec(request):
+    symbolid = request.POST.get('id')
+    Spec.objects.filter(~Q(symbol_id=symbolid)).delete()
+    basespec = Spec.objects.filter(symbol_id=symbolid)
+
+
+    symbols = Symbol.objects.filter(~Q(id=symbolid))
+    # print(symbols)
+
+    for symbol in symbols.iterator():
+        for base in basespec.iterator():
+            # print(base.name)
+            newspec = Spec(
+                    name= base.name,
+                    parameter= base.parameter,
+                    entry_value= base.entry_value,
+                    exit_value= base.exit_value,
+                    parameter_type= base.parameter_type,
+                    compare_reverse= base.compare_reverse,
+                    status= base.status,
+                    spec_type= base.spec_type,
+                    symbol_id = symbol.id
+                )
+            newspec.save()
+
+    data = {
+        'specs': serializers.serialize('json', Spec.objects.filter(spec_type = 1, symbol_id=symbolid, status=1)),
     }
     return JsonResponse(data)
