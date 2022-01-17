@@ -105,25 +105,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-cog"></i>
               <p>
-                Setting
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/backtest" class="nav-link active">
+                <a href="/backtest" class="nav-link {% if request.path == '/backtest' %}active{% endif %} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Back Test</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/symbolsetting" class="nav-link">
+                <a href="/symbolsetting" class="nav-link {% if request.path == '/symbolsetting' %}active{% endif %} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Symbol</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/spec" class="nav-link">
+                <a href="/spec" class="nav-link {% if request.path == '/spec' %}active{% endif %} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Spec</p>
                 </a>
