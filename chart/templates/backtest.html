@@ -249,7 +249,7 @@
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
-        var entryspecs = JSON.parse('{{ entryspecs|escapejs }}');
+        var entryspecs = [];// JSON.parse('{{ entryspecs|escapejs }}');
         var exitspecs = JSON.parse('{{ exitspecs|escapejs }}');
         var data = []
         var axisData = [];
@@ -1266,7 +1266,7 @@
         function renderBacktestJobLists(jobs){
             let html = `<option value="">== select job ==</option>`;
             JSON.parse(jobs).forEach(job => {
-                html += `<option value="${job.pk}"  data-id="${job.pk}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
+                html += `<option value="${job.pk}"  data-id="${job.fields.symbol}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
             });
             $('#selectedBacktestJob').html(html);
         }
@@ -1510,6 +1510,7 @@
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 let specs = JSON.parse(data.specs);
+                entryspecs = specs;
 
                 if(specs.length == 0) {
                     Swal.fire({
