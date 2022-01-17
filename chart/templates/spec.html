@@ -256,7 +256,7 @@
               let symbolid = $(this).data('id')
               let html = '';
               if(symbolid === '') return;
-              console.log(symbolid);
+
               getEntrySpec(symbolid).then(data => {
                     JSON.parse(data.spec).forEach(spec => {
                       let chkStatus = 'checked';
@@ -279,10 +279,9 @@
                                   </label>
                               </div>
                             </td>
-                          <td>${spec.fields.name}</td>
-                          <td>${specInputValue}</td>
+                          <td class="align-middle">${spec.fields.name}</td>
+                          <td class="align-middle">${specInputValue}</td>
                         </tr>`
-                        // html += `<option value="${job.pk}"  data-id="${job.pk}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
                     });
 
                     $('#spectable').html(html);

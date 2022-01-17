@@ -82,10 +82,10 @@ def index(request):
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
-        'exitspecobjects' : Spec.objects.filter(spec_type = 2,status = 1),   
-        'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
-        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1)), 
-        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1)), 
+        'exitspecobjects' : Spec.objects.filter(spec_type = 2,status = 1,symbol_id = currentview.symbol_id),   
+        'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id), 
+        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id)), 
+        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1,symbol_id = currentview.symbol_id)), 
     })
 
 def getohlc(request):  
@@ -377,7 +377,7 @@ def changespecentrypointvalue(request):
     if spec.parameter_type == 'equal':
        if spec.exit_value ==  val:
           spec.exit_value = spec.entry_value
-          
+
     spec.entry_value = request.POST['value']
     spec.save()
 
