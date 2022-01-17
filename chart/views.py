@@ -294,7 +294,8 @@ def getbacktestjob(request):
         'intervals': serializers.serialize('json', BackTestInterval.objects.all()),
         'backtestsizes': serializers.serialize('json', BackTestSize.objects.all()),
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
-        'specs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1)),
+        'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
+        'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
     }
     return JsonResponse(data)    
 

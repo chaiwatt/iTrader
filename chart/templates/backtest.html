@@ -163,7 +163,20 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <table class="table table-striped">
+                                    <thead>
+                                      <tr>
+                                        <th>#</th>
+                                        <th>Entry Bar</th>      
+                                        <th>Exit Bar</th>                              
+                                      </tr>
+                                    </thead>
+                                    <tbody id="report_table">
+                                    
+                                    </tbody>
+                                  </table>
                                 <div class="form-group float-right">
+                                   
                                     <button type="button" id="zoomatoposition" class="btn btn-primary mr-1">Zoom Position</button>
                                 </div>
                             </div>
@@ -250,7 +263,7 @@
         
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
         var entryspecs = [];// JSON.parse('{{ entryspecs|escapejs }}');
-        var exitspecs = JSON.parse('{{ exitspecs|escapejs }}');
+        var exitspecs = [];//JSON.parse('{{ exitspecs|escapejs }}');
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -297,7 +310,8 @@
         var foundEntryPoint = false;
         var flag = false;
         var testResult = []
-        var countResult = 0;
+        var tmpDataIn = null;
+        var lineLenght = 15;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -386,14 +400,14 @@
             ssma8STD = StandardDeviationCalc(Smoth_SSMA8Arr,5);  
             ssma13STD = StandardDeviationCalc(Smoth_SSMA13Arr,5);
 
-            let regressiveEq = genRegressionLine(dataMA100,20)
-            markMA100LineCord = getCoord(regressiveEq,dataMA100.length-1-20,dataMA100.length-1,20)
+            let regressiveEq = genRegressionLine(dataMA100,lineLenght)
+            markMA100LineCord = getCoord(regressiveEq,dataMA100.length-1-lineLenght,dataMA100.length-1,lineLenght)
 
-            sma100Trend = isUpTrend(regressiveEq[0],data,dataMA100,20,slopeSpec)
+            sma100Trend = isUpTrend(regressiveEq[0],data,dataMA100,lineLenght,slopeSpec)
 
             sma100ArrowLevel = {
-                sma100_arrow_below : sma100ArrowBelow(data,dataMA100,20),
-                sma100_arrow_above : sma100ArrowAbove(data,dataMA100,20),
+                sma100_arrow_below : sma100ArrowBelow(data,dataMA100,lineLenght),
+                sma100_arrow_above : sma100ArrowAbove(data,dataMA100,lineLenght),
             }
 
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
@@ -419,25 +433,24 @@
             }else{
                
                if(flag == false){
-                    countResult ++;
-                    console.log(data[data.length-1])
+                    // console.log(data[data.length-1])
                     console.log('save intry point at data id: ' + data[data.length-1][4])
-                    testResult.push({
-                        'id': countResult,
+ 
+                    tmpDataIn = {
                         'type': 'entry',
                         'data_id': data[data.length-1][4]
-                    })
+                    };
                     flag =true;
                }
-            //    console.log(findExitPoint(dataResult, exitspecs));
+            
                if(findExitPoint(dataResult, exitspecs)) {
                     foundEntryPoint = false
                     flag =false;
                     testResult.push({
-                        'id': countResult,
-                        'type': 'entry',
-                        'data_id': data[data.length-1][4]
+                        'entry': tmpDataIn.data_id,
+                        'exit': data[data.length-1][4]
                     })
+                    tmpDataIn = null;
                     console.log('save exit point at data id: ' + data[data.length-1][4] )
                } 
             }
@@ -557,22 +570,16 @@
                     {
                         name: 'OHLC-ZOOM',
                         data: data,
-                        // markPoint: {
-                        //     label: {
-                        //         normal: {
-                        //             formatter: function (param) {
-                        //                 return param != null ? param.data['name']['slope'] : '';
-                        //             }
-                        //         }
-                        //     },
-                        //     symbol: 'circle',
-                        //     symbolRotate: 0,
-                        //     symbolSize: [1, 1],
-                        //     itemStyle: {
-                        //         color: 'black'
-                        //     },
-                        //     data: MarkMA100Slope,
-                        // },
+                        markPoint: {
+                            label: {
+                                normal: {
+                                    formatter: function (param) {
+                                        return param != null ? param.data['name'] : '';
+                                    }
+                                }
+                            },
+                            data: MarkData,
+                        },
                         markLine : {
                             data: [
                                 [{
@@ -1229,11 +1236,27 @@
 
         
         $(document).on('click','#zoomatoposition',function(){
+            let firstIndex = _rawData[0].index;
+            // console.log(firstIndex)
+            testResult.forEach((result,key )=> {
+                let entryindex = result.entry - firstIndex;
+                let entryvalue = _rawData[entryindex]
+                console.log(entryvalue)
+                MarkData.push({
+                    name: "Entry",
+                    value: entryvalue.close,
+                    xAxis: entryindex,
+                    yAxis: entryvalue.close,
+                    color: "#fff",
+                });
+            })
+
             createData(_rawData);
+            // console.log(_rawData)
             canndleStickChart.dispatchAction({
                 type: 'dataZoom',
-                start: 81,
-                end: 85
+                start: 44,
+                end: 60
             });
         })
 
@@ -1412,6 +1435,7 @@
        }
        
        $(document).on("click","#jogtest",function() {
+            $('#report_table').html('');
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -1420,7 +1444,7 @@
                         text: 'please select Job!',
                     })
                 
-                resetCounter();
+                // resetCounter();
                 return
             }
             if(_rawData.length === 0) return 
@@ -1430,7 +1454,18 @@
                     title: 'Finished',
                     text: 'Back testing is finished!',
                 })
-                console.log(testResult);
+                // console.log(testResult);
+                let html ='';
+                if(testResult.length > 0){
+                    testResult.forEach((result,key )=> {
+                        html += `<tr>
+                            <td>${key+1}</td>
+                            <td>${result.entry}</td>
+                            <td>${result.exit}</td>
+                            </tr>`;
+                    });
+                }
+                $('#report_table').html(html)
                 return
             }
             let _count = count++;
@@ -1440,6 +1475,7 @@
         })
 
         $(document).on("click","#autotest",function() {
+            $('#report_table').html('');
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -1448,7 +1484,7 @@
                         text: 'please select Job!',
                     })
                 
-                resetCounter();
+                // resetCounter();
                 return
             }
 
@@ -1471,13 +1507,24 @@
                     clearInterval(backtestTimer);
                     $('#autotest').removeClass('start');
                     $('#autotest').text("Auto Test") ;
-                    resetCounter();
+                    // resetCounter();
                     Swal.fire({
                         icon: 'info',
                         title: 'Finished',
                         text: 'Back testing is finished!',
                     })
-                    console.log(testResult);
+                    // console.log(testResult);
+                    let html ='';
+                    if(testResult.length > 0){
+                        testResult.forEach((result,key )=> {
+                            html += `<tr>
+                                <td>${key+1}</td>
+                                <td>${result.entry}</td>
+                                <td>${result.exit}</td>
+                                </tr>`;
+                        });
+                    }
+                    $('#report_table').html(html)
                     return
                 }
                 let _count = count++;
@@ -1495,8 +1542,10 @@
         }
 
         $(document).on("change","#selectedBacktestJob",function() {
+            MarkData = [];
             flag = false;
             testResult = [];
+            tmpDataIn = null;
             countResult = 0;
             resetCounter()
             let selectedOption = $('#selectedBacktestJob option:selected');
@@ -1509,10 +1558,12 @@
 
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
-                let specs = JSON.parse(data.specs);
-                entryspecs = specs;
+                let entry_specs = JSON.parse(data.entryspecs);
+                let exit_specs = JSON.parse(data.exitspecs);
+                exitspecs = exit_specs;
+                entryspecs = entry_specs;
 
-                if(specs.length == 0) {
+                if(entry_specs.length == 0) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
@@ -1521,7 +1572,7 @@
                 }
                 _rawData =  createRawData(data.ohlcs);
 
-                specs.forEach(spec_item => {
+                entry_specs.forEach(spec_item => {
                     html_entrypoint_testspecs += `<tr>
                         <td>${ spec_item.fields.name}</td>
                         <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
