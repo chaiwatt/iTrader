@@ -286,6 +286,7 @@ def getbacktestjob(request):
     
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
     id = request.POST.get('id')
+    symbolid = request.POST.get('symbol_id')
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
         'symbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
@@ -293,6 +294,7 @@ def getbacktestjob(request):
         'intervals': serializers.serialize('json', BackTestInterval.objects.all()),
         'backtestsizes': serializers.serialize('json', BackTestSize.objects.all()),
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
+        'specs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid)),
     }
     return JsonResponse(data)    
 

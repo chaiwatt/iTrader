@@ -87,6 +87,8 @@ class BackTestOHLC(models.Model):
 
         
 class Spec(models.Model):
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    # symbol_id=models.IntegerField(default = 0)
     name=models.CharField(max_length=100)
     parameter=models.CharField(max_length=100)
     entry_value=models.CharField(max_length=20)
