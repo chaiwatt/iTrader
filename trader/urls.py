@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index,name='index'),
     path('getohlc',views.getohlc,name='getohlc'),
+    path('getsingleohlc',views.getsingleohlc,name='getsingleohlc'),
     path('createbacktest',views.createbacktest ,name='createbacktest'),
     path('deletebacktest',views.deletebacktest ,name='deletebacktest'),
     path('getbacktestjob',views.getbacktestjob ,name='getbacktestjob'),
@@ -36,4 +37,5 @@ urlpatterns = [
     path('getSymbolData',views.getSymbolData,name='getSymbolData'),
     path('lineNotification',views.lineNotification,name='lineNotification'),
     path('symbolsetting',views.symbolsetting,name='symbolsetting'),
+    path('search',views.search,name='search'),
 ]

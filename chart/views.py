@@ -424,3 +424,56 @@ def getentryspec(request):
     }
     return JsonResponse(data)
 
+def search(request):
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    mt5.login(myaccount.login,myaccount.password,myaccount.server)
+
+    accountinfo = mt5.account_info()
+    return render(request,'search.html',{
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
+        'timeframes':TimeFrame.objects.all(),
+        'apisymbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
+        'apitimeframes': serializers.serialize('json', TimeFrame.objects.all()),
+    })  
+
+def getsingleohlc(request):  
+
+    timeframeid = request.POST.get('timeframe')
+
+    symbolid = request.POST.get('symbol')
+
+    _symbol = Symbol.objects.filter(id = symbolid).first()
+    _timeframe = TimeFrame.objects.filter(id = timeframeid).first()
+    dataframe = getattr(mt5, f'TIMEFRAME_{_timeframe.name}')
+
+    symbol_price = mt5.symbol_info_tick(_symbol.name)._asdict()
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(_symbol.name, dataframe, 0, 300))
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlcs = []
+    for i, data in ohlc_data.iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs.append(ohlc)
+
+    data = {
+        'symbol':symbol,
+        'series':ohlcs, 
+        'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
+        'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
+    }
+    
+    return JsonResponse(data)

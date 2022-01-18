@@ -6,12 +6,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">BACK TESTING: <span id="symbol"></span> <span id="timeframe"></span></h1>
+              <h1 class="m-0"><span id="symbol"></span>(<span id="broker">{{ broker.name }}</span>) <span id="timeframe"></span></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Backtest</li>
+                <li class="breadcrumb-item active">Chart</li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -22,7 +22,7 @@
       <!-- Main content -->
       <div class="content">
         <div class="container-fluid">
-     
+            
           <div class="row">
             <div class="col-lg-9">
               <div class="card">
@@ -31,7 +31,7 @@
                     <div id="canndle_stick_chart"></div>
                     <div id="canndle_stick_chart_zoom"></div>
                     <div id="macd_chart"></div>
-                    
+                   
                 
                 </div>
               </div>
@@ -39,150 +39,45 @@
             </div>
             <!-- /.col-md-6 -->
             <div class="col-lg-3">
-        
                 <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Back Test setting</h3>
-                    </div>
-                        {% csrf_token %}
-                      <div class="card-body">
-                          <div class="row">
-                              <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="form-group">
-                                        <label>Symbol</label>
-                                        <select class="form-control"  name="selectedSymbol" id="symbols" >
+                    <div class="card-body">
+                        <form action="getSymbolData" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group"  >
+                                        <select class="form-control" name="selectedSymbol">
                                             {% for symbol in symbols %}
                                                 <option value="{{ symbol.id }}"
-                                                        {% if symbol.id  == backtest.symbol_id %}
-                                                            selected
-                                                        {% endif %}
-                                                    >{{ symbol.name }}
-                                                </option>
+                                                {% if currentview.symbol_id  == symbol.id %}
+                                                    selected
+                                                {% endif %}
+                                                >{{ symbol.name }}</option>
                                             {% endfor %}
                                         </select>
-                                      </div>
-                                    
-                                  </div>
-                              </div>
-
-                              <div class="col-md-6">
-                                <div class="form-group"> 
-                                    <label for="backtesttimeframe">Time frame</label>
-                                    <select class="form-control" name="selectedTimeframe" id="backtesttimeframe" >
-                                        {% for timeframe in timeframes %}
-                                            <option value="{{ timeframe.id }}"
-                                                {% if backtest.timeframe_id  == timeframe.id %}
-                                                    selected
-                                                {% endif %}
-                                            >{{ timeframe.name }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-group"> 
-                                    <label for="timeframe">Back test size</label>
-                                    <select class="form-control" name="backtestSize" id="backtestSize" >
-                                        {% for backtestsize in backtestsizes %}
-                                            <option value="{{ backtestsize.id }}"
-                                                {% if backtest.backtestsize_id  == backtestsize.id %}
-                                                    selected
-                                                {% endif %}
-                                            >{{ backtestsize.size }}</option>
-                                        {% endfor %}
-                                    </select>
+                                <div class="col-lg-4">
+                                    <div class="form-group"> 
+                                        <select class="form-control" name="selectedTimeframe" >
+                                            {% for timeframe in timeframes %}
+                                                <option value="{{ timeframe.id }}"
+                                                    {% if currentview.timeframe_id  == timeframe.id %}
+                                                        selected
+                                                    {% endif %}
+                                                >{{ timeframe.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="interval">Interval</label>
-                                    <select class="form-control" name="interval" id="interval" >
-                                        {% for backtestinterval in backtestintervals %}
-                                            <option value="{{ backtestinterval.id }}"
-                                                {% if backtest.interval_id  == backtestinterval.id %}
-                                                    selected
-                                                {% endif %}
-                                            >{{ backtestinterval.interval }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="interval">Test time (second)</label>
-                                    <input type="text" class="form-control" id="interval" value="" readonly>
-                                </div>
-                              </div>
-                          </div>
-                      </div>
-                      <!-- /.card-body -->
-      
-                      <div class="card-footer ">
-                        <div class="form-group float-right">
-                            
-                            <button type="button" id="btnSaveSetting" class="btn btn-success mr-1">New Job</button>
-                          
-                        </div>                        
-                      </div>
-                    <!-- </form> -->
-                  </div>
-
-                  <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Testing Job</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group"> 
-                                    <label for="selectedBacktestJob">Select Job</label>
-                                    <select class="form-control" name="selectedBacktestJob" id="selectedBacktestJob" >
-                                        <option value="">== select job ==</option>
-                                        {% for backtestjob in backtestjobs %}
-                                            <option value="{{ backtestjob.id }}" data-id="{{ backtestjob.symbol_id }}" data-name="{{ backtestjob.symbolname }}">{{ backtestjob.symbolname }} {{ backtestjob.timeframename }} {{ backtestjob.code }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="form-group float-right">
-                                    <button type="button" id="deleteallbacktest" class="btn btn-danger mr-1">Delete All</button>
-                                    <button type="button" id="deletebacktest" class="btn btn-danger mr-1">Delete</button>
-                                    <button type="button" id="jogtest" class="btn btn-primary mr-1">Jog Test</button>
-                                    <button type="button" id="autotest" class="btn btn-primary ">Auto Test</button>
-                                </div>
+                                <div class="col-lg-3">
+                                    <input type="submit" class="btn btn-primary mr-1 w-100" value="Get">
+                                </div>     
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Report</h3>
-                       
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-striped">
-                                    <thead>
-                                      <tr>
-                                        <th>#</th>
-                                        <th>Entry Bar</th>      
-                                        <th>Exit Bar</th>                              
-                                      </tr>
-                                    </thead>
-                                    <tbody id="report_table">
-                                    
-                                    </tbody>
-                                  </table>
-                                <div class="form-group float-right">
-                                   
-                                    <button type="button" id="zoomatoposition" class="btn btn-primary mr-1">Zoom Position</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Entry Point Test Spec <span id="symbolname"></span></h3>
@@ -202,61 +97,32 @@
                       </table>
                     </div>
                 </div>
+     
 
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Exit Point Test Spec</h3>
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table table-sm">
-                        <thead>
-                          <tr>
-                            <th>Parameter</th>
-                            <th>Spec</th>
-                            <th>Value</th>
-                          </tr>
-                        </thead>
-                        <tbody id="exit_point_spec_table">   
-                            <!-- {% for spec in exitspecobjects %}
-                                <tr>
-                                    <td>{{spec.name}}</td>
-                                    <td id="td_spec_{{spec_exit.parameter}}">{{spec.exit_value}}</td>
-                                    <td id="td_reading_{{spec_exit.parameter}}"></td>
-                                </tr>
-                            {% endfor %} -->
-                        </tbody>
-                      </table>
-                    </div>
-                </div>
+
+                  <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button>
+                  <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button>
+        
             </div>
             <!-- /.col-md-6 -->
           </div>
-          <!-- /.row -->
+          <!-- /.row -->+-
         </div><!-- /.container-fluid -->
       </div>
       <!-- /.content -->
       <script>
 
-        // //Initialize Select2 Elements
-        $('.select2').select2();
-
-        // //Initialize Select2 Elements
-        $('.select2bs4').select2({
-            theme: 'bootstrap4'
-        })
-        var backtestTimer;
-        var backtestTimerInterval = 500;
-        var testRange = 250;
-        var count = 0;
-        var _rawData = [];
         var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         
-        var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
+
         var entryspecs = [];// JSON.parse('{{ entryspecs|escapejs }}');
-        var exitspecs = [];//JSON.parse('{{ exitspecs|escapejs }}');
+        var responseData = [] ;//JSON.parse("{{resData|escapejs}}"); 
+        var apisymbols = JSON.parse("{{apisymbols|escapejs}}"); 
+        var apitimeframes = JSON.parse("{{apitimeframes|escapejs}}"); 
+        
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -284,6 +150,8 @@
         var dataMA100 = [];
         var dataMA200 = [];
         var MarkData = [];
+        // var askPrice = 0;
+        // var bidPrice = 0;
         var MacdCrossData  = [];
         var markMA100LineCord = [];
         var MarkMA100Slope  = [];
@@ -301,10 +169,9 @@
         var dataResult = null
         var sma100ArrowLevel = null
         var foundEntryPoint = false;
-        var flag = false;
-        var testResult = [];
-        var tmpDataIn = null;
         var lineLenght = 10;
+        var testResult = []
+        var symbolCountId = 0;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -312,20 +179,75 @@
             //         url: "{% url 'getohlc' %}",
             //         success: function (response){
             //             createData(response);
-            //             console.log(response);
             //         },
             //         error: function(response){
-            //             console.log("Error occured")
             //             location.reload(true);
             //         }
             //     })
             //  },20000)
+
+            //  setInterval(function(){
+            //     console.log('working')
+            //  },2000)
+
         });
 
-   
+        $(document).on('click','#getSingleOhlc', function(){
+            // console.log(apisymbols[symbolCountId].pk);
+            console.log(apitimeframes[1].pk);
+            let symbol = parseInt(apisymbols[symbolCountId].pk);
+            let timeframe = 1;
+            let html_entrypoint_testspecs = ``
+            getSingleOhlc(symbol,timeframe).then(data => {
+                let entry_specs = JSON.parse(data.entryspecs);
+                entryspecs = entry_specs;
+                entry_specs.forEach(spec_item => {
+                    html_entrypoint_testspecs += `<tr>
+                        <td>${ spec_item.fields.name}</td>
+                        <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                        <td id="td_reading_${spec_item.fields.parameter}"></td>
+                        </tr>`;
+                });
+                $('#entry_point_spec_table').html(html_entrypoint_testspecs);
+
+                createData(data);
+            }).catch(error => {})
+            symbolCountId++;
+            if(symbolCountId == apisymbols.length) symbolCountId= 0
+        })
+
+        function getSingleOhlc(symbol,timeframe){
+            return new Promise((resolve, reject) => {
+                data = {
+                    symbol: symbol,
+                    timeframe: timeframe,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'getsingleohlc' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+
         function createData(response){
-            _forexData = response;
-        
+            // console.log('test')
+            _forexData = response.series;
+            // console.log(_forexData)
+            // askPrice = Number(response.price['ask']);
+            // bidPrice = Number(response.price['bid']);
+            // $("#ask").html(askPrice.toFixed(3));
+            // $("#bid").html(bidPrice.toFixed(3));
+            // $("#timeframe").html(response.price['timeframe']);
+            // $("#symbol").html(response.symbol);
             data = getData(_forexData);
             // console.log(data)
             closedPrice = getClosedPrice(_forexData);
@@ -352,7 +274,6 @@
             Smoth_SSMA13 = SSMA_BARESMOTH(SSMA13Arr,3);
             Smoth_SSMA20 = SSMA_BARESMOTH(SSMA20Arr,3);
             Smoth_SSMA50 = SSMA_BARESMOTH(SSMA50Arr,3);
-            // Smoth_SSMA100 = SSMA_BARESMOTH(SSMA100Arr,3);
 
             SIGNAL = EMACalc(MACD,9);
             HISTOGRAM = HistogramCalc(SIGNAL,MACD,9);
@@ -370,7 +291,8 @@
 
             RSIArr = nullRS.concat(RSI); 
 
-     
+            dataMA200 = calculateMA(200, data);
+            dataMA100 =  nullSmoth_SSMA100.concat(SSMA100Arr);  //calculateMA(100, data); 
 
             MacdArr = nullForMACD.concat(MACD); 
             SignalArr = nullForSIGNAL.concat(SIGNAL); 
@@ -380,10 +302,7 @@
             Smoth_SSMA8Arr = nullSmoth_SSMA8.concat(Smoth_SSMA8); 
             Smoth_SSMA13Arr = nullSmoth_SSMA13.concat(Smoth_SSMA13); 
             Smoth_SSMA20Arr = nullSmoth_SSMA20.concat(Smoth_SSMA20); 
-            Smoth_SSMA50Arr = nullSmoth_SSMA50.concat(Smoth_SSMA50); 
-
-            dataMA200 = calculateMA(200, data);
-            dataMA100 =  nullSmoth_SSMA100.concat(SSMA100Arr);  //calculateMA(100, data); 
+            Smoth_SSMA50Arr = nullSmoth_SSMA8.concat(Smoth_SSMA50); 
 
             MacdCrossData = getMacdCross(MacdArr,SignalArr)
   
@@ -410,14 +329,15 @@
             regressiveEqSmma13 = genRegressionLine(Smoth_SSMA13Arr,5)
             markLineCordSsma13 = getCoord(regressiveEqSmma13,Smoth_SSMA13Arr.length-1-5,Smoth_SSMA13Arr.length-1,5)
 
+            
+            // MarkMA100Slope = sma100Trend[0];
+
             ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
             dataResult = createResult()
-            // console.log(dataResult);
-            
+   
             setDom(dataResult, entryspecs,1)
-            // showReadingAndSpec(dataResult, entryspecs);
-            
+
             if(foundEntryPoint === false){  
                 foundEntryPoint = findEntryPoint(dataResult, entryspecs)
                 
@@ -444,7 +364,7 @@
                     console.log('save exit point at data id: ' + data[data.length-1][4] )
                } 
             }
-
+         
 
             canndleStickChart.setOption({
                 series : [
@@ -560,16 +480,22 @@
                     {
                         name: 'OHLC-ZOOM',
                         data: data,
-                        markPoint: {
-                            label: {
-                                normal: {
-                                    formatter: function (param) {
-                                        return param != null ? param.data['name'] : '';
-                                    }
-                                }
-                            },
-                            data: MarkData,
-                        },
+                        // markPoint: {
+                        //     label: {
+                        //         normal: {
+                        //             formatter: function (param) {
+                        //                 return param != null ? param.data['name']['slope'] : '';
+                        //             }
+                        //         }
+                        //     },
+                        //     symbol: 'circle',
+                        //     symbolRotate: 0,
+                        //     symbolSize: [1, 1],
+                        //     itemStyle: {
+                        //         color: 'black'
+                        //     },
+                        //     data: MarkMA100Slope,
+                        // },
                         markLine : {
                             data: [
                                 [{
@@ -603,10 +529,6 @@
                 },
 
             });
-
-            function showReadingAndSpec(reading,rawSpec){
-
-            }
 
             function findEntryPoint(_reading,_rawSpec){
                 let result = true;
@@ -664,7 +586,9 @@
                 return result;
             }
 
+            
             function setDom(_reading,_rawSpec,_type){
+                // console.log(_rawSpec)
                 _rawSpec.forEach(spec => {
                     // console.log(spec.fields.parameter)
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
@@ -677,6 +601,7 @@
                                 }else{
                                     dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
                                 }
+                                
                             }else{ 
                                 if(spec.fields.compare_reverse == 1){
                                     if(reading.reading > spec.fields.entry_value){
@@ -692,11 +617,16 @@
                                     }
                                 }
                             }
+
                         }
+
+  
+
                     }
                 });
             }
             
+
 
             function createResult(){
                 let _latestSsma5 = Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1];
@@ -808,6 +738,7 @@
             }
 
      
+
         }
 
         option = {
@@ -1157,22 +1088,7 @@
                     name:'OHLC-ZOOM',
                     type:'candlestick',
                     data: data,
-                    // markPoint: {
-                    //     label: {
-                    //         normal: {
-                    //             formatter: function (param) {
-                    //                 return param != null ? param.data['name']['slope'] : '';
-                    //             }
-                    //         }
-                    //     },
-                    //     symbol: 'circle',
-                    //     symbolRotate: 0,
-                    //     symbolSize: [1, 1],
-                    //     itemStyle: {
-                    //         color: 'black'
-                    //     },
-                    //     data: MarkMA100Slope,
-                    // },
+
                     markLine : {
                         data: [
                             [{
@@ -1212,473 +1128,48 @@
         canndleStickChart.setOption(option);
         macdChart.setOption(option_macd);
         canndleStickChartZoom.setOption(option_zoom);
-        
+    
         echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom]);
-
-        if(responseData.length !== 0){
+        console.log(responseData);
+        if(responseData.length > 0){
             createData(responseData);
-            window.onresize = function () {
-                canndleStickChart.resize();
-                macdChart.resize();
-                canndleStickChartZoom.resize();
-            }
+        }
+       
+       
+        window.onresize = function () {
+            canndleStickChart.resize();
+            macdChart.resize();
+            canndleStickChartZoom.resize();
         }
 
-        
-        $(document).on('click','#zoomatoposition',function(){
-            let firstIndex = _rawData[0].index;
-            // console.log(firstIndex)
-            testResult.forEach((result,key )=> {
-                let entryindex = result.entry - firstIndex;
-                let entryvalue = _rawData[entryindex]
-                let exitindex = result.exit - firstIndex;
-                let exitvalue = _rawData[exitindex]
-                // console.log(entryvalue)
-                MarkData.push({
-                    name: "Entry",
-                    value: entryvalue.close,
-                    xAxis: entryindex,
-                    yAxis: entryvalue.close,
-                    color: "#fff",
-                });
-                MarkData.push({
-                    name: "Exit",
-                    value: exitvalue.close,
-                    xAxis: exitindex,
-                    yAxis: exitvalue.close,
-                    color: "#fff",
-                });
-            })
-
-            createData(_rawData);
-            // console.log(_rawData)
-            canndleStickChart.dispatchAction({
-                type: 'dataZoom',
-                start: 44,
-                end: 60
-            });
+        $(document).on('click','#sendLineNotify', function(){
+            lineNotification('ทดสอบการส่งไลน์').then(data => {
+                alert('done');
+            }).catch(error => {})
         })
 
-        $(document).on("click","#btnSaveSetting",function() {
-            Swal.fire({
-                title: 'Create Job?',
-                text: "Confirm to create new job!",
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    
-                    addBackTestSetting($('#symbols').val(),$('#backtesttimeframe').val(),$('#backtestSize').val(),$('#interval').val()).then(data => {
-                        Swal.fire({
-                            //position: 'top-end',
-                            icon: 'success',
-                            html: `<h2>Job name <br><strong>${JSON.parse(data.backtest)[0].fields.symbolname} ${JSON.parse(data.backtest)[0].fields.timeframename} ${JSON.parse(data.backtest)[0].fields.code}</strong> <br>has been created<h2>`,
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(function (result) {
-                            renderBacktestJobLists(data.backtestjobs)
-                        })
-                    }).catch(error => {})
-                }
-            })
-        });
-
-        function renderBacktestJobLists(jobs){
-            let html = `<option value="">== select job ==</option>`;
-            JSON.parse(jobs).forEach(job => {
-                html += `<option value="${job.pk}"  data-id="${job.fields.symbol}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
-            });
-            $('#selectedBacktestJob').html(html);
-        }
-
-        function addBackTestSetting(symbol,timeframe,size,interval){
-            return new Promise((resolve, reject) => {
-                data = {
-                    backtestsymbol: symbol,
-                    timeframe: timeframe,
-                    size: size,
-                    interval: interval,
-                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'createbacktest' %}",
-                    dataType : "json",
-                    data: data,
-                    beforeSend: function(){
-                        $('#loader').show();
-                    },
-                    success: function(data) {
-                        resolve(data)
-                    },
-                    complete:function(data){
-                        $('#loader').hide();
-                    },
-                    error: function(error) {
-                        reject(error)
-                    },
-                })
-            })
-        }
-
-        
-        $(document).on("click","#deleteallbacktest",function() {
-            resetCounter()
-            if($('#selectedBacktestJob > option').length < 2) return
-            Swal.fire({
-                title: 'Delete All?',
-                text: "Confirm to delete all jobs!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteAllBacktest().then(data => {
-                        Swal.fire({
-                            //position: 'top-end',
-                            icon: 'success',
-                            title: 'All Jobs have been deleted',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(function (result) {
-                            // renderBacktestJobLists(data.backtestjobs)
-                            window.location.href = window.location.href
-                        })
-                    }).catch(error => {})
-                }
-            })
-
-        })
-
-        
-        function deleteAllBacktest(){   
-           return new Promise((resolve, reject) => {
-               $.ajax({
-                   type: 'GET',
-                   url: "{% url 'deleteallbacktest' %}",
-                   dataType : "json",
-                   data: '',
-                   beforeSend: function(){
-                        $('#loader').show();
-                    },
-                   success: function(data) {
-                       resolve(data)
-                   },
-                   complete:function(data){
-                        $('#loader').hide();
-                    },
-                   error: function(error) {
-                       reject(error)
-                   },
-               })
-           })
-       }
-
-       $(document).on("click","#deletebacktest",function() {
-            resetCounter()
-            let selectedOption = $('#selectedBacktestJob option:selected');
-            if(selectedOption.val() === '') return
-            Swal.fire({
-                title: 'Delete Job?',
-                text: "Confirm to delete job " + selectedOption.text(),
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteBacktest(selectedOption.val()).then(data => {
-                        Swal.fire({
-                            //position: 'top-end',
-                            icon: 'success',
-                            title: 'Job has been deleted',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(function (result) {
-                            renderBacktestJobLists(data.backtestjobs)
-                        })
-                    }).catch(error => {})
-                }
-            })
-
-        })
-
-        function deleteBacktest(id){   
+        function lineNotification(message){   
            return new Promise((resolve, reject) => {
                 data = {
-                    id: id,
+                    message: message,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 }
                $.ajax({
                    type: 'POST',
-                   url: "{% url 'deletebacktest' %}",
+                   url: "{% url 'lineNotification' %}",
                    dataType : "json",
                    data: data,
-                   beforeSend: function(){
-                        $('#loader').show();
-                    },
                    success: function(data) {
                        resolve(data)
                    },
-                   complete:function(data){
-                        $('#loader').hide();
-                    },
                    error: function(error) {
                        reject(error)
                    },
                })
            })
        }
-       
-       $(document).on("click","#jogtest",function() {
-            $('#report_table').html('');
-            let selectedOption = $('#selectedBacktestJob option:selected');
-            if(selectedOption.val() === '') {
-                Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'please select Job!',
-                    })
-                
-                // resetCounter();
-                return
-            }
-            if(_rawData.length === 0) return 
-            if(count == _rawData.length  - testRange +1 ){
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Finished',
-                    text: 'Back testing is finished!',
-                })
-                // console.log(testResult);
-                let html ='';
-                if(testResult.length > 0){
-                    testResult.forEach((result,key )=> {
-                        html += `<tr>
-                            <td>${key+1}</td>
-                            <td>${result.entry}</td>
-                            <td>${result.exit}</td>
-                            </tr>`;
-                    });
-                }
-                $('#report_table').html(html)
-                showFinish();
-                return
-            }
-            let _count = count++;
-            let arraySet = _rawData.slice(_count,_count + testRange)
-            createData(arraySet);
-            // console.log(dataResult);
-        })
-
-        $(document).on("click","#autotest",function() {
-            $('#report_table').html('');
-            let selectedOption = $('#selectedBacktestJob option:selected');
-            if(selectedOption.val() === '') {
-                Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'please select Job!',
-                    })
-                
-                // resetCounter();
-                return
-            }
-
-            if(_rawData.length === 0) return 
-
-            if (this.classList.contains('start')) {
-                this.classList.remove('start');
-                this.textContent = "Auto Test";
-                clearInterval(backtestTimer);
-            } else {
-                this.classList.add('start');
-                this.textContent = "Stop";
-                autoTest();
-            }
-        })
-
-        function autoTest(){
-            function testing(){
-                if(count == _rawData.length  - testRange +1 ){
-                    clearInterval(backtestTimer);
-                    $('#autotest').removeClass('start');
-                    $('#autotest').text("Auto Test") ;
-                    // resetCounter();
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Finished',
-                        text: 'Back testing is finished!',
-                    })
-                    // console.log(testResult);
-                   
-                    let html ='';
-                    if(testResult.length > 0){
-                        testResult.forEach((result,key )=> {
-                            html += `<tr>
-                                <td>${key+1}</td>
-                                <td>${result.entry}</td>
-                                <td>${result.exit}</td>
-                                </tr>`;
-                        });
-                    }
-                    $('#report_table').html(html)
-                    showFinish();
-                    return
-                }
-                let _count = count++;
-                let arraySet = _rawData.slice(_count,_count + testRange)
-                createData(arraySet);
-            }
-            backtestTimer = setInterval(testing,backtestTimerInterval);
-            var c = 0;
-        }
-
-        function showFinish(){
-            let firstIndex = _rawData[0].index;
-            // console.log(firstIndex)
-            testResult.forEach((result,key )=> {
-                let entryindex = result.entry - firstIndex;
-                let entryvalue = _rawData[entryindex]
-                let exitindex = result.exit - firstIndex;
-                let exitvalue = _rawData[exitindex]
-                // console.log(entryvalue)
-                MarkData.push({
-                    name: "Entry",
-                    value: entryvalue.close,
-                    xAxis: entryindex,
-                    yAxis: entryvalue.close,
-                    color: "#fff",
-                });
-                MarkData.push({
-                    name: "Exit",
-                    value: exitvalue.close,
-                    xAxis: exitindex,
-                    yAxis: exitvalue.close,
-                    color: "#fff",
-                });
-            })
-
-            createData(_rawData);
-            // console.log(_rawData)
-            canndleStickChart.dispatchAction({
-                type: 'dataZoom',
-                start: 0,
-                end: 100
-            });
-        }
 
 
-        function resetCounter(){
-            count = 0;
-            _rawData = [];
-        }
-
-        $(document).on("change","#selectedBacktestJob",function() {
-            MarkData = [];
-            flag = false;
-            testResult = [];
-            tmpDataIn = null;
-            countResult = 0;
-            resetCounter()
-            let selectedOption = $('#selectedBacktestJob option:selected');
-            if(selectedOption.val() === '') return
-            let html_symbol = ``
-            let html_timeframe = ``
-            let html_backtestsize = ``
-            let html_interval = ``
-            let html_entrypoint_testspecs = ``
-
-            getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
-                let backtest = JSON.parse(data.backtest)[0].fields;
-                let entry_specs = JSON.parse(data.entryspecs);
-                let exit_specs = JSON.parse(data.exitspecs);
-                exitspecs = exit_specs;
-                entryspecs = entry_specs;
-
-                if(entry_specs.length == 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: `Not found Test spec for ${$(this).find(':selected').data('name')}`,
-                    })
-                }
-                _rawData =  createRawData(data.ohlcs);
-
-                entry_specs.forEach(spec_item => {
-                    html_entrypoint_testspecs += `<tr>
-                        <td>${ spec_item.fields.name}</td>
-                        <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
-                        <td id="td_reading_${spec_item.fields.parameter}"></td>
-                        </tr>`;
-                });
-
-                JSON.parse(data.symbols).forEach(symbol_item => {
-                    let _selectText = '';
-                    if(symbol_item.pk == backtest.symbol) {_selectText = 'selected'}
-                    html_symbol += `<option value="${symbol_item.pk}" ${_selectText}>${symbol_item.fields.name}</option>`
-                });
-
-                JSON.parse(data.timeframes).forEach(timeframe_item => {
-                    let _selectText = '';
-                    if(timeframe_item.pk == backtest.timeframe) 
-                    {
-                        _selectText = 'selected'
-                    }
-                    if(timeframe_item.pk == backtest.timeframe) _selectText = 'selected'
-                    html_timeframe += `<option value="${timeframe_item.pk}" ${_selectText}>${timeframe_item.fields.name}</option>`
-                });
-
-                JSON.parse(data.backtestsizes).forEach(backtestsize_item => {
-                    let _selectText = '';
-                    if(backtestsize_item.pk == backtest.backtestsize) _selectText = 'selected'
-                    html_backtestsize += `<option value="${backtestsize_item.pk}" ${_selectText}>${backtestsize_item.fields.size}</option>`
-                });
-
-                JSON.parse(data.intervals).forEach(interval_item => {
-                    let _selectText = '';
-                    if(interval_item.pk == backtest.interval) _selectText = 'selected'
-                    html_interval += `<option value="${interval_item.pk}" ${_selectText}>${interval_item.fields.interval}</option>`
-                });
-                
-                $('#symbolname').html(`(${$(this).find(':selected').data('name')})`);
-                $('#symbols').html(html_symbol);
-                $('#backtesttimeframe').html(html_timeframe);
-                $('#backtestSize').html(html_backtestsize);
-                $('#interval').html(html_interval);
-                $('#entry_point_spec_table').html(html_entrypoint_testspecs);
-                $("#timeframe").html($('#backtesttimeframe option:selected').text());
-                $("#symbol").html($('#symbols option:selected').text());
-                backtestTimerInterval = parseInt($('#interval option:selected').text());
-            }).catch(error => {})
-        })
-
-        function getBacktestJob(id,symbol_id){
-            return new Promise((resolve, reject) => {
-                data = {
-                    id: id,
-                    symbol_id : symbol_id,
-                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'getbacktestjob' %}",
-                    dataType : "json",
-                    data: data,
-                    success: function(data) {
-                        resolve(data)
-                    },
-                    error: function(error) {
-                        reject(error)
-                    },
-                })
-            })
-        }
-
-        
     </script>
 
 {% endblock %} 

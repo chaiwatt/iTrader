@@ -239,13 +239,17 @@
                     url: "{% url 'getohlc' %}",
                     success: function (response){
                         createData(response);
-                        // console.log(dataResult);
                     },
                     error: function(response){
                         location.reload(true);
                     }
                 })
-             },60000)
+             },2000)
+
+            //  setInterval(function(){
+            //     console.log('working')
+            //  },2000)
+
         });
 
         function createData(response){
@@ -275,6 +279,7 @@
             SSMA13Arr = SSMA_Calc(closedPrice,13);
             SSMA20Arr = SSMA_Calc(closedPrice,20);
             SSMA50Arr = SSMA_Calc(closedPrice,50);
+            SSMA100Arr = SSMA_Calc(closedPrice,100);
             RSI = RS(closedPrice,14);
 
             Smoth_SSMA5 = SSMA_BARESMOTH(SSMA5Arr,3);
@@ -294,12 +299,13 @@
             var nullSmoth_SSMA13 = Array(closedPrice.length - Smoth_SSMA13.length).fill(null);
             var nullSmoth_SSMA20 = Array(closedPrice.length - Smoth_SSMA20.length).fill(null);
             var nullSmoth_SSMA50 = Array(closedPrice.length - Smoth_SSMA50.length).fill(null);
+            var nullSmoth_SSMA100 = Array(closedPrice.length - SSMA100Arr.length).fill(null);
             var nullRS = Array(closedPrice.length - RSI.length).fill(null);
 
             RSIArr = nullRS.concat(RSI); 
 
             dataMA200 = calculateMA(200, data);
-            dataMA100 = calculateMA(100, data);
+            dataMA100 =  nullSmoth_SSMA100.concat(SSMA100Arr);  //calculateMA(100, data); 
 
             MacdArr = nullForMACD.concat(MACD); 
             SignalArr = nullForSIGNAL.concat(SIGNAL); 
