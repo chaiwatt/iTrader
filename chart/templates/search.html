@@ -134,7 +134,7 @@
         var lineLenght = 10;
         var testResult = []
         var symbolCountId = 0;
-        var timeframeCountId = 3;
+        var timeframeCountId = 2;
         $( document ).ready(function () {   
 
 
@@ -169,16 +169,17 @@
                 createData(data_item);
             }).catch(error => {})
 
-            if(timeframeCountId > 7){
-                console.log('send summary')
-                timeframeCountId = 3;
-            }else{   
-                symbolCountId++;            
-                if(symbolCountId == apisymbols.length) {
-                    symbolCountId= 0
-                    timeframeCountId++;
+         
+            symbolCountId++;            
+            if(symbolCountId == apisymbols.length) {
+                symbolCountId= 0
+                timeframeCountId++;
+                if(timeframeCountId > 7){
+                    console.log('send summary')
+                    timeframeCountId = 2;
                 }
             }
+            
            
         }
 
