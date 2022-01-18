@@ -181,6 +181,7 @@ def lineNotification(request):
     payload = {
         'message':request.POST['message']
     }
+  
     url = 'https://notify-api.line.me/api/notify'
     token = 'p59HvOJlVFphWeUtCUmWTfyI5vLbWEUJoHiJXLgdELM'
     headers = {'Authorization':'Bearer '+token}
