@@ -135,14 +135,11 @@
         var testResult = []
         var symbolCountId = 0;
         var timeframeCountId = 2;
-        var searchResult = null;
+        var searchResult = [];
         $( document ).ready(function () {   
-
-
              setInterval(function(){
                 searchMarket();
              },3000)
-
         });
 
         // $(document).on('click','#getSingleOhlc', function(){
@@ -151,7 +148,6 @@
         // })
 
         function searchMarket(){
-            // console.log(apitimeframes[1].pk);
             let symbol = parseInt(apisymbols[symbolCountId].pk);
             let timeframe = timeframeCountId;
             let html_entrypoint_testspecs = ``
@@ -176,10 +172,9 @@
                 symbolCountId= 0
                 timeframeCountId++;
                 if(timeframeCountId > 7){
-                    // lineNotification(searchResult).then(data => {
-                    //     console.log('summary sent!.')
-                    // }).catch(error => {})
-                    searchResult = null;
+                    // send summary
+                    console.log(searchResult)
+                    searchResult = [];
                     timeframeCountId = 2;
                 }
             }
@@ -210,13 +205,7 @@
         }
 
         function createData(response){
-            // console.log('test')
             _forexData = response.series;
-            // console.log(_forexData)
-            // askPrice = Number(response.price['ask']);
-            // bidPrice = Number(response.price['bid']);
-            // $("#ask").html(askPrice.toFixed(3));
-            // $("#bid").html(bidPrice.toFixed(3));
             $("#timeframe").html(response.timeframe);
             $("#symbol").html(response.symbol);
             data = getData(_forexData);
@@ -318,13 +307,17 @@
                 let found_close = tmp_info[1];
                 let found_low = tmp_info[3];
                 let found_high = tmp_info[4];
-                console.log(`Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Close:${found_close}`)
-                searchResult={
+                let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Close:${found_close}`
+                console.log(foundResult);
+                searchResult.push({
                     'Symbol':found_symbol,
                     'TF':found_timeframe,
                     'Bar':found_bar,
                     'Close':found_close
-                }
+                })
+                lineNotification(foundResult).then(data => {
+                        console.log('sent!.')
+                    }).catch(error => {})
             }
 
             canndleStickChart.setOption({
@@ -1092,7 +1085,7 @@
     
         echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom]);
         // console.log('hello');
-        console.log(responseData);
+        // console.log(responseData);
         if(responseData.length > 0){
             createData(responseData);
         }
