@@ -437,8 +437,6 @@ def search(request):
 
     accountinfo = mt5.account_info()
     return render(request,'search.html',{
-        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
-        'timeframes':TimeFrame.objects.all(),
         'apisymbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
         'apitimeframes': serializers.serialize('json', TimeFrame.objects.all()),
     })  
@@ -454,7 +452,7 @@ def getsingleohlc(request):
     dataframe = getattr(mt5, f'TIMEFRAME_{_timeframe.name}')
 
     symbol_price = mt5.symbol_info_tick(_symbol.name)._asdict()
-    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(_symbol.name, dataframe, 0, 300))
+    ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(_symbol.name, dataframe, 0, 450))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
     ohlcs = []
     for i, data in ohlc_data.iterrows():
@@ -470,7 +468,8 @@ def getsingleohlc(request):
         ohlcs.append(ohlc)
 
     data = {
-        'symbol':symbol,
+        'symbol':_symbol.name,
+        'timeframe':_timeframe.name,
         'series':ohlcs, 
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),

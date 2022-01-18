@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0"><span id="symbol"></span>(<span id="broker">{{ broker.name }}</span>) <span id="timeframe"></span></h1>
+              <h1 class="m-0"><span id="symbol"></span> <span id="timeframe"></span></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -22,7 +22,7 @@
       <!-- Main content -->
       <div class="content">
         <div class="container-fluid">
-            
+            {% csrf_token %}
           <div class="row">
             <div class="col-lg-9">
               <div class="card">
@@ -39,45 +39,7 @@
             </div>
             <!-- /.col-md-6 -->
             <div class="col-lg-3">
-                <div class="card">
-                    <div class="card-body">
-                        <form action="getSymbolData" method="POST">
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-lg-5">
-                                    <div class="form-group"  >
-                                        <select class="form-control" name="selectedSymbol">
-                                            {% for symbol in symbols %}
-                                                <option value="{{ symbol.id }}"
-                                                {% if currentview.symbol_id  == symbol.id %}
-                                                    selected
-                                                {% endif %}
-                                                >{{ symbol.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group"> 
-                                        <select class="form-control" name="selectedTimeframe" >
-                                            {% for timeframe in timeframes %}
-                                                <option value="{{ timeframe.id }}"
-                                                    {% if currentview.timeframe_id  == timeframe.id %}
-                                                        selected
-                                                    {% endif %}
-                                                >{{ timeframe.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <input type="submit" class="btn btn-primary mr-1 w-100" value="Get">
-                                </div>     
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
+              
                 <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Entry Point Test Spec <span id="symbolname"></span></h3>
@@ -101,7 +63,7 @@
 
 
                   <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button>
-                  <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button>
+                  <!-- <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button> -->
         
             </div>
             <!-- /.col-md-6 -->
@@ -172,34 +134,28 @@
         var lineLenght = 10;
         var testResult = []
         var symbolCountId = 0;
+        var timeframeCountId = 3;
         $( document ).ready(function () {   
-            //  setInterval(function(){
-            //     $.ajax({
-            //         type: 'GET',
-            //         url: "{% url 'getohlc' %}",
-            //         success: function (response){
-            //             createData(response);
-            //         },
-            //         error: function(response){
-            //             location.reload(true);
-            //         }
-            //     })
-            //  },20000)
 
-            //  setInterval(function(){
-            //     console.log('working')
-            //  },2000)
+
+             setInterval(function(){
+                searchMarket();
+             },3000)
 
         });
 
-        $(document).on('click','#getSingleOhlc', function(){
-            // console.log(apisymbols[symbolCountId].pk);
-            console.log(apitimeframes[1].pk);
+        // $(document).on('click','#getSingleOhlc', function(){
+        //     searchMarket();
+
+        // })
+
+        function searchMarket(){
+            // console.log(apitimeframes[1].pk);
             let symbol = parseInt(apisymbols[symbolCountId].pk);
-            let timeframe = 1;
+            let timeframe = timeframeCountId;
             let html_entrypoint_testspecs = ``
-            getSingleOhlc(symbol,timeframe).then(data => {
-                let entry_specs = JSON.parse(data.entryspecs);
+            getSingleOhlc(symbol,timeframe).then(data_item => {
+                let entry_specs = JSON.parse(data_item.entryspecs);
                 entryspecs = entry_specs;
                 entry_specs.forEach(spec_item => {
                     html_entrypoint_testspecs += `<tr>
@@ -210,11 +166,21 @@
                 });
                 $('#entry_point_spec_table').html(html_entrypoint_testspecs);
 
-                createData(data);
+                createData(data_item);
             }).catch(error => {})
-            symbolCountId++;
-            if(symbolCountId == apisymbols.length) symbolCountId= 0
-        })
+
+            if(timeframeCountId > 7){
+                console.log('send summary')
+                timeframeCountId = 3;
+            }else{   
+                symbolCountId++;            
+                if(symbolCountId == apisymbols.length) {
+                    symbolCountId= 0
+                    timeframeCountId++;
+                }
+            }
+           
+        }
 
         function getSingleOhlc(symbol,timeframe){
             return new Promise((resolve, reject) => {
@@ -246,8 +212,8 @@
             // bidPrice = Number(response.price['bid']);
             // $("#ask").html(askPrice.toFixed(3));
             // $("#bid").html(bidPrice.toFixed(3));
-            // $("#timeframe").html(response.price['timeframe']);
-            // $("#symbol").html(response.symbol);
+            $("#timeframe").html(response.timeframe);
+            $("#symbol").html(response.symbol);
             data = getData(_forexData);
             // console.log(data)
             closedPrice = getClosedPrice(_forexData);
@@ -329,7 +295,7 @@
             regressiveEqSmma13 = genRegressionLine(Smoth_SSMA13Arr,5)
             markLineCordSsma13 = getCoord(regressiveEqSmma13,Smoth_SSMA13Arr.length-1-5,Smoth_SSMA13Arr.length-1,5)
 
-            
+           
             // MarkMA100Slope = sma100Trend[0];
 
             ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
@@ -338,33 +304,17 @@
    
             setDom(dataResult, entryspecs,1)
 
-            if(foundEntryPoint === false){  
-                foundEntryPoint = findEntryPoint(dataResult, entryspecs)
-                
-            }else{
-               
-               if(flag == false){
-                    console.log('save intry point at data id: ' + data[data.length-1][4])
- 
-                    tmpDataIn = {
-                        'type': 'entry',
-                        'data_id': data[data.length-1][4]
-                    };
-                    flag =true;
-               }
-            
-               if(findExitPoint(dataResult, exitspecs)) {
-                    foundEntryPoint = false
-                    flag =false;
-                    testResult.push({
-                        'entry': tmpDataIn.data_id,
-                        'exit': data[data.length-1][4]
-                    })
-                    tmpDataIn = null;
-                    console.log('save exit point at data id: ' + data[data.length-1][4] )
-               } 
+            if(findEntryPoint(dataResult, entryspecs) === true){
+                let tmp_info = data[data.length-1];
+                let found_symbol = $('#symbol').text();
+                let found_timeframe = $('#timeframe').text();
+                let found_bar = tmp_info[5];
+                let found_open = tmp_info[0];
+                let found_close = tmp_info[1];
+                let found_low = tmp_info[3];
+                let found_high = tmp_info[4];
+                console.log(`found Entry Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Close:${found_close}`)
             }
-         
 
             canndleStickChart.setOption({
                 series : [
@@ -1130,6 +1080,7 @@
         canndleStickChartZoom.setOption(option_zoom);
     
         echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom]);
+        // console.log('hello');
         console.log(responseData);
         if(responseData.length > 0){
             createData(responseData);

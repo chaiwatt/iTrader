@@ -30,6 +30,7 @@
                 item.low,
                 item.high,
                 _index,
+                item.time,
             ]))
         });
         return _data;
