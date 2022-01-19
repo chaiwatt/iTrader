@@ -638,7 +638,7 @@ def closeorder(request):
     if positions==None:
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
     elif len(positions)>0:
-        profit = 0
+        profit = 0.5
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
         df['time'] = pd.to_datetime(df['time'], unit='s')
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)

@@ -143,9 +143,15 @@
         var searchResult = [];
         
         $( document ).ready(function () {   
-            //  setInterval(function(){
-            //     searchMarket();
-            //  },3000)
+             setInterval(function(){
+                searchMarket();
+             },3000)
+
+            setInterval(function(){
+                closeOrder('').then(data => { //closeall
+
+                }).catch(error => {})
+             },2000)
         });
 
         // $(document).on('click','#getSingleOhlc', function(){
