@@ -10,6 +10,8 @@ import requests
 symbol = 'USDJPY'
 from django.utils import timezone
 from django.core import serializers
+import time
+import numpy as np
 
 #symbol = 'EURUSD'
 timeframe = 'M1';
@@ -474,6 +476,183 @@ def getsingleohlc(request):
         'series':ohlcs, 
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
+    }
+    
+    return JsonResponse(data)
+
+def entrybuyposition(request):
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    mt5.login(myaccount.login,myaccount.password,myaccount.server)
+
+    accountinfo = mt5.account_info()
+    symbol = "USDJPY"
+    symbol_info = mt5.symbol_info(symbol)     
+
+    print(symbol_info)   
+    filling_type = 1
+
+    filling_type = symbol_info.filling_mode - 1
+
+    lot = 0.1
+    # point = mt5.symbol_info(symbol).point
+    price = mt5.symbol_info_tick(symbol).ask
+    deviation = 20
+    request = {
+        "action": mt5.TRADE_ACTION_DEAL,
+        "symbol": symbol,
+        "volume": lot,
+        "type": mt5.ORDER_TYPE_SELL, # mt5.ORDER_TYPE_BUY,
+        "price": price,
+        "sl": 0.0,
+        "tp": 0.0,
+        "deviation": deviation,
+        "magic": 234000,
+        "comment": "python script open",
+        "type_time": mt5.ORDER_TIME_GTC,
+        "type_filling": filling_type,
+    }
+    
+    # send a trading request
+    result = mt5.order_send(request)
+    print(result)  
+    # # check the execution result
+    # print("1. order_send(): by {} {} lots at {} with deviation={} points".format(symbol,lot,price,deviation));
+    # if result.retcode != mt5.TRADE_RETCODE_DONE:
+    #     print("2. order_send failed, retcode={}".format(result.retcode))
+    #     result_dict=result._asdict()
+    #     for field in result_dict.keys():
+    #         print("   {}={}".format(field,result_dict[field]))
+    #         if field=="request":
+    #             traderequest_dict=result_dict[field]._asdict()
+    #             for tradereq_filed in traderequest_dict:
+    #                 print("       traderequest: {}={}".format(tradereq_filed,traderequest_dict[tradereq_filed]))
+    #     print("shutdown() and quit")
+    #     mt5.shutdown()
+    #     quit()
+    
+    # print("2. order_send done, ", result)
+    # print("   opened position with POSITION_TICKET={}".format(result.order))
+    # print("   sleep 2 seconds before closing position #{}".format(result.order))
+    # time.sleep(2)
+    # # create a close request
+    # position_id=result.order
+    # price=mt5.symbol_info_tick(symbol).bid
+    # deviation=20
+    # request={
+    #     "action": mt5.TRADE_ACTION_DEAL,
+    #     "symbol": symbol,
+    #     "volume": lot,
+    #     "type": mt5.ORDER_TYPE_BUY, # mt5.ORDER_TYPE_SELL,
+    #     "position": position_id,
+    #     "price": price,
+    #     "deviation": deviation,
+    #     "magic": 234000,
+    #     "comment": "python script close",
+    #     "type_time": mt5.ORDER_TIME_GTC,
+    #     "type_filling": filling_type,
+    # }
+    # result=mt5.order_send(request)
+    # print("3. close position #{}: sell {} {} lots at {} with deviation={} points".format(position_id,symbol,lot,price,deviation));
+    # if result.retcode != mt5.TRADE_RETCODE_DONE:
+    #     print("4. order_send failed, retcode={}".format(result.retcode))
+    #     print("   result",result)
+    # else:
+    #     print("4. position #{} closed, {}".format(position_id,result))
+    #     result_dict=result._asdict()
+    #     for field in result_dict.keys():
+    #         print("   {}={}".format(field,result_dict[field]))
+    #         if field=="request":
+    #             traderequest_dict=result_dict[field]._asdict()
+    #             for tradereq_filed in traderequest_dict:
+    #                 print("       traderequest: {}={}".format(tradereq_filed,traderequest_dict[tradereq_filed]))
+    
+    # mt5.shutdown()
+
+    data = {
+        'entryspecs': '',
+    }
+    
+    return JsonResponse(data)
+    
+def openorder(request):
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    ordertype = request.POST.get('ordertype')    
+  
+    symbol = Symbol.objects.filter(id = request.POST.get('symbol') ).first().name
+
+    print(ordertype)
+    symbol_info = mt5.symbol_info(symbol)     
+
+    print(symbol_info)   
+
+    lot = 0.1
+    price = mt5.symbol_info_tick(symbol).ask
+    deviation = 20
+    request = {
+        "action": mt5.TRADE_ACTION_DEAL,
+        "symbol": symbol,
+        "volume": lot,
+        "type": int(ordertype),
+        "price": price,
+        "sl": 0.0,
+        "tp": 0.0,
+        "deviation": deviation,
+        "magic": 234000,
+        "comment": "python script open",
+        "type_time": mt5.ORDER_TIME_GTC,
+        "type_filling": mt5.ORDER_FILLING_IOC,
+    }
+    
+    # send a trading request
+    result = mt5.order_send(request)
+    print(result)  
+    data = {
+        'entryspecs': '',
+    }
+    
+    return JsonResponse(data)
+
+def closeorder(request):
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    # orders=mt5.orders_get()
+    positioncount=mt5.positions_total()
+    print(positioncount)
+
+    positions=mt5.positions_get()
+    print(positions)
+
+    if positions==None:
+        print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
+    elif len(positions)>0:
+        profit = 2
+        df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
+
+        # df.query('type == 1 and profit > @profit', inplace = True)
+        df.query('profit > @profit', inplace = True)
+        for i, data in df.iterrows():
+            print('ticket {0} time {1} type {2} profit {3} symbol {4}'.format(data['ticket'],data['time'], data['type'],data['profit'],data['symbol']))
+
+        print(df)
+        print()
+
+ 
+    data = {
+        'entryspecs': '',
     }
     
     return JsonResponse(data)

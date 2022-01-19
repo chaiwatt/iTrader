@@ -38,4 +38,10 @@ urlpatterns = [
     path('lineNotification',views.lineNotification,name='lineNotification'),
     path('symbolsetting',views.symbolsetting,name='symbolsetting'),
     path('search',views.search,name='search'),
+    path('entrybuyposition',views.entrybuyposition,name='entrybuyposition'),
+    path('openorder',views.openorder,name='openorder'),
+    path('closeorder',views.closeorder,name='closeorder'),
+    
+
+    
 ]

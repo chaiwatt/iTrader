@@ -64,6 +64,8 @@
 
                   <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button>
                   <!-- <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button> -->
+                  <button type="button" id="openOrder" class="btn btn-info">Open Order</button>
+                  <button type="button" id="closeOrder" class="btn btn-info">Close Order</button>
         
             </div>
             <!-- /.col-md-6 -->
@@ -138,9 +140,9 @@
         var searchResult = [];
         
         $( document ).ready(function () {   
-             setInterval(function(){
-                searchMarket();
-             },3000)
+            //  setInterval(function(){
+            //     searchMarket();
+            //  },3000)
         });
 
         // $(document).on('click','#getSingleOhlc', function(){
@@ -1125,8 +1127,62 @@
                })
            })
        }
+       
+       $(document).on('click','#openOrder', function(){
+        openOrder(1,1).then(data => {
 
+            }).catch(error => {})
+        })
 
+        function openOrder(symbol,ordertype){   
+           return new Promise((resolve, reject) => {
+                data = {
+                    symbol: symbol,
+                    ordertype: ordertype,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+               $.ajax({
+                   type: 'POST',
+                   url: "{% url 'openorder' %}",
+                   dataType : "json",
+                   data: data,
+                   success: function(data) {
+                       resolve(data)
+                   },
+                   error: function(error) {
+                       reject(error)
+                   },
+               })
+           })
+       }
+
+       $(document).on('click','#closeOrder', function(){
+        closeOrder(1,1).then(data => {
+
+            }).catch(error => {})
+        })
+
+        function closeOrder(symbol,ordertype){   
+           return new Promise((resolve, reject) => {
+                data = {
+                    symbol: symbol,
+                    ordertype: ordertype,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+               $.ajax({
+                   type: 'POST',
+                   url: "{% url 'closeorder' %}",
+                   dataType : "json",
+                   data: data,
+                   success: function(data) {
+                       resolve(data)
+                   },
+                   error: function(error) {
+                       reject(error)
+                   },
+               })
+           })
+       }
     </script>
 
 {% endblock %} 
