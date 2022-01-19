@@ -111,18 +111,51 @@
                 </button>
               </div>
               <div class="modal-body">
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th>Usage</th>
-                      <th>Parameter</th>
-                      <th>Spec</th>
-                    </tr>
-                  </thead>
-                  <tbody id="spectable">  
-
-                  </tbody>
-                </table>
+                <div class="card card-tabs">
+                  <div class="card-header p-0 pt-1">
+                    <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="orderbuy_tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Order Buy Spec</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="ordersale_tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Order Sale Spec</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+                    <div class="tab-content" id="custom-tabs-one-tabContent">
+                      <div class="tab-pane fade active show" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="orderbuy_tab">
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>Usage</th>
+                              <th>Parameter</th>
+                              <th>Spec</th>
+                            </tr>
+                          </thead>
+                          <tbody id="orderbuyspec_table">  
+        
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="ordersale_tab">
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>Usage</th>
+                              <th>Parameter</th>
+                              <th>Spec</th>
+                            </tr>
+                          </thead>
+                          <tbody id="ordersellspec_table">  
+        
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
               </div>
               <div class="modal-footer justify-content-right">
                 <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
@@ -254,11 +287,12 @@
                               
           $(document).on('click', '.editentryspec', function(e) {   
               let symbolid = $(this).data('id')
-              let html = '';
+              let orderbuy_html = '';
+              let ordersell_html = '';
               if(symbolid === '') return;
 
               getEntrySpec(symbolid).then(data => {
-                    JSON.parse(data.spec).forEach(spec => {
+                    JSON.parse(data.spec).filter(x => x.fields.order_type == 0).forEach(spec => {
                       let chkStatus = 'checked';
                       let specInputValue = `<input type="text" data-id="${spec.pk}" data-symbol="${spec.fields.symbol}" class="form-control specentrypointvalue" value="${spec.fields.entry_value}" >`;
                       if(spec.fields.parameter_type === 'equal'){
@@ -270,7 +304,7 @@
                                       </select>`
                       }
                       if(spec.fields.status !== '1') chkStatus = ''
-                      html += `
+                      orderbuy_html += `
                         <tr>
                           <td class="align-middle">
                             <div class="icheck-primary d-inline">
@@ -284,7 +318,34 @@
                         </tr>`
                     });
 
-                    $('#spectable').html(html);
+                    JSON.parse(data.spec).filter(x => x.fields.order_type == 1).forEach(spec => {
+                      let chkStatus = 'checked';
+                      let specInputValue = `<input type="text" data-id="${spec.pk}" data-symbol="${spec.fields.symbol}" class="form-control specentrypointvalue" value="${spec.fields.entry_value}" >`;
+                      if(spec.fields.parameter_type === 'equal'){
+                        specInputValue = `<select class="form-control specentrypointvalue" data-symbol="${spec.fields.symbol}" data-id="${spec.pk}" data-type="equal">
+                                          <option value="${spec.fields.entry_value}" 
+                                            >${spec.fields.entry_value}</option>
+                                          <option value="${spec.fields.exit_value}"
+                                          >${spec.fields.exit_value}</option>
+                                      </select>`
+                      }
+                      if(spec.fields.status !== '1') chkStatus = ''
+                      ordersell_html += `
+                        <tr>
+                          <td class="align-middle">
+                            <div class="icheck-primary d-inline">
+                                  <input type="checkbox" class="specusage" data-symbol="${spec.fields.symbol}" data-name="${spec.fields.name}" data-type="compare" id="${spec.pk}" ${chkStatus}>
+                                      <label for="${spec.pk}">
+                                  </label>
+                              </div>
+                            </td>
+                          <td class="align-middle">${spec.fields.name}</td>
+                          <td class="align-middle">${specInputValue}</td>
+                        </tr>`
+                    });
+
+                    $('#orderbuyspec_table').html(orderbuy_html);
+                    $('#ordersellspec_table').html(ordersell_html);
                     $('#modal_header').html($(this).data('name'));
                     $('#specModal').modal('show')
               }).catch(error => {})
