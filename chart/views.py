@@ -411,6 +411,7 @@ def clonespec(request):
                     compare_reverse= base.compare_reverse,
                     status= base.status,
                     spec_type= base.spec_type,
+                    order_type= base.order_type,
                     symbol_id = symbol.id
                 )
             newspec.save()

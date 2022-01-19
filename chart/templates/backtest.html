@@ -436,8 +436,8 @@
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
             
             if(foundEntryPoint === false){  
-                foundEntryPoint = findEntryPoint(dataResult, orderbuy_entry_specs,ordersell_entry_specs)
-                
+                foundEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+                // foundEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
             }else{
                
                if(flag == false){
@@ -621,11 +621,8 @@
 
             });
 
-            function showReadingAndSpec(reading,rawSpec){
 
-            }
-
-            function findEntryPoint(_reading,_orderbuy_rawSpec,_ordersell_rawSpec){
+            function findOrderBuyEntryPoint(_reading,_orderbuy_rawSpec,_ordersell_rawSpec){
                 let result = true;
                 _orderbuy_rawSpec.forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
@@ -651,6 +648,10 @@
                     }
                 });
                 return result;
+            }
+
+            function findOrderSellEntryPoint(_reading,_ordersell_rawSpec){
+
             }
 
             function findExitPoint(_reading,_orderbuy_close_rawSpec,_ordersell_close_rawSpec){
@@ -727,17 +728,27 @@
                             }
                             else{ 
                                 if(spec.fields.compare_reverse == 1){
+                                    
                                     if(reading.reading > spec.fields.entry_value){
                                         dom.innerHTML = `<span class="badge bg-success" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}</span>`
                                     }else{
                                         dom.innerHTML = `<span class="badge bg-danger" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}</span>`
                                     }
                                 }else{
-                                    if(reading.reading < spec.fields.entry_value){
-                                        dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    if(spec.fields.entry_value < 0){
+                                        if(reading.reading*-1 > spec.fields.entry_value*-1){
+                                            dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }else{
+                                            dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }
                                     }else{
-                                        dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        if(reading.reading < spec.fields.entry_value){
+                                            dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }else{
+                                            dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }
                                     }
+
                                 }
                             }
                         }
@@ -1655,7 +1666,7 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                console.log(_ordersell_entry_specs)
+                console.log(_orderbuy_entry_specs)
 
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
