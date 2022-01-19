@@ -64,7 +64,9 @@
 
                   <!-- <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button> -->
                   <!-- <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button> -->
-                  <button type="button" id="openOrder" class="btn btn-info">Open Order</button>
+                  <button type="button" id="openOrderBuy" class="btn btn-info">Open Order Buy</button>
+                  <button type="button" id="openOrderSale" class="btn btn-info">Open Order Sale</button>
+                  <br>
                   <button type="button" id="closeAllOrder" class="btn btn-primary">Close All</button>
                   <button type="button" id="closeOrder" class="btn btn-success">Close on Profit</button>
 
@@ -1128,9 +1130,15 @@
                })
            })
        }
-       
-       $(document).on('click','#openOrder', function(){
+
+       $(document).on('click','#openOrderBuy', function(){
         openOrder(1,0).then(data => { //0=order on Buy 1=order on Sell
+
+            }).catch(error => {})
+        })
+       
+       $(document).on('click','#openOrderSale', function(){
+        openOrder(1,1).then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })
