@@ -155,6 +155,48 @@
                     </div>
                 </div>
 
+
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Order Sell Test Spec </h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody  id="ordersell_spec_table">   
+    
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Order Buy Test Spec <span id="symbolname"></span></h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody  id="orderbuy_spec_table">   
+    
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Report</h3>
@@ -183,45 +225,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Order Buy Test Spec <span id="symbolname"></span></h3>
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table table-sm">
-                        <thead>
-                          <tr>
-                            <th>Parameter</th>
-                            <th>Spec</th>
-                            <th>Value</th>
-                          </tr>
-                        </thead>
-                        <tbody  id="orderbuy_spec_table">   
-    
-                        </tbody>
-                      </table>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Order Sell Test Spec </h3>
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table table-sm">
-                        <thead>
-                          <tr>
-                            <th>Parameter</th>
-                            <th>Spec</th>
-                            <th>Value</th>
-                          </tr>
-                        </thead>
-                        <tbody  id="ordersell_spec_table">   
-    
-                        </tbody>
-                      </table>
-                    </div>
-                </div>
 
                 <div class="card">
                     <div class="card-header">
@@ -318,8 +322,10 @@
         var ssma13STD = 0;
         var dataResult = null
         var sma100ArrowLevel = null
-        var foundEntryPoint = false;
-        var flag = false;
+        var foundOrderBuyEntryPoint = false;
+        var foundOrderSellEntryPoint = false;
+        var orderBuyEntryPointflag = false;
+        var orderSellEntryPointflag = false;
         var testResult = [];
         var tmpDataIn = null;
         var lineLenght = 10;
@@ -431,36 +437,66 @@
             ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
             dataResult = createResult()
-            console.log(dataResult);
+            // console.log(dataResult);
             
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
             
-            if(foundEntryPoint === false){  
-                foundEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
-                // foundEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
+            if(foundOrderBuyEntryPoint === false){  
+                foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+                
             }else{
                
-               if(flag == false){
-                    console.log('save intry point at data id: ' + data[data.length-1][4])
+               if(orderBuyEntryPointflag == false){
+                    console.log('save order buy intry point at data id: ' + data[data.length-1][4])
  
                     tmpDataIn = {
-                        'type': 'entry',
+                        'type': 'Orber buy',
                         'data_id': data[data.length-1][4]
                     };
-                    flag =true;
+                    orderBuyEntryPointflag =true;
                }
             
-               if(findExitPoint(dataResult, orderbuy_close_specs, ordersell_close_specs)) {
-                    foundEntryPoint = false
-                    flag =false;
+               if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
+                    foundOrderBuyEntryPoint = false
+                    orderBuyEntryPointflag =false;
                     testResult.push({
                         'entry': tmpDataIn.data_id,
+                        'type' : tmpDataIn.type,
                         'exit': data[data.length-1][4]
                     })
                     tmpDataIn = null;
-                    console.log('save exit point at data id: ' + data[data.length-1][4] )
+                    console.log('save order buy exit point at data id: ' + data[data.length-1][4] )
                } 
             }
+
+
+            if(foundOrderSellEntryPoint === false){  
+                foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
+            }else{
+               
+               if(orderSellEntryPointflag == false){
+                    console.log('save order sell intry point at data id: ' + data[data.length-1][4])
+ 
+                    tmpDataIn = {
+                        'type': 'Orber sell',
+                        'data_id': data[data.length-1][4]
+                    };
+                    orderSellEntryPointflag =true;
+               }
+            
+               if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
+                    foundOrderSellEntryPoint = false
+                    orderSellEntryPointflag =false;
+                    testResult.push({
+                        'entry': tmpDataIn.data_id,
+                        'type' : tmpDataIn.type,
+                        'exit': data[data.length-1][4]
+                    })
+                    tmpDataIn = null;
+                    console.log('save order sell exit point at data id: ' + data[data.length-1][4] )
+               } 
+            }
+
 
 
             canndleStickChart.setOption({
@@ -651,10 +687,44 @@
             }
 
             function findOrderSellEntryPoint(_reading,_ordersell_rawSpec){
+                let result = true;
+                _ordersell_rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.entry_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.entry_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+                                if(spec.fields.entry_value < 0){
+                                    if(reading.reading*-1 < spec.fields.entry_value*-1){
+                                        result = false ;
+                                        return
+                                    }
+                                }else{
+                                    if(reading.reading > spec.fields.entry_value){
+                                        result = false ;
+                                        return
+                                    }
+                                }
+                                
+                            }
 
+                        }
+                    }
+                });
+                
+                return result;
             }
 
-            function findExitPoint(_reading,_orderbuy_close_rawSpec,_ordersell_close_rawSpec){
+            function findOrderBuyExitPoint(_reading,_orderbuy_close_rawSpec){
                 let result = true;
                 _orderbuy_close_rawSpec.forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
@@ -674,6 +744,42 @@
                                 if(reading.reading > spec.fields.exit_value){
                                     result = false ;
                                     return
+                                }
+                            }
+                        }
+                    }
+                });
+                return result;
+            }
+
+            function findOrderSellExitPoint(_reading,_ordersell_close_rawSpec){
+                let result = true;
+                _ordersell_close_rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.exit_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.exit_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+
+                                if(spec.fields.exit_value < 0){
+                                    if(reading.reading*-1 > spec.fields.exit_value*-1){
+                                        result = false ;
+                                        return
+                                    }
+                                }else{
+                                    if(reading.reading > spec.fields.exit_value){
+                                        result = false ;
+                                        return
+                                    }
                                 }
                             }
                         }
@@ -730,9 +836,9 @@
                                 if(spec.fields.compare_reverse == 1){
                                     
                                     if(reading.reading > spec.fields.entry_value){
-                                        dom.innerHTML = `<span class="badge bg-success" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
                                     }else{
-                                        dom.innerHTML = `<span class="badge bg-danger" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
                                     }
                                 }else{
                                     if(spec.fields.entry_value < 0){
@@ -1513,7 +1619,7 @@
                     title: 'Finished',
                     text: 'Back testing is finished!',
                 })
-                // console.log(testResult);
+
                 let html ='';
                 if(testResult.length > 0){
                     testResult.forEach((result,key )=> {
@@ -1599,15 +1705,13 @@
 
         function showFinish(){
             let firstIndex = _rawData[0].index;
-            // console.log(firstIndex)
             testResult.forEach((result,key )=> {
                 let entryindex = result.entry - firstIndex;
                 let entryvalue = _rawData[entryindex]
                 let exitindex = result.exit - firstIndex;
                 let exitvalue = _rawData[exitindex]
-                // console.log(entryvalue)
                 MarkData.push({
-                    name: "Entry",
+                    name: result.type,
                     value: entryvalue.close,
                     xAxis: entryindex,
                     yAxis: entryvalue.close,
@@ -1639,7 +1743,8 @@
 
         $(document).on("change","#selectedBacktestJob",function() {
             MarkData = [];
-            flag = false;
+            orderBuyEntryPointflag = false;
+            orderSellEntryPointflag = false;
             testResult = [];
             tmpDataIn = null;
             countResult = 0;
@@ -1666,7 +1771,7 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                console.log(_orderbuy_entry_specs)
+                console.log(_ordersell_close_specs)
 
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
