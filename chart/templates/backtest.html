@@ -185,7 +185,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header">
-                      <h3 class="card-title">Entry Point Test Spec <span id="symbolname"></span></h3>
+                      <h3 class="card-title">Order Buy Test Spec <span id="symbolname"></span></h3>
                     </div>
                     <div class="card-body p-0">
                       <table class="table table-sm">
@@ -196,7 +196,27 @@
                             <th>Value</th>
                           </tr>
                         </thead>
-                        <tbody  id="entry_point_spec_table">   
+                        <tbody  id="orderbuy_spec_table">   
+    
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Order Sell Test Spec </h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody  id="ordersell_spec_table">   
     
                         </tbody>
                       </table>
@@ -217,13 +237,7 @@
                           </tr>
                         </thead>
                         <tbody id="exit_point_spec_table">   
-                            <!-- {% for spec in exitspecobjects %}
-                                <tr>
-                                    <td>{{spec.name}}</td>
-                                    <td id="td_spec_{{spec_exit.parameter}}">{{spec.exit_value}}</td>
-                                    <td id="td_reading_{{spec_exit.parameter}}"></td>
-                                </tr>
-                            {% endfor %} -->
+
                         </tbody>
                       </table>
                     </div>
@@ -255,8 +269,12 @@
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
-        var entryspecs = [];// JSON.parse('{{ entryspecs|escapejs }}');
-        var exitspecs = [];//JSON.parse('{{ exitspecs|escapejs }}');
+        var orderbuy_entry_specs = [];// JSON.parse('{{ entryspecs|escapejs }}');
+        var ordersale_entry_specs = [];
+
+
+        var orderbuy_close_specs = [];//JSON.parse('{{ exitspecs|escapejs }}');
+        var ordersell_close_specs = [];
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -413,13 +431,12 @@
             ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
             dataResult = createResult()
-            // console.log(dataResult);
+            console.log(dataResult);
             
-            setDom(dataResult, entryspecs,1)
-            // showReadingAndSpec(dataResult, entryspecs);
+            setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
             
             if(foundEntryPoint === false){  
-                foundEntryPoint = findEntryPoint(dataResult, entryspecs)
+                foundEntryPoint = findEntryPoint(dataResult, orderbuy_entry_specs,ordersell_entry_specs)
                 
             }else{
                
@@ -433,7 +450,7 @@
                     flag =true;
                }
             
-               if(findExitPoint(dataResult, exitspecs)) {
+               if(findExitPoint(dataResult, orderbuy_close_specs, ordersell_close_specs)) {
                     foundEntryPoint = false
                     flag =false;
                     testResult.push({
@@ -608,9 +625,9 @@
 
             }
 
-            function findEntryPoint(_reading,_rawSpec){
+            function findEntryPoint(_reading,_orderbuy_rawSpec,_ordersell_rawSpec){
                 let result = true;
-                _rawSpec.forEach(spec => {
+                _orderbuy_rawSpec.forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
                     if(typeof reading !== 'undefined'){
                         if(isNaN(reading.reading) === true){
@@ -636,9 +653,9 @@
                 return result;
             }
 
-            function findExitPoint(_reading,_rawSpec){
+            function findExitPoint(_reading,_orderbuy_close_rawSpec,_ordersell_close_rawSpec){
                 let result = true;
-                _rawSpec.forEach(spec => {
+                _orderbuy_close_rawSpec.forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
                     if(typeof reading !== 'undefined'){
                         if(isNaN(reading.reading) === true){
@@ -664,12 +681,12 @@
                 return result;
             }
 
-            function setDom(_reading,_rawSpec,_type){
-                _rawSpec.forEach(spec => {
-                    // console.log(spec.fields.parameter)
+            function setDom(_reading,_orderbuy_rawSpec,_ordersell_rawSpec,_type){
+                _orderbuy_rawSpec.filter(x => x.fields.order_type == 0).forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    
                     if(typeof reading !== 'undefined'){
-                        const dom = document.querySelector(`#td_reading_${spec.fields.parameter}`);
+                        const dom = document.querySelector(`#td_orderbuy_reading_${spec.fields.parameter}`);
                         if(_type == 1){ // entry point
                             if(isNaN(reading.reading) === true){
                                 if(reading.reading === spec.fields.entry_value){
@@ -695,6 +712,38 @@
                         }
                     }
                 });
+
+                _ordersell_rawSpec.filter(x => x.fields.order_type == 1).forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        const dom = document.querySelector(`#td_ordersell_reading_${spec.fields.parameter}`);
+                        if(_type == 1){ // entry point
+                            if(isNaN(reading.reading) === true){
+                                if(reading.reading === spec.fields.entry_value){
+                                    dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+                                }else{
+                                    dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+                                }
+                            }
+                            else{ 
+                                if(spec.fields.compare_reverse == 1){
+                                    if(reading.reading > spec.fields.entry_value){
+                                        dom.innerHTML = `<span class="badge bg-success" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}aa</span>`
+                                    }else{
+                                        dom.innerHTML = `<span class="badge bg-danger" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}b</span>`
+                                    }
+                                }else{
+                                    if(reading.reading < spec.fields.entry_value){
+                                        dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    }else{
+                                        dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
             }
             
 
@@ -1590,16 +1639,25 @@
             let html_timeframe = ``
             let html_backtestsize = ``
             let html_interval = ``
-            let html_entrypoint_testspecs = ``
+            let html_openbuy_testspecs = ``
+            let html_opensell_testspecs = ``
 
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
-                let entry_specs = JSON.parse(data.entryspecs);
-                let exit_specs = JSON.parse(data.exitspecs);
-                exitspecs = exit_specs;
-                entryspecs = entry_specs;
+                let _orderbuy_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 0);
+                let _ordersell_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 1);
 
-                if(entry_specs.length == 0) {
+                let _orderbuy_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 0);
+                let _ordersell_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 1);
+
+                orderbuy_close_specs = _orderbuy_close_specs;
+                ordersell_close_specs = _ordersell_close_specs;
+
+                orderbuy_entry_specs = _orderbuy_entry_specs;
+                ordersell_entry_specs = _ordersell_entry_specs;
+                console.log(_ordersell_entry_specs)
+
+                if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
@@ -1608,11 +1666,19 @@
                 }
                 _rawData =  createRawData(data.ohlcs);
 
-                entry_specs.forEach(spec_item => {
-                    html_entrypoint_testspecs += `<tr>
+                _orderbuy_entry_specs.forEach(spec_item => {
+                    html_openbuy_testspecs += `<tr>
                         <td>${ spec_item.fields.name}</td>
-                        <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
-                        <td id="td_reading_${spec_item.fields.parameter}"></td>
+                        <td id="td_orderbuy_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                        <td id="td_orderbuy_reading_${spec_item.fields.parameter}"></td>
+                        </tr>`;
+                });
+
+                _ordersell_entry_specs.forEach(spec_item => {
+                    html_opensell_testspecs += `<tr>
+                        <td>${ spec_item.fields.name}</td>
+                        <td id="td_ordersell_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                        <td id="td_ordersell_reading_${spec_item.fields.parameter}"></td>
                         </tr>`;
                 });
 
@@ -1649,7 +1715,8 @@
                 $('#backtesttimeframe').html(html_timeframe);
                 $('#backtestSize').html(html_backtestsize);
                 $('#interval').html(html_interval);
-                $('#entry_point_spec_table').html(html_entrypoint_testspecs);
+                $('#orderbuy_spec_table').html(html_openbuy_testspecs);
+                $('#ordersell_spec_table').html(html_opensell_testspecs);
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
