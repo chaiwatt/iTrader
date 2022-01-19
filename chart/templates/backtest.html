@@ -728,9 +728,9 @@
                             else{ 
                                 if(spec.fields.compare_reverse == 1){
                                     if(reading.reading > spec.fields.entry_value){
-                                        dom.innerHTML = `<span class="badge bg-success" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}aa</span>`
+                                        dom.innerHTML = `<span class="badge bg-success" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}</span>`
                                     }else{
-                                        dom.innerHTML = `<span class="badge bg-danger" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}b</span>`
+                                        dom.innerHTML = `<span class="badge bg-danger" >${spec.fields.entry_value} ${parseFloat(reading.reading).toFixed(8)}</span>`
                                     }
                                 }else{
                                     if(reading.reading < spec.fields.entry_value){
