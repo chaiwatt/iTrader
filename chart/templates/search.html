@@ -62,11 +62,12 @@
      
 
 
-                  <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button>
+                  <!-- <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button> -->
                   <!-- <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button> -->
                   <button type="button" id="openOrder" class="btn btn-info">Open Order</button>
-                  <button type="button" id="closeOrder" class="btn btn-info">Close Order</button>
-        
+                  <button type="button" id="closeAllOrder" class="btn btn-primary">Close All</button>
+                  <button type="button" id="closeOrder" class="btn btn-success">Close on Profit</button>
+
             </div>
             <!-- /.col-md-6 -->
           </div>
@@ -1100,12 +1101,12 @@
             canndleStickChartZoom.resize();
         }
 
-        $(document).on('click','#sendLineNotify', function(){
-            searchResult=`[USDJPY H1 2012-11-22 Close:121] [USDJPY H1 2012-11-22 Close:121]`
-            lineNotification(searchResult).then(data => {
-                // alert('done');
-            }).catch(error => {})
-        })
+        // $(document).on('click','#sendLineNotify', function(){
+        //     searchResult=`[USDJPY H1 2012-11-22 Close:121] [USDJPY H1 2012-11-22 Close:121]`
+        //     lineNotification(searchResult).then(data => {
+        //         // alert('done');
+        //     }).catch(error => {})
+        // })
 
         function lineNotification(message){   
            return new Promise((resolve, reject) => {
@@ -1129,7 +1130,7 @@
        }
        
        $(document).on('click','#openOrder', function(){
-        openOrder(1,1).then(data => {
+        openOrder(1,0).then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })
@@ -1156,17 +1157,23 @@
            })
        }
 
-       $(document).on('click','#closeOrder', function(){
-        closeOrder(1,1).then(data => {
+       
+       $(document).on('click','#closeAllOrder', function(){
+        closeOrder('closeall').then(data => { //closeall
 
             }).catch(error => {})
         })
 
-        function closeOrder(symbol,ordertype){   
+       $(document).on('click','#closeOrder', function(){
+        closeOrder('').then(data => { //closeall
+
+            }).catch(error => {})
+        })
+
+        function closeOrder(clossall){   
            return new Promise((resolve, reject) => {
                 data = {
-                    symbol: symbol,
-                    ordertype: ordertype,
+                    clossall: clossall,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 }
                $.ajax({
