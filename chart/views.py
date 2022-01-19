@@ -586,24 +586,28 @@ def openorder(request):
         print("initialize() failed")
         mt5.shutdown()
 
-    ordertype = request.POST.get('ordertype')    
-  
+    ordertype = request.POST.get('ordertype')   
+
     symbol = Symbol.objects.filter(id = request.POST.get('symbol') ).first().name
+    tick = mt5.symbol_info_tick(symbol)
 
-    print(ordertype)
-    symbol_info = mt5.symbol_info(symbol)     
+    order_dict = {'buy': 0, 'sell': 1};
+    price_dict = {'buy': tick.ask, 'sell': tick.bid};
 
-    print(symbol_info)   
+    # print(ordertype)
+    # symbol_info = mt5.symbol_info(symbol)     
+
+    # print(symbol_info)   
 
     lot = 0.1
-    price = mt5.symbol_info_tick(symbol).ask
+    
     deviation = 20
     request = {
         "action": mt5.TRADE_ACTION_DEAL,
         "symbol": symbol,
         "volume": lot,
-        "type": int(ordertype),
-        "price": price,
+        "type": order_dict[ordertype],
+        "price": price_dict[ordertype],
         "sl": 0.0,
         "tp": 0.0,
         "deviation": deviation,
@@ -633,7 +637,7 @@ def closeorder(request):
     print(positioncount)
 
     positions=mt5.positions_get()
-    print(positions)
+    # print(positions)
 
     if positions==None:
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
@@ -654,24 +658,21 @@ def closeorder(request):
 
         for i, data in df.iterrows():
             print('ticket {0} time {1} volume {2} type {3} profit {4} symbol {5}'.format(data['ticket'],data['time'], data['volume'],data['type'],data['profit'],data['symbol']))
-            symbol = data['symbol']
-            position_id = data['ticket']
-            lot = data['volume']
-            price=mt5.symbol_info_tick(symbol).bid
+         
             deviation=20
-            type = int(data['type'])
-            if (type == 0):
-                type = 1
-            elif (type == 1):
-                type = 0
+            tick=mt5.symbol_info_tick(symbol)
+
+            price_dict = {0: tick.ask, 1: tick.bid}
+
+            type_dict = {0: 1, 1: 0}    
 
             request={
                 "action": mt5.TRADE_ACTION_DEAL,
-                "symbol": symbol,
-                "volume": lot,
-                "type": type,
-                "position": position_id,
-                "price": price,
+                "symbol": data['symbol'],
+                "volume": data['volume'],
+                "type": type_dict[int(data['type'])],
+                "position": data['ticket'],
+                "price": price_dict[int(data['type'])],
                 "deviation": deviation,
                 "magic": 234000,
                 "comment": "python script close",

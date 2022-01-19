@@ -1138,13 +1138,13 @@
        }
 
        $(document).on('click','#openOrderBuy', function(){
-        openOrder(1,0).then(data => { //0=order on Buy 1=order on Sell
+        openOrder(1,'buy').then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })
        
        $(document).on('click','#openOrderSale', function(){
-        openOrder(1,1).then(data => { //0=order on Buy 1=order on Sell
+        openOrder(1,'sell').then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })
