@@ -194,9 +194,9 @@
         var testResult = [];
         var tmpDataIn = null;
         $( document ).ready(function () {   
-            //  setInterval(function(){
-            //     searchMarket();
-            //  },3000)
+             setInterval(function(){
+                searchMarket();
+             },3000)
 
             // setInterval(function(){
             //     closeOrder('').then(data => { //closeall
@@ -417,8 +417,8 @@
           
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
 
-           console.log(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)) 
-            console.log(findOrderSellEntryPoint(dataResult, ordersell_entry_specs))
+        //    console.log(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)) 
+        //     console.log(findOrderSellEntryPoint(dataResult, ordersell_entry_specs))
 
             if(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs) ===true || findOrderSellEntryPoint(dataResult, ordersell_entry_specs) === true){
                 let tmp_info = data[data.length-1];

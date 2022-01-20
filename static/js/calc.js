@@ -294,12 +294,30 @@
         return true;
     }
 
+    function sma100PresentBelow(_data,sma100){
+        c = _data.length-1
+        if(sma100[c] > _data[c][2]){
+            return false
+        }   
+
+        return true;
+    }
+
     function sma100ArrowAbove(_data,sma100,nRange){   
         for(var i = _data.length-nRange ; i < _data.length ; i++ ){
             if(sma100[i] < _data[i][3]){
                 return false
             }        
         }
+        return true;
+    }
+
+    function sma100PresentAbove(_data,sma100){   
+        c = _data.length-1
+        if(sma100[c] < _data[c][3]){
+            return false
+        }   
+
         return true;
     }
 

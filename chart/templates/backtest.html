@@ -320,6 +320,7 @@
         var ssma13STD = 0;
         var dataResult = null
         var sma100ArrowLevel = null
+        var sma100PresentLevel = null
         var foundOrderBuyEntryPoint = false;
         var foundOrderSellEntryPoint = false;
         var orderBuyEntryPointflag = false;
@@ -421,6 +422,11 @@
             sma100ArrowLevel = {
                 sma100_arrow_below : sma100ArrowBelow(data,dataMA100,lineLenght),
                 sma100_arrow_above : sma100ArrowAbove(data,dataMA100,lineLenght),
+            }
+
+            sma100PresentLevel = {
+                sma100_present_below : sma100PresentBelow(data,dataMA100),
+                sma100_present_above : sma100PresentAbove(data,dataMA100),
             }
 
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
@@ -714,7 +720,6 @@
                                 }
                                 
                             }
-
                         }
                     }
                 });
@@ -960,6 +965,16 @@
                         parameter: 'sma100_arrow_above',
                         reading: sma100ArrowLevel.sma100_arrow_above ?  'True' : 'False'
                     },
+
+                    {
+                        parameter: 'sma100_present_below',
+                        reading: sma100PresentLevel.sma100_present_below ? 'True' : 'False'
+                    },
+                    {
+                        parameter: 'sma100_present_above',
+                        reading: sma100PresentLevel.sma100_present_above ?  'True' : 'False'
+                    },
+
                     {
                         parameter: 'aligator_order_uptrend',
                         reading: ssma3LineOrder.aligator_order_uptrend ?  'True' : 'False'
