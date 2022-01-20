@@ -445,6 +445,7 @@ def search(request):
     return render(request,'search.html',{
         'apisymbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
         'apitimeframes': serializers.serialize('json', TimeFrame.objects.all()),
+        'searchtype': serializers.serialize('json', SearchType.objects.all()),
     })  
 
 def getsingleohlc(request):  

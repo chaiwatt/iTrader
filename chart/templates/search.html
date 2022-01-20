@@ -135,7 +135,7 @@
         var responseData = [] ;//JSON.parse("{{resData|escapejs}}"); 
         var apisymbols = JSON.parse("{{apisymbols|escapejs}}"); 
         var apitimeframes = JSON.parse("{{apitimeframes|escapejs}}"); 
-        
+        var sma100PresentLevel = null
         var data = []
         var axisData = [];
         var MacdArr = [];
@@ -185,7 +185,7 @@
         var lineLenght = 10;
         var testResult = []
         var symbolCountId = 0;
-        var timeframeCountId = 2;
+        var timeframeCountId = 3;
         var searchResult = [];
         var foundOrderBuyEntryPoint = false;
         var foundOrderSellEntryPoint = false;
@@ -193,6 +193,10 @@
         var orderSellEntryPointflag = false;
         var testResult = [];
         var tmpDataIn = null;
+        var searchType = JSON.parse("{{searchtype|escapejs}}")[0].fields; 
+        var momenttumBar = false;
+        var trendPattern = false;
+
         $( document ).ready(function () {   
              setInterval(function(){
                 searchMarket();
@@ -286,11 +290,11 @@
                 tmpDataIn = null;
                 symbolCountId= 0
                 timeframeCountId++;
-                if(timeframeCountId > 7){
+                if(timeframeCountId > 6){
                     // send summary
                     console.log(searchResult)
                     searchResult = [];
-                    timeframeCountId = 2;
+                    timeframeCountId = 3;
                 }
             }
             
@@ -395,6 +399,14 @@
                 sma100_arrow_above : sma100ArrowAbove(data,dataMA100,lineLenght),
             }
 
+            sma100PresentLevel = {
+                sma100_present_below : sma100PresentBelow(data,dataMA100),
+                sma100_present_above : sma100PresentAbove(data,dataMA100),
+            }
+            
+            momenttumBar = getMomenttumBar(data,sma100PresentLevel,3);
+            trendPattern = getTrendPattern(data,sma100PresentLevel);
+
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
 
@@ -417,29 +429,100 @@
           
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
 
-        //    console.log(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)) 
-        //     console.log(findOrderSellEntryPoint(dataResult, ordersell_entry_specs))
-
-            if(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs) ===true || findOrderSellEntryPoint(dataResult, ordersell_entry_specs) === true){
-                let tmp_info = data[data.length-1];
-                let found_symbol = $('#symbol').text();
-                let found_timeframe = $('#timeframe').text();
-                let found_bar = tmp_info[5];
-                let found_open = tmp_info[0];
-                let found_close = tmp_info[1];
-                let found_low = tmp_info[3];
-                let found_high = tmp_info[4];
-                let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Close:${found_close}`
-                console.log(foundResult);
-                searchResult.push({
-                    'Symbol':found_symbol,
-                    'TF':found_timeframe,
-                    'Bar':found_bar,
-                    'Close':found_close
-                })
-                lineNotification(foundResult).then(data => {
+            if(searchType.trend == 1){
+                let orderbuyentrypoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs);
+                let ordersellentrypoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs);
+                if(orderbuyentrypoint ==true || ordersellentrypoint == true){
+                    let ordertype = '';
+                    if(orderbuyentrypoint){
+                        ordertype = 'Order Buy (Trend)'
+                    }else if(ordersellentrypoint == true){
+                        ordertype = 'Order Sell (Trend)'
+                    }
+                    let tmp_info = data[data.length-1];
+                    let found_symbol = $('#symbol').text();
+                    let found_timeframe = $('#timeframe').text();
+                    let found_bar = tmp_info[5];
+                    let found_open = tmp_info[0];
+                    let found_close = tmp_info[1];
+                    let found_low = tmp_info[3];
+                    let found_high = tmp_info[4];
+                    let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype} `
+                    // console.log(foundResult);
+                    searchResult.push({
+                        'Symbol':found_symbol,
+                        'TF':found_timeframe,
+                        'Bar':found_bar,
+                        'Close':found_close,
+                        'Type':ordertype,
+                    })
+                    lineNotification(foundResult).then(data => {
                         console.log('sent!.')
                     }).catch(error => {})
+                }
+            }
+
+            if(searchType.pattern == 1){
+                if(momenttumBar.foundBar == true){
+                    let ordertype = '';
+                    if(momenttumBar.type == 1){
+                        ordertype = 'Order Sell (Momentum)'
+                    }else if(momenttumBar.type == 2){
+                        ordertype = 'Order Buy (Momentum)'
+                    }
+
+                    let tmp_info = data[data.length-1];
+                    let found_symbol = $('#symbol').text();
+                    let found_timeframe = $('#timeframe').text();
+                    let found_bar = tmp_info[5];
+                    let found_open = tmp_info[0];
+                    let found_close = tmp_info[1];
+                    let found_low = tmp_info[3];
+                    let found_high = tmp_info[4];
+                    let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
+                    console.log(foundResult);
+                    searchResult.push({
+                        'Symbol':found_symbol,
+                        'TF':found_timeframe,
+                        'Bar':found_bar,
+                        'Close':found_close,
+                        'Type':ordertype,
+                    })
+                    lineNotification(foundResult).then(data => {
+                        console.log('sent!.')
+                    }).catch(error => {})
+                }
+
+                if(trendPattern.foundBar == true){
+                    let ordertype = '';
+    
+                    if(trendPattern.type == 1){
+                        ordertype = 'Order Sell (Pattern down trend)'
+                    }else if(trendPattern.type == 2){
+                        ordertype = 'Order Buy (Pattern up trend)'
+                    }
+
+                    let tmp_info = data[data.length-1];
+                    let found_symbol = $('#symbol').text();
+                    let found_timeframe = $('#timeframe').text();
+                    let found_bar = tmp_info[5];
+                    let found_open = tmp_info[0];
+                    let found_close = tmp_info[1];
+                    let found_low = tmp_info[3];
+                    let found_high = tmp_info[4];
+                    let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
+                    console.log(foundResult);
+                    searchResult.push({
+                        'Symbol':found_symbol,
+                        'TF':found_timeframe,
+                        'Bar':found_bar,
+                        'Close':found_close,
+                        'Type':ordertype,
+                    })
+                    lineNotification(foundResult).then(data => {
+                        console.log('sent!.')
+                    }).catch(error => {})
+                }
             }
 
             canndleStickChart.setOption({
@@ -947,6 +1030,14 @@
                     {
                         parameter: 'sma100_arrow_above',
                         reading: sma100ArrowLevel.sma100_arrow_above ?  'True' : 'False'
+                    },
+                    {
+                        parameter: 'sma100_present_below',
+                        reading: sma100PresentLevel.sma100_present_below ? 'True' : 'False'
+                    },
+                    {
+                        parameter: 'sma100_present_above',
+                        reading: sma100PresentLevel.sma100_present_above ?  'True' : 'False'
                     },
                     {
                         parameter: 'aligator_order_uptrend',
