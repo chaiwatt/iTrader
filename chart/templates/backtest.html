@@ -327,6 +327,8 @@
         var testResult = [];
         var tmpDataIn = null;
         var lineLenght = 10;
+        var momenttumBar = false;
+        var trendPattern = false
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -428,16 +430,17 @@
                 sma100_present_above : sma100PresentAbove(data,dataMA100),
             }
 
-            momenttumBar = getMomenttumBar(data)
-           
-            if(momenttumBar.foundBar == true){
+            momenttumBar = getMomenttumBar(data,sma100PresentLevel,3);// getMomenttum2Bar(data,3)
+            trendPattern = getTrendPattern(data,sma100PresentLevel);
+            // console.log(trendPattern)
+            // if(momenttumBar.foundBar == true){
                 
-                if(momenttumBar.order == 'buy'){
-                    console.log('MB Buy')
-                }else{
-                    console.log('MB Sale')
-                }
-            }
+            //     if(momenttumBar.order == 'buy'){
+            //         console.log('MB Buy')
+            //     }else{
+            //         console.log('MB Sale')
+            //     }
+            // }
 
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
@@ -490,7 +493,7 @@
                         console.log('save order sell intry point at data id: ' + data[data.length-1][4])
     
                         tmpDataIn = {
-                            'type': 'Orber sell (Trend)',
+                            'type': 'Order sell (Trend)',
                             'data_id': data[data.length-1][4]
                         };
                         orderSellEntryPointflag =true;
@@ -510,8 +513,49 @@
                 }
             }
 
-            if(searchType.pattern == 1){ // search pattern
-                console.log('pattern search')
+            if(searchType.pattern == 1){ // search pattern   
+                if(momenttumBar.foundBar == true){
+                    if(momenttumBar.type == 1){
+                        testResult.push({
+                            'entry': momenttumBar.id,
+                            'type' : 'Order sell (Momentum)',
+                            'exit': momenttumBar.id
+                        })  
+                        
+                        console.log('found Order sell (Momentum)')
+                    }else if(momenttumBar.type == 2){
+                        testResult.push({
+                            'entry': momenttumBar.id,
+                            'type' : 'Order buy (Momentum)',
+                            'exit': momenttumBar.id
+                        })  
+                        console.log(momenttumBar.id)
+               
+                        console.log('found Order buy (Momentum)')
+                    }
+                }
+
+                if(trendPattern.foundBar == true){
+                    if(trendPattern.type == 1){
+                        testResult.push({
+                            'entry': trendPattern.id,
+                            'type' : 'Order sell (Pattern down trend)',
+                            'exit': trendPattern.id
+                        })  
+                        
+                        console.log('found Order sell (Pattern down trend)')
+                    }else if(trendPattern.type == 2){
+                        testResult.push({
+                            'entry': trendPattern.id,
+                            'type' : 'Order buy (Pattern up trend)',
+                            'exit': trendPattern.id
+                        })  
+                        console.log(trendPattern.id)
+               
+                        console.log('found Order buy (Pattern up trend)')
+                    }
+                }
+
             }   
          
 

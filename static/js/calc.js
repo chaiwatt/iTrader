@@ -321,33 +321,50 @@
         return true;
     }
 
-    function getMomenttumBar(_data){ 
+    function getMomenttumBar(_data,presentLevel,gain){ 
         let present = _data[_data.length-1]
         let previous1 = _data[_data.length-2]
         let previous2 = _data[_data.length-3]
         let previous3 = _data[_data.length-4]  
+
+    //     if(isCorrectWickTail(previous1,80) == false || isCorrectWickTail(previous2,80) == false || isCorrectWickTail(previous3,80) == false){
+    //         return {
+    //             id : present[4],
+    //             foundBar : false,
+    //             type : '',
+    //         }
+    //    }
 
         let diffHiLow_present = present[3] - present[2];
         let diffHiLow_previous1 = previous1[3]- previous1[2];
         let diffHiLow_previous2 = previous2[3] - previous2[2];
         let diffHiLow_previous3 = previous3[3] - previous3[2];
 
-        if(diffHiLow_present > 2.5*(diffHiLow_previous1) && diffHiLow_present > 2.5*(diffHiLow_previous2) && diffHiLow_present > 2.5*(diffHiLow_previous3)){
-            if(present[2] < previous1[2] && present[2] < previous2[2]  && present[2] < previous3[2] ){
+        if(diffHiLow_present > gain*(diffHiLow_previous1) && diffHiLow_present > gain*(diffHiLow_previous2) && diffHiLow_present > gain*(diffHiLow_previous3)){
+            if(present[2] < previous1[2] && present[2] < previous2[2]  && present[2] < previous3[2] && presentLevel.sma100_present_above == true){
                 return {
+                    id : present[4],
                     foundBar : true,
-                    order : 'sell',
+                    type : 1,
                 }
-            } else{
+            } else if(present[2] > previous1[2] && present[2] > previous2[2]  && present[2] > previous3[2] && presentLevel.sma100_present_below == true){
                 return {
+                    id : present[4],
                     foundBar : true,
-                    order : 'buy',
+                    type : 2,
+                }
+            }else{
+                return {
+                    id : present[4],
+                    foundBar : false,
+                    type : '',
                 }
             }
         }
         return {
+            id : present[4],
             foundBar : false,
-            order : 'sell',
+            type : '',
         }
         // c = _data.length-1
         // if(sma100[c] < _data[c][3]){
@@ -355,6 +372,134 @@
         // }   
 
         // return true;
+    }
+
+    function getTrendPattern(_data,presentLevel){
+        let present = _data[_data.length-1]
+        let previous1 = _data[_data.length-2]
+        let previous2 = _data[_data.length-3]
+        let previous3 = _data[_data.length-4]  
+
+        if(isCorrectWickTail(previous1,30) == false || isCorrectWickTail(previous2,30) == false || isCorrectWickTail(previous3,30) == false){
+            return {
+                id : present[4],
+                foundBar : false,
+                type : '',
+            }
+       }
+
+        if(presentLevel.sma100_present_below == true){ //check up trend
+            if(previous1[0] > previous2[0] && previous2[0] > previous3[0] && previous1[2] > previous2[2] && previous2[2] > previous3[2] ){
+                console.log('pattern up trend')
+                return {
+                    id : present[4],
+                    foundBar : true,
+                    type : 2,
+                }
+            }else{
+                return {
+                    id : present[4],
+                    foundBar : false,
+                    type : '',
+                }
+            }
+        }else if(presentLevel.sma100_present_above == true){ //check down trend
+            if(previous1[0] < previous2[0] && previous2[0] < previous3[0] && previous1[2] < previous2[2] && previous2[2] < previous3[2] ){
+                console.log('pattern down trend')
+                return {
+                    id : present[4],
+                    foundBar : true,
+                    type : 1,
+                }
+            }else{
+                return {
+                    id : present[4],
+                    foundBar : false,
+                    type : '',
+                }
+            }
+        }else{
+            return {
+                id : present[4],
+                foundBar : false,
+                type : '',
+            }
+        }
+
+    }
+
+    // function getMomenttum2Bar(_data,gain){ 
+    //     let present = _data[_data.length-1]
+    //     let previous1 = _data[_data.length-2]
+    //     let previous2 = _data[_data.length-3]
+
+    //    if(isCorrectWickTail(previous1,80) == false || isCorrectWickTail(previous2,80) == false ){
+    //         return {
+    //             id : _data.length-1,
+    //             foundBar : false,
+    //             type : '',
+    //         }
+    //    }
+
+    //     let diffHiLow_present = present[3] - present[2];
+    //     let diffHiLow_previous1 = previous1[3]- previous1[2];
+    //     let diffHiLow_previous2 = previous2[3] - previous2[2];
+
+    //     if(diffHiLow_present > gain*(diffHiLow_previous1) && diffHiLow_present > gain*(diffHiLow_previous2) ){
+    //         if(present[2] < previous1[2] && present[2] < previous2[2] ){
+    //             return {
+    //                 id : present[4],
+    //                 foundBar : true,
+    //                 type : 1,
+    //             }
+    //         } else{
+    //             return {
+    //                 id : present[4],
+    //                 foundBar : true,
+    //                 type : 2,
+    //             }
+    //         }
+    //     }
+    //     return {
+    //         id : _data.length-1,
+    //         foundBar : false,
+    //         type : '',
+    //     }
+    //     // c = _data.length-1
+    //     // if(sma100[c] < _data[c][3]){
+    //     //     return false
+    //     // }   
+
+    //     // return true;
+    // }
+
+    function isCorrectWickTail(data,percent){
+        presentarr = data.filter((ohlc,idx) => idx < 4)
+        let sorted = sortArr(presentarr);
+        let body = sorted[2]-sorted[1]
+        let wick = sorted[3]-sorted[2]
+        let tail = sorted[1]-sorted[0]
+
+        // console.log(data)
+        
+        
+        let diffbodywick = 100-((body - wick)*100/body)
+        let diffbodytail = 100-((body - tail)*100/body)
+
+        // console.log(diffbodywick + ' yyy ' + diffbodytail)
+
+        if (diffbodywick <= percent && diffbodytail <= percent) {
+            
+            return true;
+        }
+        return false;
+    }
+
+    function sortArr(numArray){
+        numArray.sort(function(a, b) {
+        return a - b;
+        });
+        return numArray;
     }
 
     function getSsma3LineOrder(ssma5,ssma8,ssma13){
