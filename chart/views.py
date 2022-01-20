@@ -84,7 +84,7 @@ def index(request):
         'resData': data,
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
-        'searchreports':SearchReport.objects.all(),
+        'searchreports':SearchReport.objects.all().order_by("-id"),
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
@@ -704,6 +704,22 @@ def updatesearchreport(request):
     new = SearchReport(symbol = request.POST.get('symbol'),timeframe= request.POST.get('timeframe'),order_type= request.POST.get('message'))
     new.save()
     
+    data = {
+        'entryspecs': '',
+    }
+    
+    return JsonResponse(data)
+
+def symboldata(request):
+    report = SearchReport.objects.filter(id = request.POST.get('id') ).first()
+    symbol = Symbol.objects.filter(name = report.symbol).first()
+    timeframe = TimeFrame.objects.filter(name = report.timeframe).first()
+
+    currentview = CurrentView.objects.first()
+    currentview.symbol_id = symbol.id
+    currentview.timeframe_id = timeframe.id
+    currentview.save()
+
     data = {
         'entryspecs': '',
     }
