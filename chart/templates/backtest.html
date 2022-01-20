@@ -481,7 +481,7 @@
                             'exit': data[data.length-1][4]
                         })
                         tmpDataIn = null;
-                        console.log('save order buy exit point at data id: ' + data[data.length-1][4] )
+                        console.log('save order buy exit point ' )
                 } 
                 }
 
@@ -490,7 +490,7 @@
                 }else{
                 
                 if(orderSellEntryPointflag == false){
-                        console.log('save order sell intry point at data id: ' + data[data.length-1][4])
+                        console.log('save order sell intry')
     
                         tmpDataIn = {
                             'type': 'Order sell (Trend)',
@@ -508,7 +508,7 @@
                             'exit': data[data.length-1][4]
                         })
                         tmpDataIn = null;
-                        console.log('save order sell exit point at data id: ' + data[data.length-1][4] )
+                        console.log('save order sell exit point '  )
                 } 
                 }
             }
@@ -529,7 +529,7 @@
                             'type' : 'Order buy (Momentum)',
                             'exit': momenttumBar.id
                         })  
-                        console.log(momenttumBar.id)
+                        console.log(testResult)
                
                         console.log('found Order buy (Momentum)')
                     }
