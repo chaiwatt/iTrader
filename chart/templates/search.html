@@ -42,7 +42,7 @@
               
                 <div class="card">
                     <div class="card-header">
-                      <h3 class="card-title">Entry Point Test Spec <span id="symbolname"></span></h3>
+                      <h3 class="card-title">Order Buy Test Spec <span id="symbolname"></span></h3>
                     </div>
                     <div class="card-body p-0">
                       <table class="table table-sm">
@@ -53,17 +53,57 @@
                             <th>Value</th>
                           </tr>
                         </thead>
-                        <tbody  id="entry_point_spec_table">   
+                        <tbody  id="orderbuy_spec_table">   
     
                         </tbody>
                       </table>
                     </div>
                 </div>
-     
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Order Sell Test Spec </h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody  id="ordersell_spec_table">   
+    
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Exit Point Test Spec</h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody id="exit_point_spec_table">   
+
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
 
 
                   <!-- <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button> -->
-                  <!-- <button type="button" id="getSingleOhlc" class="btn btn-info">Get OHLC</button> -->
+                  <button type="button" id="btnGetSingleOhlc" class="btn btn-info">Get OHLC</button>
                   <button type="button" id="openOrderBuy" class="btn btn-info">Open Order Buy</button>
                   <button type="button" id="openOrderSale" class="btn btn-info">Open Order Sale</button>
                   <br>
@@ -85,7 +125,13 @@
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
         
 
-        var entryspecs = [];// JSON.parse('{{ entryspecs|escapejs }}');
+        // var entryspecs = [];// JSON.parse('{{ entryspecs|escapejs }}');
+        var orderbuy_entry_specs = [];// JSON.parse('{{ entryspecs|escapejs }}');
+        var ordersale_entry_specs = [];
+
+        var orderbuy_close_specs = [];//JSON.parse('{{ exitspecs|escapejs }}');
+        var ordersell_close_specs = [];
+
         var responseData = [] ;//JSON.parse("{{resData|escapejs}}"); 
         var apisymbols = JSON.parse("{{apisymbols|escapejs}}"); 
         var apitimeframes = JSON.parse("{{apitimeframes|escapejs}}"); 
@@ -141,46 +187,103 @@
         var symbolCountId = 0;
         var timeframeCountId = 2;
         var searchResult = [];
-        
+        var foundOrderBuyEntryPoint = false;
+        var foundOrderSellEntryPoint = false;
+        var orderBuyEntryPointflag = false;
+        var orderSellEntryPointflag = false;
+        var testResult = [];
+        var tmpDataIn = null;
         $( document ).ready(function () {   
-             setInterval(function(){
-                searchMarket();
-             },3000)
+            //  setInterval(function(){
+            //     searchMarket();
+            //  },3000)
 
-            setInterval(function(){
-                closeOrder('').then(data => { //closeall
+            // setInterval(function(){
+            //     closeOrder('').then(data => { //closeall
 
-                }).catch(error => {})
-             },2000)
+            //     }).catch(error => {})
+            //  },2000)
         });
 
-        // $(document).on('click','#getSingleOhlc', function(){
-        //     searchMarket();
+        $(document).on('click','#btnGetSingleOhlc', function(){
+            
+            searchMarket();
 
-        // })
+        })
 
         function searchMarket(){
             let symbol = parseInt(apisymbols[symbolCountId].pk);
             let timeframe = timeframeCountId;
             let html_entrypoint_testspecs = ``
+            let html_openbuy_testspecs = ``
+            let html_opensell_testspecs = ``
             getSingleOhlc(symbol,timeframe).then(data_item => {
-                let entry_specs = JSON.parse(data_item.entryspecs);
-                entryspecs = entry_specs;
-                entry_specs.forEach(spec_item => {
-                    html_entrypoint_testspecs += `<tr>
+                // let entry_specs = JSON.parse(data_item.entryspecs);
+
+                let _orderbuy_entry_specs = JSON.parse(data_item.entryspecs).filter(x => x.fields.order_type == 0);
+                let _ordersell_entry_specs = JSON.parse(data_item.entryspecs).filter(x => x.fields.order_type == 1);
+
+                let _orderbuy_close_specs = JSON.parse(data_item.exitspecs).filter(x => x.fields.order_type == 0);
+                let _ordersell_close_specs = JSON.parse(data_item.exitspecs).filter(x => x.fields.order_type == 1);
+
+                // console.log(_orderbuy_entry_specs)
+
+                orderbuy_close_specs = _orderbuy_close_specs;
+                ordersell_close_specs = _ordersell_close_specs;
+
+                orderbuy_entry_specs = _orderbuy_entry_specs;
+                ordersell_entry_specs = _ordersell_entry_specs;
+                // console.log(_ordersell_close_specs)
+
+                if(JSON.parse(data_item.entryspecs).length == 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: `Not found Test spec for ${$(this).find(':selected').data('name')}`,
+                    })
+                }
+
+                
+                // _rawData =  createRawData(data_item.ohlcs);
+                // console.log(_orderbuy_entry_specs)
+                _orderbuy_entry_specs.forEach(spec_item => {
+                    html_openbuy_testspecs += `<tr>
                         <td>${ spec_item.fields.name}</td>
-                        <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
-                        <td id="td_reading_${spec_item.fields.parameter}"></td>
+                        <td id="td_orderbuy_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                        <td id="td_orderbuy_reading_${spec_item.fields.parameter}"></td>
                         </tr>`;
                 });
-                $('#entry_point_spec_table').html(html_entrypoint_testspecs);
+               
+                _ordersell_entry_specs.forEach(spec_item => {
+                    html_opensell_testspecs += `<tr>
+                        <td>${ spec_item.fields.name}</td>
+                        <td id="td_ordersell_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                        <td id="td_ordersell_reading_${spec_item.fields.parameter}"></td>
+                        </tr>`;
+                });
 
+                // entryspecs = _orderbuy_entry_specs;
+                // _orderbuy_entry_specs.forEach(spec_item => {
+                //     html_entrypoint_testspecs += `<tr>
+                //         <td>${ spec_item.fields.name}</td>
+                //         <td id="td_spec_${spec_item.fields.parameter}">${spec_item.fields.entry_value}</td>
+                //         <td id="td_reading_${spec_item.fields.parameter}"></td>
+                //         </tr>`;
+                // });
+                // $('#entry_point_spec_table').html(html_entrypoint_testspecs);
+                $('#orderbuy_spec_table').html(html_openbuy_testspecs);
+                $('#ordersell_spec_table').html(html_opensell_testspecs);
                 createData(data_item);
             }).catch(error => {})
 
          
             symbolCountId++;            
             if(symbolCountId == apisymbols.length) {
+                MarkData = [];
+                orderBuyEntryPointflag = false;
+                orderSellEntryPointflag = false;
+                testResult = [];
+                tmpDataIn = null;
                 symbolCountId= 0
                 timeframeCountId++;
                 if(timeframeCountId > 7){
@@ -308,9 +411,16 @@
 
             dataResult = createResult()
    
-            setDom(dataResult, entryspecs,1)
+            // setDom(dataResult, entryspecs,1)
 
-            if(findEntryPoint(dataResult, entryspecs) === true){
+           
+          
+            setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
+
+           console.log(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)) 
+            console.log(findOrderSellEntryPoint(dataResult, ordersell_entry_specs))
+
+            if(findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs) ===true || findOrderSellEntryPoint(dataResult, ordersell_entry_specs) === true){
                 let tmp_info = data[data.length-1];
                 let found_symbol = $('#symbol').text();
                 let found_timeframe = $('#timeframe').text();
@@ -552,14 +662,82 @@
                 return result;
             }
 
+
             
-            function setDom(_reading,_rawSpec,_type){
-                // console.log(_rawSpec)
-                _rawSpec.forEach(spec => {
-                    // console.log(spec.fields.parameter)
+            function findOrderBuyEntryPoint(_reading,_orderbuy_rawSpec,_ordersell_rawSpec){
+                let result = true;
+                _orderbuy_rawSpec.forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
                     if(typeof reading !== 'undefined'){
-                        const dom = document.querySelector(`#td_reading_${spec.fields.parameter}`);
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.entry_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.entry_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+                                if(reading.reading > spec.fields.entry_value){
+                                    result = false ;
+                                    return
+                                }
+                            }
+                        }
+                    }
+                });
+                return result;
+            }
+
+            function findOrderSellEntryPoint(_reading,_ordersell_rawSpec){
+                let result = true;
+                _ordersell_rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.entry_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.entry_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+                                if(spec.fields.entry_value < 0){
+                                    if(reading.reading*-1 < spec.fields.entry_value*-1){
+                                        result = false ;
+                                        return
+                                    }
+                                }else{
+                                    if(reading.reading > spec.fields.entry_value){
+                                        result = false ;
+                                        return
+                                    }
+                                }
+                                
+                            }
+
+                        }
+                    }
+                });
+                
+                return result;
+            }
+
+
+            function setDom(_reading,_orderbuy_rawSpec,_ordersell_rawSpec,_type){
+             
+                _orderbuy_rawSpec.filter(x => x.fields.order_type == 0).forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    
+                    if(typeof reading !== 'undefined'){
+                        const dom = document.querySelector(`#td_orderbuy_reading_${spec.fields.parameter}`);
                         if(_type == 1){ // entry point
                             if(isNaN(reading.reading) === true){
                                 if(reading.reading === spec.fields.entry_value){
@@ -567,7 +745,6 @@
                                 }else{
                                     dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
                                 }
-                                
                             }else{ 
                                 if(spec.fields.compare_reverse == 1){
                                     if(reading.reading > spec.fields.entry_value){
@@ -583,14 +760,93 @@
                                     }
                                 }
                             }
-
                         }
+                    }
+                });
+
+                _ordersell_rawSpec.filter(x => x.fields.order_type == 1).forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        const dom = document.querySelector(`#td_ordersell_reading_${spec.fields.parameter}`);
+                        if(_type == 1){ // entry point
+                            if(isNaN(reading.reading) === true){
+                                if(reading.reading === spec.fields.entry_value){
+                                    dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+                                }else{
+                                    dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+                                }
+                            }
+                            else{ 
+                                if(spec.fields.compare_reverse == 1){
+                                    
+                                    if(reading.reading > spec.fields.entry_value){
+                                        dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    }else{
+                                        dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    }
+                                }else{
+                                    if(spec.fields.entry_value < 0){
+                                        if(reading.reading*-1 > spec.fields.entry_value*-1){
+                                            dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }else{
+                                            dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }
+                                    }else{
+                                        if(reading.reading < spec.fields.entry_value){
+                                            dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }else{
+                                            dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                });
+
+            }
+            
+
+            
+            // function setDom(_reading,_rawSpec,_type){
+            //     // console.log(_rawSpec)
+            //     _rawSpec.forEach(spec => {
+            //         // console.log(spec.fields.parameter)
+            //         let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+            //         if(typeof reading !== 'undefined'){
+            //             const dom = document.querySelector(`#td_reading_${spec.fields.parameter}`);
+            //             if(_type == 1){ // entry point
+            //                 if(isNaN(reading.reading) === true){
+            //                     if(reading.reading === spec.fields.entry_value){
+            //                         dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+            //                     }else{
+            //                         dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+            //                     }
+                                
+            //                 }else{ 
+            //                     if(spec.fields.compare_reverse == 1){
+            //                         if(reading.reading > spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }else{
+            //                         if(reading.reading < spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }
+            //                 }
+
+            //             }
 
   
 
-                    }
-                });
-            }
+            //         }
+            //     });
+            // }
             
 
 

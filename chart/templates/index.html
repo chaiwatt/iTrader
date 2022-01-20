@@ -136,7 +136,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                      <h3 class="card-title">Entry Point Test Spec <span id="symbolname"></span></h3>
+                      <h3 class="card-title">Order Buy Test Spec<span id="symbolname"></span></h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body p-0">
@@ -150,11 +150,42 @@
                         </thead>
                         <tbody>
                     
-                            {% for spec in entryspecobjectss %}
+                            {% for spec in orderbuyentryspecobjects %}
                                 <tr>
                                     <td>{{spec.name}}</td>
-                                    <td id="td_spec_{{spec.parameter}}">{{spec.entry_value}}</td>
-                                    <td id="td_reading_{{spec.parameter}}"></td>
+                                    <td id="td_orderbuy_spec_{{spec.parameter}}">{{spec.entry_value}}</td>
+                                    <td id="td_orderbuy_reading_{{spec.parameter}}"></td>
+                                </tr>
+                            {% endfor %}
+        
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+
+
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Order Sell Test Spec<span id="symbolname"></span></h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                    
+                            {% for spec in ordersellentryspecobjects %}
+                                <tr>
+                                    <td>{{spec.name}}</td>
+                                    <td id="td_ordersell_spec_{{spec.parameter}}">{{spec.entry_value}}</td>
+                                    <td id="td_ordersell_reading_{{spec.parameter}}"></td>
                                 </tr>
                             {% endfor %}
         
@@ -349,7 +380,8 @@
 
             dataResult = createResult()
    
-            setDom(dataResult, entryspecs,1)
+            // setDom(dataResult, entryspecs,1)
+            setDom(dataResult, entryspecs.filter(x => x.fields.order_type == 0),entryspecs.filter(x => x.fields.order_type == 1),1)
          
            
             // if(foundEntryPoint === false){     
@@ -524,13 +556,51 @@
 
  
             
-            function setDom(_reading,_rawSpec,_type){
-                // console.log(_rawSpec)
-                _rawSpec.forEach(spec => {
-                    // console.log(spec.fields.parameter)
+            // function setDom(_reading,_rawSpec,_type){
+            //     // console.log(_rawSpec)
+            //     _rawSpec.forEach(spec => {
+            //         // console.log(spec.fields.parameter)
+            //         let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+            //         if(typeof reading !== 'undefined'){
+            //             const dom = document.querySelector(`#td_reading_${spec.fields.parameter}`);
+            //             if(_type == 1){ // entry point
+            //                 if(isNaN(reading.reading) === true){
+            //                     if(reading.reading === spec.fields.entry_value){
+            //                         dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+            //                     }else{
+            //                         dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+            //                     }
+                                
+            //                 }else{ 
+            //                     if(spec.fields.compare_reverse == 1){
+            //                         if(reading.reading > spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }else{
+            //                         if(reading.reading < spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }
+            //                 }
+
+            //             }
+
+  
+
+            //         }
+            //     });
+            // }
+
+            function setDom(_reading,_orderbuy_rawSpec,_ordersell_rawSpec,_type){
+                _orderbuy_rawSpec.filter(x => x.fields.order_type == 0).forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    
                     if(typeof reading !== 'undefined'){
-                        const dom = document.querySelector(`#td_reading_${spec.fields.parameter}`);
+                        const dom = document.querySelector(`#td_orderbuy_reading_${spec.fields.parameter}`);
                         if(_type == 1){ // entry point
                             if(isNaN(reading.reading) === true){
                                 if(reading.reading === spec.fields.entry_value){
@@ -538,7 +608,6 @@
                                 }else{
                                     dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
                                 }
-                                
                             }else{ 
                                 if(spec.fields.compare_reverse == 1){
                                     if(reading.reading > spec.fields.entry_value){
@@ -554,15 +623,54 @@
                                     }
                                 }
                             }
-
                         }
-
-  
-
                     }
                 });
+
+                _ordersell_rawSpec.filter(x => x.fields.order_type == 1).forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        const dom = document.querySelector(`#td_ordersell_reading_${spec.fields.parameter}`);
+                        if(_type == 1){ // entry point
+                            if(isNaN(reading.reading) === true){
+                                if(reading.reading === spec.fields.entry_value){
+                                    dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+                                }else{
+                                    dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+                                }
+                            }
+                            else{ 
+                                if(spec.fields.compare_reverse == 1){
+                                    
+                                    if(reading.reading > spec.fields.entry_value){
+                                        dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    }else{
+                                        dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                    }
+                                }else{
+                                    if(spec.fields.entry_value < 0){
+                                        if(reading.reading*-1 > spec.fields.entry_value*-1){
+                                            dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }else{
+                                            dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }
+                                    }else{
+                                        if(reading.reading < spec.fields.entry_value){
+                                            dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }else{
+                                            dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                });
+
             }
             
+
 
 
             function createResult(){

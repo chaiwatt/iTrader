@@ -155,7 +155,25 @@
                     </div>
                 </div>
 
-
+                <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Order Buy Test Spec <span id="symbolname"></span></h3>
+                    </div>
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Spec</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody  id="orderbuy_spec_table">   
+    
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
 
                 <div class="card">
                     <div class="card-header">
@@ -171,26 +189,6 @@
                           </tr>
                         </thead>
                         <tbody  id="ordersell_spec_table">   
-    
-                        </tbody>
-                      </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Order Buy Test Spec <span id="symbolname"></span></h3>
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table table-sm">
-                        <thead>
-                          <tr>
-                            <th>Parameter</th>
-                            <th>Spec</th>
-                            <th>Value</th>
-                          </tr>
-                        </thead>
-                        <tbody  id="orderbuy_spec_table">   
     
                         </tbody>
                       </table>
@@ -450,7 +448,7 @@
                     console.log('save order buy intry point at data id: ' + data[data.length-1][4])
  
                     tmpDataIn = {
-                        'type': 'Orber buy',
+                        'type': 'Orber buy (Trend)',
                         'data_id': data[data.length-1][4]
                     };
                     orderBuyEntryPointflag =true;
@@ -478,7 +476,7 @@
                     console.log('save order sell intry point at data id: ' + data[data.length-1][4])
  
                     tmpDataIn = {
-                        'type': 'Orber sell',
+                        'type': 'Orber sell (Trend)',
                         'data_id': data[data.length-1][4]
                     };
                     orderSellEntryPointflag =true;

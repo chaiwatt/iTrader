@@ -85,7 +85,8 @@ def index(request):
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
         'exitspecobjects' : Spec.objects.filter(spec_type = 2,status = 1,symbol_id = currentview.symbol_id),   
-        'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id), 
+        'orderbuyentryspecobjects' : Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id,order_type = 0), 
+        'ordersellentryspecobjects' : Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id,order_type = 1), 
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id)), 
         'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1,symbol_id = currentview.symbol_id)), 
     })
@@ -477,6 +478,8 @@ def getsingleohlc(request):
         'series':ohlcs, 
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
+
+
     }
     
     return JsonResponse(data)
