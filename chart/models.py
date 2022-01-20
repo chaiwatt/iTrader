@@ -100,3 +100,9 @@ class Spec(models.Model):
     class Meta:
         db_table = "specs"
 
+        
+class SearchType(models.Model):
+    trend=models.CharField(max_length=1, default=1)
+    pattern=models.CharField(max_length=1, default = 0)
+    class Meta:
+        db_table = "search_types"

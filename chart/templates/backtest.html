@@ -269,11 +269,10 @@
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
         var canndleStickChartZoom = echarts.init(document.getElementById('canndle_stick_chart_zoom')); 
-        
+        var searchType = JSON.parse("{{searchtype|escapejs}}")[0].fields; 
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
         var orderbuy_entry_specs = [];// JSON.parse('{{ entryspecs|escapejs }}');
         var ordersale_entry_specs = [];
-
 
         var orderbuy_close_specs = [];//JSON.parse('{{ exitspecs|escapejs }}');
         var ordersell_close_specs = [];
@@ -444,63 +443,67 @@
             // console.log(dataResult);
             
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
-            
-            if(foundOrderBuyEntryPoint === false){  
-                foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+
+            if(searchType.trend == 1){ // search trend
                 
-            }else{
-               
-               if(orderBuyEntryPointflag == false){
-                    console.log('save order buy intry point at data id: ' + data[data.length-1][4])
- 
-                    tmpDataIn = {
-                        'type': 'Orber buy (Trend)',
-                        'data_id': data[data.length-1][4]
-                    };
-                    orderBuyEntryPointflag =true;
-               }
-            
-               if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
-                    foundOrderBuyEntryPoint = false
-                    orderBuyEntryPointflag =false;
-                    testResult.push({
-                        'entry': tmpDataIn.data_id,
-                        'type' : tmpDataIn.type,
-                        'exit': data[data.length-1][4]
-                    })
-                    tmpDataIn = null;
-                    console.log('save order buy exit point at data id: ' + data[data.length-1][4] )
-               } 
+                if(foundOrderBuyEntryPoint === false){  
+                    foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+                }else{
+                
+                if(orderBuyEntryPointflag == false){
+                        console.log('save order buy intry point at data id: ' + data[data.length-1][4])
+                        tmpDataIn = {
+                            'type': 'Orber buy (Trend)',
+                            'data_id': data[data.length-1][4]
+                        };
+                        orderBuyEntryPointflag =true;
+                }
+                
+                if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
+                        foundOrderBuyEntryPoint = false
+                        orderBuyEntryPointflag =false;
+                        testResult.push({
+                            'entry': tmpDataIn.data_id,
+                            'type' : tmpDataIn.type,
+                            'exit': data[data.length-1][4]
+                        })
+                        tmpDataIn = null;
+                        console.log('save order buy exit point at data id: ' + data[data.length-1][4] )
+                } 
+                }
+
+                if(foundOrderSellEntryPoint === false){  
+                    foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
+                }else{
+                
+                if(orderSellEntryPointflag == false){
+                        console.log('save order sell intry point at data id: ' + data[data.length-1][4])
+    
+                        tmpDataIn = {
+                            'type': 'Orber sell (Trend)',
+                            'data_id': data[data.length-1][4]
+                        };
+                        orderSellEntryPointflag =true;
+                }
+                
+                if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
+                        foundOrderSellEntryPoint = false
+                        orderSellEntryPointflag =false;
+                        testResult.push({
+                            'entry': tmpDataIn.data_id,
+                            'type' : tmpDataIn.type,
+                            'exit': data[data.length-1][4]
+                        })
+                        tmpDataIn = null;
+                        console.log('save order sell exit point at data id: ' + data[data.length-1][4] )
+                } 
+                }
             }
 
-
-            if(foundOrderSellEntryPoint === false){  
-                foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
-            }else{
-               
-               if(orderSellEntryPointflag == false){
-                    console.log('save order sell intry point at data id: ' + data[data.length-1][4])
- 
-                    tmpDataIn = {
-                        'type': 'Orber sell (Trend)',
-                        'data_id': data[data.length-1][4]
-                    };
-                    orderSellEntryPointflag =true;
-               }
-            
-               if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
-                    foundOrderSellEntryPoint = false
-                    orderSellEntryPointflag =false;
-                    testResult.push({
-                        'entry': tmpDataIn.data_id,
-                        'type' : tmpDataIn.type,
-                        'exit': data[data.length-1][4]
-                    })
-                    tmpDataIn = null;
-                    console.log('save order sell exit point at data id: ' + data[data.length-1][4] )
-               } 
-            }
-
+            if(searchType.pattern == 1){ // search pattern
+                console.log('pattern search')
+            }   
+         
 
 
             canndleStickChart.setOption({
