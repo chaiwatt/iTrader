@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0"><span id="symbol"></span>(<span id="broker">{{ broker.name }}</span>) <span id="timeframe"></span></h1>
+              <h1 class="m-0"><span id="symbol"></span>(<span id="broker">{{ broker.name }}</span>) </h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -25,6 +25,55 @@
             
           <div class="row">
             <div class="col-lg-9">
+                <div class="row">
+
+                <!-- /.col -->
+                <div class="col-md-4 col-sm-6 col-12">
+                    <div class="info-box bg-primary">
+                        <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+        
+                        <div class="info-box-content">
+                        <span class="info-box-text"  style="font-size: 20px;">TF</span>
+                        <span class="info-box-number" id="timeframe" style="font-size: 26px;"></span>
+        
+                        
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-4 col-sm-6 col-12">
+                      <div class="info-box bg-success">
+                        <span class="info-box-icon"><i class="far fa-star"></i></span>
+          
+                        <div class="info-box-content">
+                          <span class="info-box-text"  style="font-size: 20px;">ASK</span>
+                          <span class="info-box-number" id="ask" style="font-size: 26px;"></span>
+          
+                       
+                        </div>
+                        <!-- /.info-box-content -->
+                      </div>
+                      <!-- /.info-box -->
+                    </div>
+         
+                    <div class="col-md-4 col-sm-6 col-12">
+                      <div class="info-box bg-info">
+                        <span class="info-box-icon"><i class="fas fa-hand-holding-usd"></i></span>
+          
+                        <div class="info-box-content">
+                          <span class="info-box-text" style="font-size: 20px;" >BID</span>
+                          <span class="info-box-number" id="bid" style="font-size: 26px;"></span>
+          
+               
+                        </div>
+                        <!-- /.info-box-content -->
+                      </div>
+                      <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                  </div>
               <div class="card">
                 <div class="card-body">
       
@@ -78,44 +127,14 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
-                    
-                                    <div class="info-box-content">
-                                    <span class="info-box-text">ASK</span>
-                                    <span class="info-box-number" id="ask"></span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-danger"><i class="far fa-star"></i></span>
-                    
-                                    <div class="info-box-content">
-                                    <span class="info-box-text">BID</span>
-                                    <span class="info-box-number" id="bid"></span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </div>
-                        </div>
-                       
-                    </div>
 
-      
-                </div>
      
         
-                <div class="card">
+                <!-- <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Orders</h3>
                     </div>
-                    <!-- /.card-header -->
+                
                     <div class="card-body p-0">
                         <table class="table table-striped">
                             <thead>
@@ -131,8 +150,8 @@
                             </tbody>
                           </table>
                     </div>
-                    <!-- /.card-body -->
-                </div>
+                   
+                </div> -->
 
                 <div class="card">
                     <div class="card-header">
@@ -195,7 +214,7 @@
                     <!-- /.card-body -->
                   </div>
 
-                  <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button>
+                  <!-- <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button> -->
         
             </div>
             <!-- /.col-md-6 -->
@@ -1197,11 +1216,11 @@
             canndleStickChartZoom.resize();
         }
 
-        $(document).on('click','#sendLineNotify', function(){
-            lineNotification('ทดสอบการส่งไลน์').then(data => {
-                alert('done');
-            }).catch(error => {})
-        })
+        // $(document).on('click','#sendLineNotify', function(){
+        //     lineNotification('ทดสอบการส่งไลน์').then(data => {
+        //         alert('done');
+        //     }).catch(error => {})
+        // })
 
         function lineNotification(message){   
            return new Promise((resolve, reject) => {
