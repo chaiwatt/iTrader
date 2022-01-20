@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -84,6 +84,7 @@ def index(request):
         'resData': data,
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
+        'searchreports':SearchReport.objects.all(),
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
@@ -700,6 +701,9 @@ def closeorder(request):
     return JsonResponse(data)
 
 def updatesearchreport(request):
+    new = SearchReport(symbol = request.POST.get('symbol'),timeframe= request.POST.get('timeframe'),order_type= request.POST.get('message'))
+    new.save()
+    
     data = {
         'entryspecs': '',
     }

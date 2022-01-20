@@ -108,8 +108,8 @@ class SearchType(models.Model):
         db_table = "search_types"
 
 class SearchReport(models.Model):
-    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
-    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
     order_type=models.CharField(max_length=100, default=None)
+    symbol=models.CharField(max_length=10, default=None)
+    timeframe=models.CharField(max_length=10, default=None)
     class Meta:
         db_table = "search_reports"       
