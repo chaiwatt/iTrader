@@ -321,6 +321,42 @@
         return true;
     }
 
+    function getMomenttumBar(_data){ 
+        let present = _data[_data.length-1]
+        let previous1 = _data[_data.length-2]
+        let previous2 = _data[_data.length-3]
+        let previous3 = _data[_data.length-4]  
+
+        let diffHiLow_present = present[3] - present[2];
+        let diffHiLow_previous1 = previous1[3]- previous1[2];
+        let diffHiLow_previous2 = previous2[3] - previous2[2];
+        let diffHiLow_previous3 = previous3[3] - previous3[2];
+
+        if(diffHiLow_present > 2.5*(diffHiLow_previous1) && diffHiLow_present > 2.5*(diffHiLow_previous2) && diffHiLow_present > 2.5*(diffHiLow_previous3)){
+            if(present[2] < previous1[2] && present[2] < previous2[2]  && present[2] < previous3[2] ){
+                return {
+                    foundBar : true,
+                    order : 'sell',
+                }
+            } else{
+                return {
+                    foundBar : true,
+                    order : 'buy',
+                }
+            }
+        }
+        return {
+            foundBar : false,
+            order : 'sell',
+        }
+        // c = _data.length-1
+        // if(sma100[c] < _data[c][3]){
+        //     return false
+        // }   
+
+        // return true;
+    }
+
     function getSsma3LineOrder(ssma5,ssma8,ssma13){
         // isSsmaSequencing = isSssmaSequence(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
         let isUpTrend = false;

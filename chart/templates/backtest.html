@@ -428,6 +428,17 @@
                 sma100_present_above : sma100PresentAbove(data,dataMA100),
             }
 
+            momenttumBar = getMomenttumBar(data)
+           
+            if(momenttumBar.foundBar == true){
+                
+                if(momenttumBar.order == 'buy'){
+                    console.log('MB Buy')
+                }else{
+                    console.log('MB Sale')
+                }
+            }
+
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
 
@@ -444,8 +455,7 @@
             
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
 
-            if(searchType.trend == 1){ // search trend
-                
+            if(searchType.trend == 1){ // search trend  
                 if(foundOrderBuyEntryPoint === false){  
                     foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
                 }else{
