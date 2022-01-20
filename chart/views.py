@@ -43,7 +43,7 @@ def index(request):
     symbol = _symbol.name
     
     symbol_info=mt5.symbol_info(symbol)
-    print (symbol_info)
+    # print (symbol_info)
 
     # lasttick=mt5.symbol_info_tick(symbol)
     # print(lasttick)
@@ -51,7 +51,7 @@ def index(request):
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
 
 
-    print(symbol_price)
+    # print(symbol_price)
     
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
@@ -693,6 +693,13 @@ def closeorder(request):
 
         print(df)
     
+    data = {
+        'entryspecs': '',
+    }
+    
+    return JsonResponse(data)
+
+def updatesearchreport(request):
     data = {
         'entryspecs': '',
     }

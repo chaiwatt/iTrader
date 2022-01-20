@@ -106,3 +106,10 @@ class SearchType(models.Model):
     pattern=models.CharField(max_length=1, default = 0)
     class Meta:
         db_table = "search_types"
+
+class SearchReport(models.Model):
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
+    order_type=models.CharField(max_length=100, default=None)
+    class Meta:
+        db_table = "search_reports"       

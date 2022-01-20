@@ -41,6 +41,7 @@ urlpatterns = [
     path('entrybuyposition',views.entrybuyposition,name='entrybuyposition'),
     path('openorder',views.openorder,name='openorder'),
     path('closeorder',views.closeorder,name='closeorder'),
+    path('updatesearchreport',views.updatesearchreport,name='updatesearchreport'),
     
 
     

@@ -101,7 +101,6 @@
                     </div>
                 </div>
 
-
                   <!-- <button type="button" id="sendLineNotify" class="btn btn-info">Test Line Notify</button> -->
                   <button type="button" id="btnGetSingleOhlc" class="btn btn-info">Get OHLC</button>
                   <button type="button" id="openOrderBuy" class="btn btn-info">Open Order Buy</button>
@@ -480,7 +479,7 @@
                     let found_low = tmp_info[3];
                     let found_high = tmp_info[4];
                     let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
-                    console.log(foundResult);
+                    // console.log(foundResult);
                     searchResult.push({
                         'Symbol':found_symbol,
                         'TF':found_timeframe,
@@ -931,7 +930,9 @@
             //     });
             // }
             
+            function updateSearchReport(){
 
+            }
 
             function createResult(){
                 let _latestSsma5 = Smoth_SSMA5Arr[Smoth_SSMA5Arr.length-1];
