@@ -1372,14 +1372,14 @@
 
        $(document).on('click','.openorder', function(){
         let type = 'buy';
-        let lotsize = 0.01;
+        let lotsize = 0.05;
         if($(this).data('type').includes("Sell") == true) type = 'sell'
 
         Swal.fire({
             title: 'Open Order?',
             text: "Confirm to open order",
             input: 'text',
-            inputValue: '0.01',
+            inputValue: lotsize,
             inputAttributes: {
                 autocapitalize: 'off'
             },
