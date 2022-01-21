@@ -166,7 +166,7 @@ def getohlc(request):
                 'type':data['type'],
             }
             orders.append(_data)
-        print(orders)
+        # print(orders)
 
     data = {
         'orders':orders,
@@ -654,7 +654,6 @@ def openorder(request):
     symbol = Symbol.objects.filter(id = request.POST.get('symbol') ).first().name
     tick = mt5.symbol_info_tick(symbol)
 
-    
 
     order_dict = {'buy': 0, 'sell': 1};
     price_dict = {'buy': tick.ask, 'sell': tick.bid};
@@ -680,12 +679,37 @@ def openorder(request):
     
     # send a trading request
     result = mt5.order_send(request)
-    print(result)  
+    # print(result) 
+
+    positions=mt5.positions_get()
+    # print(positions)
+    orders = []
+    if positions==None:
+        print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
+    elif len(positions)>0:
+        df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
+        # print(df)
+        
+        for i, data in df.iterrows():
+           
+            _data = {
+                'symbol':data['symbol'],
+                'lot':data['volume'] ,
+                'profit':data['profit'],
+                'position':data['ticket'],
+                'type':data['type'],
+            }
+            orders.append(_data)
+
     data = {
-        'entryspecs': '',
+        'orders':orders,
+        'searchreports': serializers.serialize('json', SearchReport.objects.all().order_by('-id')[:30]),
     }
     
     return JsonResponse(data)
+
 
 def closeorder(request):
     if not mt5.initialize():
@@ -780,8 +804,31 @@ def manualcloseorder(request):
     }
     result=mt5.order_send(request)
     print(result)
+    positions=mt5.positions_get()
+    # print(positions)
+    orders = []
+    if positions==None:
+        print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
+    elif len(positions)>0:
+        df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
+        # print(df)
+        
+        for i, data in df.iterrows():
+           
+            _data = {
+                'symbol':data['symbol'],
+                'lot':data['volume'] ,
+                'profit':data['profit'],
+                'position':data['ticket'],
+                'type':data['type'],
+            }
+            orders.append(_data)
+
     data = {
-        'entryspecs': '',
+        'orders':orders,
+        'searchreports': serializers.serialize('json', SearchReport.objects.all().order_by('-id')[:30]),
     }
     
     return JsonResponse(data)

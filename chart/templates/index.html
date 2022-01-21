@@ -127,31 +127,6 @@
                 </div>
 
 
-     
-        
-                <!-- <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Orders</h3>
-                    </div>
-                
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Order</th>      
-                                <th>Spread</th>                             
-                                <th>Price</th>
-                                <th>Profit</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            
-                            </tbody>
-                          </table>
-                    </div>
-                   
-                </div> -->
-
                 <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Order Buy Test Spec<span id="symbolname"></span></h3>
@@ -214,8 +189,13 @@
                   </div>
 
                   <div class="card ">
-                    <div class="card-header bg-info">
-                      <h3 class="card-title">Recent Order</h3>
+                    <div class="card-header">
+                      <h3 class="card-title">Recent Order <div class="icheck-success d-inline">
+                        <input type="checkbox" id="checkboxSuccess1">
+                        <label for="checkboxSuccess1">
+                           <small>(Auto Close @1$)</small> 
+                        </label>
+                      </div></h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body p-0">
@@ -230,7 +210,6 @@
                           </tr>
                         </thead>
                         <tbody id="order_table"> 
-                         <!-- {{orders.length}} -->
                             {% for order in orders %}
                                 <tr>
                                     <td >{{order.position}}</td>
@@ -290,6 +269,9 @@
       <!-- /.content -->
       <script>
 
+        $("input[data-bootstrap-switch]").each(function(){
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
         var slopeSpec = 0.00001;
         var canndleStickChart = echarts.init(document.getElementById('canndle_stick_chart'));  
         var macdChart = echarts.init(document.getElementById('macd_chart')); 
@@ -356,12 +338,38 @@
                     url: "{% url 'getohlc' %}",
                     success: function (response){
                         createData(response);
+                        let html_order_table = ''
+                        let html_report_search_table = ''
+
+                        response.orders.forEach(order => {
+                            html_order_table += `<tr>
+                                    <td >${order.position}</td>
+                                    <td >${order.symbol}</td>
+                                    <td >${order.lot}</td>
+                                    <td >${order.profit.toFixed(2)}</td>
+                                    <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                                </tr>`
+                        });
+
+                        JSON.parse(response.searchreports).forEach(searchreport => {
+                            html_report_search_table += `<tr>
+                                    <td class="getSymbol" >${searchreport.fields.symbolname}</td>
+                                    <td >${searchreport.fields.timeframename}</td>
+                                    <td >${searchreport.fields.order_type}</td>
+                                    <td ><div class="float-right"><a type="button" data-type="${searchreport.fields.order_type}" data-symbol="${searchreport.fields.symbol}" data-id="${searchreport.pk}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="${searchreport.pk}" data-timeframe="${searchreport.fields.timeframe}" data-symbol="${searchreport.fields.symbol}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
+                                    
+                                </tr>`
+                        });
+
+                        $('#order_table').html(html_order_table);
+                        $('#report_table').html(html_report_search_table);
+
                     },
                     error: function(response){
                         location.reload(true);
                     }
                 })
-             },60000)
+             },2000)
 
             //  setInterval(function(){
             //     console.log('working')
@@ -1360,6 +1368,34 @@
         if($(this).data('type').includes("Sell") == true) type = 'sell'
         
         openOrder($(this).data('symbol'),type,lotsize).then(data => { //0=order on Buy 1=order on Sell
+            // window.location.href = window.location.href
+            // console.log(JSON.parse(data.searchreports))
+
+            let html_order_table = ''
+            let html_report_search_table = ''
+
+            data.orders.forEach(order => {
+                html_order_table += `<tr>
+                        <td >${order.position}</td>
+                        <td >${order.symbol}</td>
+                        <td >${order.lot}</td>
+                        <td >${order.profit.toFixed(2)}</td>
+                        <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                    </tr>`
+            });
+
+            JSON.parse(data.searchreports).forEach(searchreport => {
+                html_report_search_table += `<tr>
+                        <td class="getSymbol" >${searchreport.fields.symbolname}</td>
+                        <td >${searchreport.fields.timeframename}</td>
+                        <td >${searchreport.fields.order_type}</td>
+                        <td ><div class="float-right"><a type="button" data-type="${searchreport.fields.order_type}" data-symbol="${searchreport.fields.symbol}" data-id="${searchreport.pk}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="${searchreport.pk}" data-timeframe="${searchreport.fields.timeframe}" data-symbol="${searchreport.fields.symbol}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
+                        
+                    </tr>`
+            });
+
+            $('#order_table').html(html_order_table);
+            $('#report_table').html(html_report_search_table);
 
             }).catch(error => {})
         })
@@ -1390,7 +1426,32 @@
        $(document).on('click','.closeorder', function(){
         
         manualCloseOrder($(this).data('symbol'),$(this).data('position'),$(this).data('type'),$(this).data('lot')).then(data => { //0=order on Buy 1=order on Sell
-            window.location.href = window.location.href
+            // window.location.href = window.location.href
+            let html_order_table = ''
+            let html_report_search_table = ''
+
+            data.orders.forEach(order => {
+                html_order_table += `<tr>
+                        <td >${order.position}</td>
+                        <td >${order.symbol}</td>
+                        <td >${order.lot}</td>
+                        <td >${order.profit.toFixed(2)}</td>
+                        <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                    </tr>`
+            });
+
+            JSON.parse(data.searchreports).forEach(searchreport => {
+                html_report_search_table += `<tr>
+                        <td class="getSymbol" >${searchreport.fields.symbolname}</td>
+                        <td >${searchreport.fields.timeframename}</td>
+                        <td >${searchreport.fields.order_type}</td>
+                        <td ><div class="float-right"><a type="button" data-type="${searchreport.fields.order_type}" data-symbol="${searchreport.fields.symbol}" data-id="${searchreport.pk}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="${searchreport.pk}" data-timeframe="${searchreport.fields.timeframe}" data-symbol="${searchreport.fields.symbol}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
+                        
+                    </tr>`
+            });
+
+            $('#order_table').html(html_order_table);
+            $('#report_table').html(html_report_search_table);
             }).catch(error => {})
         })
 

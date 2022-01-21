@@ -199,7 +199,7 @@
         $( document ).ready(function () {   
              setInterval(function(){
                 searchMarket();
-             },5000)
+             },10000)
 
             // setInterval(function(){
             //     closeOrder('').then(data => { //closeall
@@ -447,7 +447,6 @@
                     let found_low = tmp_info[3];
                     let found_high = tmp_info[4];
                     let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype} `
-                    // console.log(foundResult);
                     searchResult.push({
                         'Symbol':found_symbol,
                         'TF':found_timeframe,
@@ -458,9 +457,9 @@
                     UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
 
                     }).catch(error => {})
-                    lineNotification(foundResult).then(data => {
-                        console.log('sent!.')
-                    }).catch(error => {})
+                    // lineNotification(foundResult).then(data => {
+                    //     console.log('sent!.')
+                    // }).catch(error => {})
                 }
             }
 
@@ -482,7 +481,6 @@
                     let found_low = tmp_info[3];
                     let found_high = tmp_info[4];
                     let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
-                    // console.log(foundResult);
                     searchResult.push({
                         'Symbol':found_symbol,
                         'TF':found_timeframe,
@@ -493,9 +491,9 @@
                     UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
 
                     }).catch(error => {})
-                    lineNotification(foundResult).then(data => {
-                        console.log('sent!.')
-                    }).catch(error => {})
+                    // lineNotification(foundResult).then(data => {
+                    //     console.log('sent!.')
+                    // }).catch(error => {})
                 }
 
                 if(trendPattern.foundBar == true){
@@ -527,9 +525,9 @@
                     UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
 
                     }).catch(error => {})
-                    lineNotification(foundResult).then(data => {
-                        console.log('sent!.')
-                    }).catch(error => {})
+                    // lineNotification(foundResult).then(data => {
+                    //     console.log('sent!.')
+                    // }).catch(error => {})
                 }
             }
 
