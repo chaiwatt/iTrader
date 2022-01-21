@@ -347,14 +347,15 @@
                         createData(response);
                         let html_order_table = ''
                         let html_report_search_table = ''
-
+                        let btncolor = 'btn-success'
                         response.orders.forEach(order => {
+                            if(order.profit < 0) btncolor = 'btn-danger'
                             html_order_table += `<tr>
                                     <td >${order.position}</td>
                                     <td >${order.symbol}</td>
                                     <td >${order.lot}</td>
                                     <td >${order.profit.toFixed(2)}</td>
-                                    <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                                    <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn ${btncolor} btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
                                 </tr>`
                         });
 
@@ -1392,14 +1393,16 @@
                         openOrder($(this).data('symbol'),type,parseFloat(result.value)).then(data => { //0=order on Buy 1=order on Sell
                             let html_order_table = ''
                             let html_report_search_table = ''
-
+                            let btncolor = 'btn-success'
+                            
                             data.orders.forEach(order => {
+                                if(order.profit < 0) btncolor = 'btn-danger'
                                 html_order_table += `<tr>
                                         <td >${order.position}</td>
                                         <td >${order.symbol}</td>
                                         <td >${order.lot}</td>
                                         <td >${order.profit.toFixed(2)}</td>
-                                        <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                                        <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn ${btncolor} btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
                                     </tr>`
                             });
 
@@ -1466,14 +1469,16 @@
                     // window.location.href = window.location.href
                     let html_order_table = ''
                     let html_report_search_table = ''
+                    let btncolor = 'btn-success'
 
                     data.orders.forEach(order => {
+                        if(order.profit < 0) btncolor = 'btn-danger'
                         html_order_table += `<tr>
                                 <td >${order.position}</td>
                                 <td >${order.symbol}</td>
                                 <td >${order.lot}</td>
                                 <td >${order.profit.toFixed(2)}</td>
-                                <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                                <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn ${btncolor} btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
                             </tr>`
                     });
 
