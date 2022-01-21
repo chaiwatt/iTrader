@@ -19,6 +19,7 @@ class Setting(models.Model):
     myaccount=models.ForeignKey(MyAccount, on_delete=models.CASCADE)
     autoclose=models.CharField(max_length=1, default=1)
     autocloseprice=models.FloatField(max_length=10, default = 0)
+    reportsymbolsort=models.CharField(max_length=1, default = 1)
     class Meta:
         db_table = "settings" 
 
@@ -31,6 +32,7 @@ class Symbol(models.Model):
     broker=models.ForeignKey(Broker, on_delete=models.CASCADE)
     name=models.CharField(max_length=20)
     status=models.CharField(max_length=1)
+    
     class Meta:
         db_table = "symbols"
 

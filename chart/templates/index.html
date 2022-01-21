@@ -190,7 +190,7 @@
 
                   <div class="card ">
                     <div class="card-header">
-                      <h3 class="card-title">Recent Order <div class="icheck-success d-inline">
+                      <h3 class="card-title">Recent Order <div class="icheck-success d-inline ml-2">
                         <input type="checkbox" id="checkboxSuccess1">
                         <label for="checkboxSuccess1">
                            <small>(Auto Close @3$)</small> 
@@ -229,8 +229,13 @@
                   </div>
 
                   <div class="card ">
-                    <div class="card-header bg-success">
-                      <h3 class="card-title">Recent Entry</h3>
+                    <div class="card-header ">
+                      <h3 class="card-title">Recent Entry <div class="icheck-success d-inline ml-2">
+                        <input type="checkbox" id="checkboxSuccess2">
+                        <label for="checkboxSuccess2">
+                           <small>(Sort by Symbol)</small> 
+                        </label>
+                      </div></h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body p-0">
@@ -1372,41 +1377,55 @@
         Swal.fire({
             title: 'Open Order?',
             text: "Confirm to open order",
+            input: 'text',
+            inputValue: '0.01',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
             icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'OK'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    openOrder($(this).data('symbol'),type,lotsize).then(data => { //0=order on Buy 1=order on Sell
-                        let html_order_table = ''
-                        let html_report_search_table = ''
+                if (isNaN(result.value) === false) {
+                    if (result.isConfirmed) {
+                        openOrder($(this).data('symbol'),type,parseFloat(result.value)).then(data => { //0=order on Buy 1=order on Sell
+                            let html_order_table = ''
+                            let html_report_search_table = ''
 
-                        data.orders.forEach(order => {
-                            html_order_table += `<tr>
-                                    <td >${order.position}</td>
-                                    <td >${order.symbol}</td>
-                                    <td >${order.lot}</td>
-                                    <td >${order.profit.toFixed(2)}</td>
-                                    <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
-                                </tr>`
-                        });
+                            data.orders.forEach(order => {
+                                html_order_table += `<tr>
+                                        <td >${order.position}</td>
+                                        <td >${order.symbol}</td>
+                                        <td >${order.lot}</td>
+                                        <td >${order.profit.toFixed(2)}</td>
+                                        <td><a type="button" data-lot="${order.lot}" data-symbol="${order.symbol}" data-type="${order.type}" data-position="${order.position}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                                    </tr>`
+                            });
 
-                        JSON.parse(data.searchreports).forEach(searchreport => {
-                            html_report_search_table += `<tr>
-                                    <td class="getSymbol" >${searchreport.fields.symbolname}</td>
-                                    <td >${searchreport.fields.timeframename}</td>
-                                    <td >${searchreport.fields.order_type}</td>
-                                    <td ><div class="float-right"><a type="button" data-type="${searchreport.fields.order_type}" data-symbol="${searchreport.fields.symbol}" data-id="${searchreport.pk}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="${searchreport.pk}" data-timeframe="${searchreport.fields.timeframe}" data-symbol="${searchreport.fields.symbol}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
-                                    
-                                </tr>`
-                        });
+                            JSON.parse(data.searchreports).forEach(searchreport => {
+                                html_report_search_table += `<tr>
+                                        <td class="getSymbol" >${searchreport.fields.symbolname}</td>
+                                        <td >${searchreport.fields.timeframename}</td>
+                                        <td >${searchreport.fields.order_type}</td>
+                                        <td ><div class="float-right"><a type="button" data-type="${searchreport.fields.order_type}" data-symbol="${searchreport.fields.symbol}" data-id="${searchreport.pk}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="${searchreport.pk}" data-timeframe="${searchreport.fields.timeframe}" data-symbol="${searchreport.fields.symbol}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
+                                        
+                                    </tr>`
+                            });
 
-                        $('#order_table').html(html_order_table);
-                        $('#report_table').html(html_report_search_table);
+                            $('#order_table').html(html_order_table);
+                            $('#report_table').html(html_report_search_table);
 
-                        }).catch(error => {})
+                            }).catch(error => {})
+                    }
+                }else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Error',
+                        text: 'Lot size is not correct',
+                    })
                 }
+
             })
         })
 
