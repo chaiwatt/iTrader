@@ -111,5 +111,10 @@ class SearchReport(models.Model):
     order_type=models.CharField(max_length=100, default=None)
     symbol=models.CharField(max_length=10, default=None)
     timeframe=models.CharField(max_length=10, default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     class Meta:
-        db_table = "search_reports"       
+        db_table = "search_reports"   
+
+
+            

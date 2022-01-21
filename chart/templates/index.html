@@ -311,7 +311,9 @@
         var sma100ArrowLevel = null
         var foundEntryPoint = false;
         var lineLenght = 10;
-
+        var momenttumBar = false;
+        var trendPattern = false;
+        var sma100PresentLevel = null
 
         $( document ).ready(function () {   
              setInterval(function(){
@@ -413,6 +415,14 @@
                 sma100_arrow_below : sma100ArrowBelow(data,dataMA100,lineLenght),
                 sma100_arrow_above : sma100ArrowAbove(data,dataMA100,lineLenght),
             }
+
+            sma100PresentLevel = {
+                sma100_present_below : sma100PresentBelow(data,dataMA100),
+                sma100_present_above : sma100PresentAbove(data,dataMA100),
+            }
+            
+            momenttumBar = getMomenttumBar(data,sma100PresentLevel,3);
+            trendPattern = getTrendPattern(data,sma100PresentLevel);
 
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
@@ -822,11 +832,19 @@
                         reading: sma100ArrowLevel.sma100_arrow_above ?  'True' : 'False'
                     },
                     {
+                        parameter: 'sma100_present_below',
+                        reading: sma100PresentLevel.sma100_present_below ? 'True' : 'False'
+                    },
+                    {
+                        parameter: 'sma100_present_above',
+                        reading: sma100PresentLevel.sma100_present_above ?  'True' : 'False'
+                    },
+                    {
                         parameter: 'aligator_order_uptrend',
                         reading: ssma3LineOrder.aligator_order_uptrend ?  'True' : 'False'
                     },
                     {
-                        parameter: 'sma100_arrow_above',
+                        parameter: 'aligator_order_downtrend',
                         reading: ssma3LineOrder.aligator_order_downtrend ?  'True' : 'False'
                     },
                 ];
