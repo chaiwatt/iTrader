@@ -43,6 +43,7 @@ urlpatterns = [
     path('closeorder',views.closeorder,name='closeorder'),
     path('updatesearchreport',views.updatesearchreport,name='updatesearchreport'),
     path('symboldata',views.symboldata,name='symboldata'),
+    path('manualcloseorder',views.manualcloseorder,name='manualcloseorder'),
     
 
     

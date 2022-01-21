@@ -56,6 +56,7 @@ def index(request):
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
     ohlcs = []
+    orders = []
     for i, data in ohlc_data.iterrows():
         ohlc = {
             'time':data['time'].strftime('%Y-%m-%d %H:%M:%S'),
@@ -68,7 +69,30 @@ def index(request):
         }
         ohlcs.append(ohlc)
 
+    positions=mt5.positions_get()
+    # print(positions)
+
+    if positions==None:
+        print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
+    elif len(positions)>0:
+        df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
+        # print(df)
+        
+        for i, data in df.iterrows():
+            # print('ticket {0} time {1} volume {2} type {3} profit {4} symbol {5}'.format(data['ticket'],data['time'], data['volume'],data['type'],data['profit'],data['symbol']))
+            _data = {
+                'symbol':data['symbol'],
+                'lot':data['volume'] ,
+                'profit':data['profit'],
+                'position':data['ticket'],
+                'type':data['type'],
+            }
+            orders.append(_data)
+        print(orders)
     data = {
+        'orders':orders,
         'symbol':symbol,
         'series':ohlcs, 
         'price': 
@@ -81,6 +105,7 @@ def index(request):
 
     data = dumps(data)
     return render(request,'index.html',{
+        'orders': orders,
         'resData': data,
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
@@ -108,6 +133,7 @@ def getohlc(request):
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 600))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
     ohlcs = []
+    orders = []
     for i, data in ohlc_data.iterrows():
         ohlc = {
             'time':data['time'],
@@ -119,10 +145,34 @@ def getohlc(request):
             'id':i
         }
         ohlcs.append(ohlc)
+    positions=mt5.positions_get()
+    # print(positions)
+
+    if positions==None:
+        print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
+    elif len(positions)>0:
+        df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
+        # print(df)
+        
+        for i, data in df.iterrows():
+           
+            _data = {
+                'symbol':data['symbol'],
+                'lot':data['volume'] ,
+                'profit':data['profit'],
+                'position':data['ticket'],
+                'type':data['type'],
+            }
+            orders.append(_data)
+        print(orders)
 
     data = {
+        'orders':orders,
         'symbol':symbol,
         'series':ohlcs, 
+        'searchreports': serializers.serialize('json', SearchReport.objects.all().order_by('-id')[:30]),
         'price': 
         {
             'ask':symbol_price['ask'],
@@ -645,7 +695,7 @@ def closeorder(request):
     clossall = request.POST.get('clossall')   
 
     positioncount=mt5.positions_total()
-    print(positioncount)
+    # print(positioncount)
 
     positions=mt5.positions_get()
     # print(positions)
@@ -695,6 +745,41 @@ def closeorder(request):
 
         print(df)
     
+    data = {
+        'entryspecs': '',
+    }
+    
+    return JsonResponse(data)
+
+def manualcloseorder(request):
+    symbol = request.POST.get('symbol')   
+    lot = float(request.POST.get('lot'))
+    ordertype = int(request.POST.get('type'))
+    position = int(request.POST.get('position'))   
+    deviation=20
+    tick=mt5.symbol_info_tick(symbol)
+
+    price_dict = {0: tick.ask, 1: tick.bid}
+
+    type_dict = {0: 1, 1: 0}    
+
+    print(tick.ask)
+
+    request={
+        "action": mt5.TRADE_ACTION_DEAL,
+        "symbol": symbol,
+        "volume": lot,
+        "type": type_dict[ordertype],
+        "position": position,
+        "price": price_dict[ordertype],
+        "deviation": deviation,
+        "magic": 234000,
+        "comment": "python script close",
+        "type_time": mt5.ORDER_TIME_GTC,
+        "type_filling": mt5.ORDER_FILLING_IOC,
+    }
+    result=mt5.order_send(request)
+    print(result)
     data = {
         'entryspecs': '',
     }

@@ -222,22 +222,24 @@
                       <table class="table table-sm">
                         <thead>
                           <tr>
+                            <th>Position</th>
                             <th>Symbol</th>
                             <th>Lot</th>
                             <th>Profit</th>
-                            
+                            <th>Close</th>
                           </tr>
                         </thead>
-                        <tbody>                   
-                            <!-- {% for order in orders %}
+                        <tbody id="order_table"> 
+                         <!-- {{orders.length}} -->
+                            {% for order in orders %}
                                 <tr>
-                                    <td class="getSymbol" >{{order.symbolname}}</td>
+                                    <td >{{order.position}}</td>
+                                    <td >{{order.symbol}}</td>
                                     <td >{{order.lot}}</td>
                                     <td >{{order.profit}}</td>
-                                    <td ><div class="float-right"><a type="button" data-id="{{order.id}}" class="btn btn-primary btn-sm closeorder"><i class="far fa-stop-circle"></i></a></div> </td>
-                                   
+                                    <td><a type="button" data-lot="{{order.lot}}" data-symbol="{{order.symbol}}" data-type="{{order.type}}" data-position="{{order.position}}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
                                 </tr>
-                            {% endfor %} -->
+                            {% endfor %}
         
                         </tbody>
                       </table>
@@ -260,14 +262,14 @@
                             <th ><span class="float-right">Details</span> </th>
                           </tr>
                         </thead>
-                        <tbody>                   
+                        <tbody id= "report_table">                   
                             {% for searchreport in searchreports %}
                                 <tr>
                                     <td class="getSymbol" >{{searchreport.symbolname}}</td>
                                     <td >{{searchreport.timeframename}}</td>
                                     <td >{{searchreport.order_type}}</td>
                                     <td ><div class="float-right"><a type="button" data-type="{{searchreport.order_type}}" data-symbol="{{searchreport.symbol_id}}" data-id="{{searchreport.id}}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="{{searchreport.id}}" data-timeframe="{{searchreport.timeframe_id}}" data-symbol="{{searchreport.symbol_id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
-                                    <!-- <td ><div class="float-right"><a type="button" data-id="{{searchreport.id}}" class="btn btn-danger btn-sm mr-1 closeorder"><i class="far fa-stop-circle"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td> -->
+                                    
                                 </tr>
                             {% endfor %}
         
@@ -1356,7 +1358,6 @@
         let type = 'buy';
         let lotsize = 0.01;
         if($(this).data('type').includes("Sell") == true) type = 'sell'
-        // console.log(type)
         
         openOrder($(this).data('symbol'),type,lotsize).then(data => { //0=order on Buy 1=order on Sell
 
@@ -1374,6 +1375,37 @@
                $.ajax({
                    type: 'POST',
                    url: "{% url 'openorder' %}",
+                   dataType : "json",
+                   data: data,
+                   success: function(data) {
+                       resolve(data)
+                   },
+                   error: function(error) {
+                       reject(error)
+                   },
+               })
+           })
+       }
+
+       $(document).on('click','.closeorder', function(){
+        
+        manualCloseOrder($(this).data('symbol'),$(this).data('position'),$(this).data('type'),$(this).data('lot')).then(data => { //0=order on Buy 1=order on Sell
+            window.location.href = window.location.href
+            }).catch(error => {})
+        })
+
+        function manualCloseOrder(symbol,position,type,lot){   
+           return new Promise((resolve, reject) => {
+                data = {
+                    symbol: symbol,
+                    position: position,
+                    type: type,
+                    lot: lot,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+               $.ajax({
+                   type: 'POST',
+                   url: "{% url 'manualcloseorder' %}",
                    dataType : "json",
                    data: data,
                    success: function(data) {
