@@ -17,6 +17,8 @@ class MyAccount(models.Model):
 
 class Setting(models.Model):
     myaccount=models.ForeignKey(MyAccount, on_delete=models.CASCADE)
+    autoclose=models.CharField(max_length=1, default=1)
+    autocloseprice=models.FloatField(max_length=10, default = 0)
     class Meta:
         db_table = "settings" 
 
@@ -118,8 +120,6 @@ class SearchReport(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         db_table = "search_reports"   
-
-        
 
 
             
