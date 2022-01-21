@@ -84,7 +84,7 @@ def index(request):
         'resData': data,
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
-        'searchreports':SearchReport.objects.all().order_by("-id"),
+        'searchreports':SearchReport.objects.all().order_by('-id')[:30],
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
