@@ -266,7 +266,7 @@
                                     <td class="getSymbol" >{{searchreport.symbolname}}</td>
                                     <td >{{searchreport.timeframename}}</td>
                                     <td >{{searchreport.order_type}}</td>
-                                    <td ><div class="float-right"><a type="button" data-symbol="{{searchreport.symbol_id}}" data-id="{{searchreport.id}}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
+                                    <td ><div class="float-right"><a type="button" data-type="{{searchreport.order_type}}" data-symbol="{{searchreport.symbol_id}}" data-id="{{searchreport.id}}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="{{searchreport.id}}" data-timeframe="{{searchreport.timeframe_id}}" data-symbol="{{searchreport.symbol_id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
                                     <!-- <td ><div class="float-right"><a type="button" data-id="{{searchreport.id}}" class="btn btn-danger btn-sm mr-1 closeorder"><i class="far fa-stop-circle"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td> -->
                                 </tr>
                             {% endfor %}
@@ -1325,15 +1325,16 @@
        }
 
        $(document).on('click','.moreinfo', function(){
-           symbolData($(this).data('id')).then(data => { //0=order on Buy 1=order on Sell
+           symbolData($(this).data('symbol'),$(this).data('timeframe')).then(data => { //0=order on Buy 1=order on Sell
                 window.location.href = window.location.href
             }).catch(error => {})
        })
 
-       function symbolData(id){   
+       function symbolData(symbol,timeframe){   
            return new Promise((resolve, reject) => {
                 data = {
-                    id: id,
+                    symbol: symbol,
+                    timeframe: timeframe,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 }
                $.ajax({
@@ -1351,8 +1352,13 @@
            })
        }
 
-       $(document).on('click','#openorder', function(){
-        openOrder(1,'sell',0.01).then(data => { //0=order on Buy 1=order on Sell
+       $(document).on('click','.openorder', function(){
+        let type = 'buy';
+        let lotsize = 0.01;
+        if($(this).data('type').includes("Sell") == true) type = 'sell'
+        // console.log(type)
+        
+        openOrder($(this).data('symbol'),type,lotsize).then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })

@@ -598,13 +598,19 @@ def openorder(request):
         mt5.shutdown()
 
     ordertype = request.POST.get('ordertype')   
-    lot = request.POST.get('lot')   
+    lot = float(request.POST.get('lot'))
+    print(request.POST.get('lot'))
 
     symbol = Symbol.objects.filter(id = request.POST.get('symbol') ).first().name
     tick = mt5.symbol_info_tick(symbol)
 
+    
+
     order_dict = {'buy': 0, 'sell': 1};
     price_dict = {'buy': tick.ask, 'sell': tick.bid};
+
+
+    print(price_dict[ordertype])
 
     deviation = 20
     request = {
@@ -708,13 +714,10 @@ def updatesearchreport(request):
     return JsonResponse(data)
 
 def symboldata(request):
-    report = SearchReport.objects.filter(id = request.POST.get('id') ).first()
-    symbol = Symbol.objects.filter(name = report.symbol).first()
-    timeframe = TimeFrame.objects.filter(name = report.timeframe).first()
 
     currentview = CurrentView.objects.first()
-    currentview.symbol_id = symbol.id
-    currentview.timeframe_id = timeframe.id
+    currentview.symbol_id = request.POST.get('symbol')
+    currentview.timeframe_id = request.POST.get('timeframe')
     currentview.save()
 
     data = {
