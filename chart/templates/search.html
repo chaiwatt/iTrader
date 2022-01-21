@@ -1514,22 +1514,23 @@
        }
 
        $(document).on('click','#openOrderBuy', function(){
-        openOrder(1,'buy').then(data => { //0=order on Buy 1=order on Sell
+        openOrder(1,'buy',0.01).then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })
        
        $(document).on('click','#openOrderSale', function(){
-        openOrder(1,'sell').then(data => { //0=order on Buy 1=order on Sell
+        openOrder(1,'sell',0.01).then(data => { //0=order on Buy 1=order on Sell
 
             }).catch(error => {})
         })
 
-        function openOrder(symbol,ordertype){   
+        function openOrder(symbol,ordertype,lot){   
            return new Promise((resolve, reject) => {
                 data = {
                     symbol: symbol,
                     ordertype: ordertype,
+                    lot: lot,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 }
                $.ajax({

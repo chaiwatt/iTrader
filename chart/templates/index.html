@@ -214,6 +214,38 @@
                   </div>
 
                   <div class="card ">
+                    <div class="card-header bg-info">
+                      <h3 class="card-title">Recent Order</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Symbol</th>
+                            <th>Lot</th>
+                            <th>Profit</th>
+                            
+                          </tr>
+                        </thead>
+                        <tbody>                   
+                            <!-- {% for order in orders %}
+                                <tr>
+                                    <td class="getSymbol" >{{order.symbolname}}</td>
+                                    <td >{{order.lot}}</td>
+                                    <td >{{order.profit}}</td>
+                                    <td ><div class="float-right"><a type="button" data-id="{{order.id}}" class="btn btn-primary btn-sm closeorder"><i class="far fa-stop-circle"></i></a></div> </td>
+                                   
+                                </tr>
+                            {% endfor %} -->
+        
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+
+                  <div class="card ">
                     <div class="card-header bg-success">
                       <h3 class="card-title">Recent Entry</h3>
                     </div>
@@ -228,14 +260,14 @@
                             <th ><span class="float-right">Details</span> </th>
                           </tr>
                         </thead>
-                        <tbody>
-                    
+                        <tbody>                   
                             {% for searchreport in searchreports %}
                                 <tr>
                                     <td class="getSymbol" >{{searchreport.symbol}}</td>
                                     <td >{{searchreport.timeframe}}</td>
                                     <td >{{searchreport.order_type}}</td>
-                                    <td ><a type="button" data-id="{{searchreport.id}}" class="btn btn-primary btn-sm float-right moreinfo"><i class="fas fa-eye"></i></a></td>
+                                    <td ><div class="float-right"><a type="button" data-id="{{searchreport.id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td>
+                                    <!-- <td ><div class="float-right"><a type="button" data-id="{{searchreport.id}}" class="btn btn-danger btn-sm mr-1 closeorder"><i class="far fa-stop-circle"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-success btn-sm mr-1 openorder"><i class="fas fa-running"></i></a><a type="button" data-id="{{searchreport.id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a></div> </td> -->
                                 </tr>
                             {% endfor %}
         

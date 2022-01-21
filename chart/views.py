@@ -84,6 +84,7 @@ def index(request):
         'resData': data,
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
+        
         'searchreports':SearchReport.objects.all().order_by('-id')[:30],
         'currentview':currentview,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
@@ -597,6 +598,7 @@ def openorder(request):
         mt5.shutdown()
 
     ordertype = request.POST.get('ordertype')   
+    lot = request.POST.get('lot')   
 
     symbol = Symbol.objects.filter(id = request.POST.get('symbol') ).first().name
     tick = mt5.symbol_info_tick(symbol)
@@ -604,13 +606,6 @@ def openorder(request):
     order_dict = {'buy': 0, 'sell': 1};
     price_dict = {'buy': tick.ask, 'sell': tick.bid};
 
-    # print(ordertype)
-    # symbol_info = mt5.symbol_info(symbol)     
-
-    # print(symbol_info)   
-
-    lot = 0.1
-    
     deviation = 20
     request = {
         "action": mt5.TRADE_ACTION_DEAL,

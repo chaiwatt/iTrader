@@ -117,15 +117,7 @@ class SearchReport(models.Model):
     class Meta:
         db_table = "search_reports"   
 
-class Order(models.Model):
-    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
-    lot=models.CharField(max_length=10, default=None)
-    openprice=models.CharField(max_length=10, default=None)
-    status=models.CharField(max_length=1, default=None)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    class Meta:
-        db_table = "orders"          
+        
 
 
             
