@@ -216,7 +216,9 @@
                                     <td >{{order.symbol}}</td>
                                     <td >{{order.lot}}</td>
                                     <td >{{order.profit}}</td>
-                                    <td><a type="button" data-lot="{{order.lot}}" data-symbol="{{order.symbol}}" data-type="{{order.type}}" data-position="{{order.position}}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a></td>      
+                                    <td><a type="button" data-lot="{{order.lot}}" data-symbol="{{order.symbol}}" data-type="{{order.type}}" data-position="{{order.position}}" class="btn btn-danger btn-sm mr-1 closeorder float-right"><i class="far fa-stop-circle"></i></a>
+                                        <a type="button" data-timeframe="{{searchreport.timeframe_id}}" data-symbol="{{searchreport.symbol_id}}" class="btn btn-primary btn-sm moreinfo"><i class="fas fa-eye"></i></a>
+                                    </td>      
                                 </tr>
                             {% endfor %}
         

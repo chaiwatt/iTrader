@@ -82,6 +82,8 @@ def index(request):
         
         for i, data in df.iterrows():
             # print('ticket {0} time {1} volume {2} type {3} profit {4} symbol {5}'.format(data['ticket'],data['time'], data['volume'],data['type'],data['profit'],data['symbol']))
+            # _symbol = Symbol.objects.filter(name = data['symbol']).first()
+            # _timeframe = TimeFrame.objects.filter(name = data['symbol']).first()
             _data = {
                 'symbol':data['symbol'],
                 'lot':data['volume'] ,
