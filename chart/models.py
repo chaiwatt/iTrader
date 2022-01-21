@@ -108,9 +108,11 @@ class SearchType(models.Model):
         db_table = "search_types"
 
 class SearchReport(models.Model):
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
     order_type=models.CharField(max_length=100, default=None)
-    symbol=models.CharField(max_length=10, default=None)
-    timeframe=models.CharField(max_length=10, default=None)
+    symbolname=models.CharField(max_length=10, default=None)
+    timeframename=models.CharField(max_length=10, default=None)
     # onorder=models.CharField(max_length=1, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

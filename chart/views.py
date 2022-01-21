@@ -696,7 +696,9 @@ def closeorder(request):
     return JsonResponse(data)
 
 def updatesearchreport(request):
-    new = SearchReport(symbol = request.POST.get('symbol'),timeframe= request.POST.get('timeframe'),order_type= request.POST.get('message'))
+    symbol = Symbol.objects.filter(name = request.POST.get('symbol')).first()
+    timeframe = TimeFrame.objects.filter(name = request.POST.get('timeframe')).first()
+    new = SearchReport(symbol_id = symbol.id,timeframe_id= timeframe.id,symbolname = symbol.name,timeframename= timeframe.name,order_type= request.POST.get('message'))
     new.save()
     
     data = {
