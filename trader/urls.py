@@ -44,6 +44,8 @@ urlpatterns = [
     path('updatesearchreport',views.updatesearchreport,name='updatesearchreport'),
     path('symboldata',views.symboldata,name='symboldata'),
     path('manualcloseorder',views.manualcloseorder,name='manualcloseorder'),
+    path('getSampleOhlc',views.getSampleOhlc,name='getSampleOhlc'),
+    
     
 
     
