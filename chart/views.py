@@ -52,9 +52,10 @@ def index(request):
     print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
     print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
     print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-    
-    symbol_price = mt5.symbol_info_tick(symbol)._asdict()
+    print(stopLossPrice(0.1,accountinfo.balance))
+    print(getLotSize(stopLossPrice(0.01,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
 
+    symbol_price = mt5.symbol_info_tick(symbol)._asdict()
 
     # print(symbol_price)
     
@@ -142,7 +143,12 @@ def pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize):
         return (((math.pow(10, (-1)*degit))/currentPrice)*contractSize)*lotsize
     else:
         return ((math.pow(10, (-1)*degit))*contractSize)*lotsize
-            
+
+def stopLossPrice(percent,balance):
+    return percent * balance
+
+def getLotSize(stoplostPrice,numPips,pipPrice):
+    return stoplostPrice/(numPips*pipPrice)
 
 def getohlc(request):  
     currentview = CurrentView.objects.first()
