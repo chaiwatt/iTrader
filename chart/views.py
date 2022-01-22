@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.core import serializers
 import time
 import numpy as np
+import math
 
 #symbol = 'EURUSD'
 timeframe = 'M1';
@@ -26,7 +27,7 @@ def index(request):
     setting = Setting.objects.first()
     
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
-
+    
     if not mt5.initialize():
         print("initialize() failed")
         mt5.shutdown()
@@ -34,7 +35,7 @@ def index(request):
     mt5.login(myaccount.login,myaccount.password,myaccount.server)
 
     accountinfo = mt5.account_info()
-    
+    print (accountinfo)
     currentview = CurrentView.objects.first()
     tf = TimeFrame.objects.get(id = currentview.timeframe_id)
     timeframe = tf.name
@@ -47,6 +48,9 @@ def index(request):
 
     # lasttick=mt5.symbol_info_tick(symbol)
     # print(lasttick)
+
+    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
+    print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
     
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
 
@@ -122,6 +126,22 @@ def index(request):
         'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1,symbol_id = currentview.symbol_id)), 
         'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1,symbol_id = currentview.symbol_id)), 
     })
+
+def pipChange(fromPrice,toPrice,degit):
+    multipleNum = 10
+    if degit % 2 == 0:
+        multipleNum = 1
+    
+    math.pow(10, 1*degit)
+    pip = ((toPrice - fromPrice) * math.pow(10, 1*degit))/multipleNum
+    return "{:.2f}".format(pip)   
+
+def pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize):
+    if symbol[0:3] == 'USD':
+        return (((math.pow(10, (-1)*degit))/currentPrice)*contractSize)*lotsize
+    else:
+        return ((math.pow(10, (-1)*degit))*contractSize)*lotsize
+            
 
 def getohlc(request):  
     currentview = CurrentView.objects.first()
