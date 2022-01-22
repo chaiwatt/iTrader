@@ -45,8 +45,6 @@ urlpatterns = [
     path('symboldata',views.symboldata,name='symboldata'),
     path('manualcloseorder',views.manualcloseorder,name='manualcloseorder'),
     path('getSampleOhlc',views.getSampleOhlc,name='getSampleOhlc'),
-    
-    
-
+    path('savefirstfoundstatus',views.savefirstfoundstatus,name='savefirstfoundstatus'),
     
 ]

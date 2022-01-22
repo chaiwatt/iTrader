@@ -20,6 +20,7 @@ class Setting(models.Model):
     autoclose=models.CharField(max_length=1, default=1)
     autocloseprice=models.FloatField(max_length=10, default = 0)
     reportsymbolsort=models.CharField(max_length=1, default = 1)
+    firstfoundstatus=models.CharField(max_length=1, default = 1)
     class Meta:
         db_table = "settings" 
 

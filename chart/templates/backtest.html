@@ -130,7 +130,16 @@
 
                   <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Testing Job</h3>
+                        <h3 class="card-title">Testing Job <div class="icheck-success d-inline ml-2">
+                            <input type="checkbox" id="checkFirstFound"
+                            {% if setting.firstfoundstatus == '2' %}
+                            checked
+                            {%endif%}
+                            >
+                            <label for="checkFirstFound">
+                               <small>(Notify and exit 1st found)</small> 
+                            </label>
+                          </div></h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -151,6 +160,70 @@
                                     <button type="button" id="autotest" class="btn btn-primary ">Auto Test</button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Demo Trade</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stoplost">Stop Lost</label>
+                                    <input type="text" class="form-control" id="stoplost" value="" >
+                                </div>
+                             </div>
+                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="takeprofit">Take Profit (3xSL)</label>
+                                    <input type="text" class="form-control" id="takeprofit" value="" >
+                                </div>
+                             </div>
+                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="lotsize">Lot size</label>
+                                    <input type="text" class="form-control" id="lotsize" value="" readonly >
+                                </div>
+                             </div>
+                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="price">Price</label>
+                                    <input type="text" class="form-control" id="price" value="" readonly >
+                                </div>
+                             </div>
+                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="maxlost">Max Lost</label>
+                                    <input type="text" class="form-control" id="maxlost" value="" readonly >
+                                </div>
+                             </div>
+                             <div class="col-md-6">
+                                <label for="ordertype">Order Type</label>
+                                <select class="form-control" name="ordertype" id="ordertype" >
+                                    <option value="0" >Order Buy</option>
+                                    <option value="1" >Order Sell</option>
+                                </select>
+                             </div>
+                             <div class="col-md-12">
+                                <table class="table table-sm">
+                                    <thead>
+                                      <tr>
+                                        <th>Price</th>
+                                        <th>Profit</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody  id="demotrade_table">   
+                
+                                    </tbody>
+                                  </table>
+                             </div>
+                             
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="jogtrade" class="btn btn-primary mr-1 float-right">Trade</button>
                         </div>
                     </div>
                 </div>
@@ -328,7 +401,8 @@
         var tmpDataIn = null;
         var lineLenght = 10;
         var momenttumBar = false;
-        var trendPattern = false
+        var trendPattern = false;
+   
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -454,35 +528,44 @@
             ssma3LineOrder = getSsma3LineOrder(Smoth_SSMA5Arr,Smoth_SSMA8Arr,Smoth_SSMA13Arr)
 
             dataResult = createResult()
-            // console.log(dataResult);
+            
             
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
 
-            if(searchType.trend == 1){ // search trend  
+            if(searchType.trend == 1){ 
                 if(foundOrderBuyEntryPoint === false){  
                     foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
-                }else{
-                
-                if(orderBuyEntryPointflag == false){
-                        console.log('save order buy intry point at data id: ' + data[data.length-1][4])
-                        tmpDataIn = {
-                            'type': 'Orber buy (Trend)',
-                            'data_id': data[data.length-1][4]
-                        };
-                        orderBuyEntryPointflag =true;
-                }
-                
-                if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
-                        foundOrderBuyEntryPoint = false
-                        orderBuyEntryPointflag =false;
-                        testResult.push({
-                            'entry': tmpDataIn.data_id,
-                            'type' : tmpDataIn.type,
-                            'exit': data[data.length-1][4]
-                        })
-                        tmpDataIn = null;
-                        console.log('save order buy exit point ' )
-                } 
+                    }else{
+                        if(orderBuyEntryPointflag == false){
+                                console.log('save order buy intry point at data id: ' + data[data.length-1][4])
+                                tmpDataIn = {
+                                    'type': 'Orber buy (Trend)',
+                                    'data_id': data[data.length-1][4]
+                                };
+                                orderBuyEntryPointflag =true;
+                                if ($('#checkFirstFound').is(":checked")){
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: 'Found',
+                                        text: 'First Found exit is enable. Searching is paused',
+                                    })
+                                    $('#autotest').removeClass('start');
+                                    $('#autotest').text("Auto Test") ;
+                                    clearInterval(backtestTimer);
+                                }
+                                
+                        }
+                        if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
+                                foundOrderBuyEntryPoint = false
+                                orderBuyEntryPointflag =false;
+                                testResult.push({
+                                    'entry': tmpDataIn.data_id,
+                                    'type' : tmpDataIn.type,
+                                    'exit': data[data.length-1][4]
+                                })
+                                tmpDataIn = null;
+                                console.log('save order buy exit point ' )
+                        } 
                 }
 
                 if(foundOrderSellEntryPoint === false){  
@@ -496,7 +579,18 @@
                             'type': 'Order sell (Trend)',
                             'data_id': data[data.length-1][4]
                         };
+                      
                         orderSellEntryPointflag =true;
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                 }
                 
                 if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
@@ -523,14 +617,33 @@
                         })  
                         
                         console.log('found Order sell (Momentum)')
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }else if(momenttumBar.type == 2){
                         testResult.push({
                             'entry': momenttumBar.id,
                             'type' : 'Order buy (Momentum)',
                             'exit': momenttumBar.id
                         })  
-                        console.log(testResult)
-               
+                        
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                         console.log('found Order buy (Momentum)')
                     }
                 }
@@ -542,7 +655,16 @@
                             'type' : 'Order sell (Pattern down trend)',
                             'exit': trendPattern.id
                         })  
-                        
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        } 
                         console.log('found Order sell (Pattern down trend)')
                     }else if(trendPattern.type == 2){
                         testResult.push({
@@ -550,8 +672,17 @@
                             'type' : 'Order buy (Pattern up trend)',
                             'exit': trendPattern.id
                         })  
-                        console.log(trendPattern.id)
-               
+                        // console.log(trendPattern.id)
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                         console.log('found Order buy (Pattern up trend)')
                     }
                 }
@@ -1678,8 +1809,6 @@
                         title: 'Oops...',
                         text: 'please select Job!',
                     })
-                
-                // resetCounter();
                 return
             }
             if(_rawData.length === 0) return 
@@ -1707,7 +1836,54 @@
             let _count = count++;
             let arraySet = _rawData.slice(_count,_count + testRange)
             createData(arraySet);
-            // console.log(dataResult);
+        })
+
+        $(document).on('click','#jogtrade', function() {
+            if($('#stoplost').val() == '' || $('#takeprofit').val() == ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Error',
+                    text: 'Stop Lost and Take Profit not correct!',
+                })
+                return;
+            }
+
+      
+            $('#report_table').html('');
+            let selectedOption = $('#selectedBacktestJob option:selected');
+            if(selectedOption.val() === '') {
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'please select Job!',
+                    })
+                return
+            }
+            if(_rawData.length === 0) return 
+            if(count == _rawData.length  - testRange +1 ){
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Finished',
+                    text: 'Back testing is finished!',
+                })
+
+                let html ='';
+                if(testResult.length > 0){
+                    testResult.forEach((result,key )=> {
+                        html += `<tr>
+                            <td>${key+1}</td>
+                            <td>${result.entry}</td>
+                            <td>${result.exit}</td>
+                            </tr>`;
+                    });
+                }
+                $('#report_table').html(html)
+                showFinish();
+                return
+            }
+            let _count = count++;
+            let arraySet = _rawData.slice(_count,_count + testRange)
+            createData(arraySet);
         })
 
         $(document).on("click","#autotest",function() {
@@ -1931,7 +2107,37 @@
             })
         }
 
-        
+        $(document).on('change','#checkFirstFound',function(){
+            let status = 1;
+            if ($(this).is(":checked")){
+                status = 2;
+            }
+            console.log(status)
+            saveFirstFoundStatus(status).then(data => { //0=order on Buy 1=order on Sell
+                console.log(data)
+            }).catch(error => {})
+       })
+
+       function saveFirstFoundStatus(status){
+            return new Promise((resolve, reject) => {
+                data = {
+                    status : status,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'savefirstfoundstatus' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
     </script>
 
 {% endblock %} 

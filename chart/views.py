@@ -313,6 +313,7 @@ def backtest(request):
         'backtestintervals':backtestintervals,
         'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
         'accountinfo' : accountinfo,
+        'setting' : Setting.objects.first(),
         'backtestjobs' : BackTest.objects.all().order_by("-id"),
         'exitspecobjects' : Spec.objects.filter(spec_type = 2,status = 1), 
         'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
@@ -899,15 +900,28 @@ def getSampleOhlc(request):
         print("initialize() failed, error code =",mt5.last_error())
         quit()
     
-    # set time zone to UTC
+    found_date = '2022-01-20 23:30:00'
+
+    date_obj = datetime.strptime(found_date, '%Y-%m-%d %H:%M:%S')
+
+
+    print ("Year Month Day Hour Minute",  date_obj.year,  date_obj.month,  date_obj.day , date_obj.hour,  date_obj.minute)
+
     timezone = pytz.timezone("UTC")
-    # create 'datetime' objects in UTC time zone to avoid the implementation of a local time zone offset
-    utc_from = datetime(2022, 1, 20,0, tzinfo=timezone)
-    utc_to = datetime(2022, 1, 20,23, tzinfo=timezone)
-    # get bars from USDJPY M5 within the interval of 2020.01.10 00:00 - 2020.01.11 13:00 in UTC time zone
-    rates = mt5.copy_rates_range("USDJPY", mt5.TIMEFRAME_M1, utc_from, utc_to)
+
+    utc_from = datetime(2022, 1, 21,0, tzinfo=timezone)
+    utc_to = datetime(2022, 1, 22,23, tzinfo=timezone)
+
+    utc_from = datetime(2022, 1, 21,0, tzinfo=timezone)
+    utc_to = datetime(2022, 1, 22,23, tzinfo=timezone)
+
+    rates = mt5.copy_rates_range("USDJPY", mt5.TIMEFRAME_M30, utc_from, utc_to)
+
+    utc_from = datetime(2020, 1, 10, tzinfo=timezone)
+    # get 10 EURUSD H4 bars starting from 01.10.2020 in UTC time zone
+    rates = mt5.copy_rates_from("USDJPY", mt5.TIMEFRAME_M30, utc_from, 10)
     
-    # shut down connection to the MetaTrader 5 terminal
+
     mt5.shutdown()
     print(rates)
     # display each element of obtained data in a new line
@@ -930,6 +944,17 @@ def getSampleOhlc(request):
     print("\nDisplay dataframe with data")
     print(rates_frame)
 
+    data = {
+        'nothing': '',
+    }
+    
+    return JsonResponse(data)
+
+
+def savefirstfoundstatus(request):
+    setting = Setting.objects.first()
+    setting.firstfoundstatus = request.POST.get('status')
+    setting.save()
     data = {
         'nothing': '',
     }
