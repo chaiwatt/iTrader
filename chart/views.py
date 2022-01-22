@@ -322,6 +322,43 @@ def backtest(request):
         'searchtype': serializers.serialize('json', SearchType.objects.all()),
     })
 
+def demotrade(request):
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    setting = Setting.objects.first()
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+    # mt5.login(login,password,server)
+
+    accountinfo = mt5.account_info()
+    # print(account_info)
+
+    backtest = BackTest.objects.last()
+   
+
+    backtestintervals = BackTestInterval.objects.all()
+    
+
+    return render(request,'demotrade.html',{
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
+        'timeframes':TimeFrame.objects.all(),
+        'backtestsizes':BackTestSize.objects.all(),
+        'backtest':backtest,
+        'specs' : serializers.serialize('json', Spec.objects.all()), 
+        'backtestintervals':backtestintervals,
+        'broker':Broker.objects.filter(id = myaccount.broker_id).first(),
+        'accountinfo' : accountinfo,
+        'setting' : Setting.objects.first(),
+        'backtestjobs' : BackTest.objects.all().order_by("-id"),
+        'exitspecobjects' : Spec.objects.filter(spec_type = 2,status = 1), 
+        'entryspecobjectss' : Spec.objects.filter(spec_type = 1,status = 1), 
+        'entryspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 1,status = 1)), 
+        'exitspecs' : serializers.serialize('json', Spec.objects.filter(spec_type = 2,status = 1)), 
+        'searchtype': serializers.serialize('json', SearchType.objects.all()),
+    })
+
+
 def createbacktest(request):
 
     btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 250

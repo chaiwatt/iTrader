@@ -34,6 +34,7 @@ urlpatterns = [
     path('deleteallbacktest',views.deleteallbacktest ,name='deleteallbacktest'),
     path('jogtest',views.jogtest ,name='jogtest'),
     path('backtest',views.backtest,name='backtest'),
+    path('demotrade',views.demotrade,name='demotrade'),
     path('getSymbolData',views.getSymbolData,name='getSymbolData'),
     path('lineNotification',views.lineNotification,name='lineNotification'),
     path('symbolsetting',views.symbolsetting,name='symbolsetting'),
