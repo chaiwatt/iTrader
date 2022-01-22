@@ -51,6 +51,7 @@ def index(request):
 
     print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
     print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
     
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
 
@@ -134,7 +135,7 @@ def pipChange(fromPrice,toPrice,degit):
     
     math.pow(10, 1*degit)
     pip = ((toPrice - fromPrice) * math.pow(10, 1*degit))/multipleNum
-    return "{:.2f}".format(pip)   
+    return pip 
 
 def pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize):
     if symbol[0:3] == 'USD':
