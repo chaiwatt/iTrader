@@ -31,6 +31,7 @@
                 item.high,
                 _index,
                 item.time,
+                item.tick,
             ]))
         });
         return _data;
@@ -390,7 +391,7 @@
 
         if(presentLevel.sma100_present_below == true){ //check up trend
             if(previous1[0] > previous2[0] && previous2[0] > previous3[0] && previous1[2] > previous2[2] && previous2[2] > previous3[2] ){
-                console.log('pattern up trend')
+                // console.log('pattern up trend')
                 return {
                     id : present[4],
                     foundBar : true,
@@ -405,7 +406,7 @@
             }
         }else if(presentLevel.sma100_present_above == true){ //check down trend
             if(previous1[0] < previous2[0] && previous2[0] < previous3[0] && previous1[2] < previous2[2] && previous2[2] < previous3[2] ){
-                console.log('pattern down trend')
+                // console.log('pattern down trend')
                 return {
                     id : present[4],
                     foundBar : true,
@@ -472,6 +473,31 @@
 
     //     // return true;
     // }
+
+    function isContinuityDownTrendrend(_data,sma100){
+        let downtren0 = sma100[sma100.length-1] - _data[_data.length-1][3]
+        let downtren1 = sma100[sma100.length-2] - _data[_data.length-2][3]
+        let downtren2 = sma100[sma100.length-3] - _data[_data.length-3][3]  
+
+        if(downtren0 > downtren1 && downtren1 > downtren2){
+            // console.log(downtren0+ ' ' + downtren1+ ' ' + downtren2)
+            return true
+        }else {
+            return false
+        }
+    }
+
+    function isContinuityDownTrend(_data,sma100,trend){
+        let uptren0 = _data[_data.length-1][2] -  sma100[sma100.length-1] 
+        let uptren1 = _data[_data.length-2][2] - sma100[sma100.length-2]
+        let uptren2 = _data[_data.length-3][2]  - sma100[sma100.length-3]   
+
+        if(uptren0 > uptren1 && uptren1 > uptren2){
+            return true
+        }else {
+            return false
+        }
+    }
 
     function isCorrectWickTail(data,percent){
         presentarr = data.filter((ohlc,idx) => idx < 4)

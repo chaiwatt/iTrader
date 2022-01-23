@@ -420,12 +420,18 @@
             //  },20000)
         });
 
+        const sumArray = arr =>
+        (arr || Array.of(arr))
+            .sort((a, b) => a - b)
+            .slice(1, (arr && (arr.length - 1)))
+            .reduce((sum, n) => sum + n, 0)
    
         function createData(response){
             _forexData = response;
         
             data = getData(_forexData);
-            // console.log(data)
+            // console.log(data[data.length-1])
+
             closedPrice = getClosedPrice(_forexData);
             lowPrice = getLowPrice(_forexData);
             highPrice = getHighPrice(_forexData);
@@ -468,8 +474,6 @@
 
             RSIArr = nullRS.concat(RSI); 
 
-     
-
             MacdArr = nullForMACD.concat(MACD); 
             SignalArr = nullForSIGNAL.concat(SIGNAL); 
             HistogramArr = nullForHISTOGRAM.concat(HISTOGRAM); 
@@ -506,15 +510,7 @@
 
             momenttumBar = getMomenttumBar(data,sma100PresentLevel,3);// getMomenttum2Bar(data,3)
             trendPattern = getTrendPattern(data,sma100PresentLevel);
-            // console.log(trendPattern)
-            // if(momenttumBar.foundBar == true){
-                
-            //     if(momenttumBar.order == 'buy'){
-            //         console.log('MB Buy')
-            //     }else{
-            //         console.log('MB Sale')
-            //     }
-            // }
+
 
             regressiveEqSmma5 = genRegressionLine(Smoth_SSMA5Arr,5)
             markLineCordSsma5 = getCoord(regressiveEqSmma5,Smoth_SSMA5Arr.length-1-5,Smoth_SSMA5Arr.length-1,5)
@@ -532,162 +528,185 @@
             
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
 
-            if(searchType.trend == 1){ 
-                if(foundOrderBuyEntryPoint === false){  
-                    foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
-                    }else{
-                        if(orderBuyEntryPointflag == false){
-                                console.log('save order buy intry point at data id: ' + data[data.length-1][4])
-                                tmpDataIn = {
-                                    'type': 'Orber buy (Trend)',
-                                    'data_id': data[data.length-1][4]
-                                };
-                                orderBuyEntryPointflag =true;
-                                if ($('#checkFirstFound').is(":checked")){
-                                    Swal.fire({
-                                        icon: 'info',
-                                        title: 'Found',
-                                        text: 'First Found exit is enable. Searching is paused',
-                                    })
-                                    $('#autotest').removeClass('start');
-                                    $('#autotest').text("Auto Test") ;
-                                    clearInterval(backtestTimer);
-                                }
-                                
-                        }
-                        if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
-                                foundOrderBuyEntryPoint = false
-                                orderBuyEntryPointflag =false;
-                                testResult.push({
-                                    'entry': tmpDataIn.data_id,
-                                    'type' : tmpDataIn.type,
-                                    'exit': data[data.length-1][4]
-                                })
-                                tmpDataIn = null;
-                                console.log('save order buy exit point ' )
-                        } 
-                }
-
-                if(foundOrderSellEntryPoint === false){  
-                    foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
-                }else{
-                
-                if(orderSellEntryPointflag == false){
-                        console.log('save order sell intry')
+            
+            
+            
+            // if(foundOrderBuyEntryPoint == false){
+            //     foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+            // }else{
+            //     let check = isContinuityUpTrendrend(data,dataMA100)
+            //     console.log(check)
+            // }
     
-                        tmpDataIn = {
-                            'type': 'Order sell (Trend)',
-                            'data_id': data[data.length-1][4]
-                        };
-                      
-                        orderSellEntryPointflag =true;
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
-                }
-                
-                if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
-                        foundOrderSellEntryPoint = false
-                        orderSellEntryPointflag =false;
-                        testResult.push({
-                            'entry': tmpDataIn.data_id,
-                            'type' : tmpDataIn.type,
-                            'exit': data[data.length-1][4]
-                        })
-                        tmpDataIn = null;
-                        console.log('save order sell exit point '  )
-                } 
-                }
+            // console.log(foundOrderSellEntryPoint)
+            if(foundOrderSellEntryPoint == false){
+                foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
             }
 
-            if(searchType.pattern == 1){ // search pattern   
-                if(momenttumBar.foundBar == true){
-                    if(momenttumBar.type == 1){
-                        testResult.push({
-                            'entry': momenttumBar.id,
-                            'type' : 'Order sell (Momentum)',
-                            'exit': momenttumBar.id
-                        })  
-                        
-                        console.log('found Order sell (Momentum)')
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
-                    }else if(momenttumBar.type == 2){
-                        testResult.push({
-                            'entry': momenttumBar.id,
-                            'type' : 'Order buy (Momentum)',
-                            'exit': momenttumBar.id
-                        })  
-                        
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
-                        console.log('found Order buy (Momentum)')
-                    }
+            if(foundOrderSellEntryPoint == true){
+                if (isContinuityDownTrend(data,dataMA100) == true){
+                    console.log('found continue down')
                 }
+                
+            }
 
-                if(trendPattern.foundBar == true){
-                    if(trendPattern.type == 1){
-                        testResult.push({
-                            'entry': trendPattern.id,
-                            'type' : 'Order sell (Pattern down trend)',
-                            'exit': trendPattern.id
-                        })  
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        } 
-                        console.log('found Order sell (Pattern down trend)')
-                    }else if(trendPattern.type == 2){
-                        testResult.push({
-                            'entry': trendPattern.id,
-                            'type' : 'Order buy (Pattern up trend)',
-                            'exit': trendPattern.id
-                        })  
-                        // console.log(trendPattern.id)
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
-                        console.log('found Order buy (Pattern up trend)')
-                    }
-                }
+            // if(searchType.trend == 1){ 
+            //     if(foundOrderBuyEntryPoint === false){  
+            //         foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+            //         if(foundOrderBuyEntryPoint == true){
+            //             alert('found trend')
+            //         }
+            //     }else{
+            //         if(orderBuyEntryPointflag == false){
+            //             console.log('save order buy intry point at data id: ' + data[data.length-1][4])
+            //             tmpDataIn = {
+            //                 'type': 'Orber buy (Trend)',
+            //                 'data_id': data[data.length-1][4]
+            //             };
+            //             orderBuyEntryPointflag =true;
+            //             if ($('#checkFirstFound').is(":checked")){
+            //                 Swal.fire({
+            //                     icon: 'info',
+            //                     title: 'Found',
+            //                     text: 'First Found exit is enable. Searching is paused',
+            //                 })
+            //                 $('#autotest').removeClass('start');
+            //                 $('#autotest').text("Auto Test") ;
+            //                 clearInterval(backtestTimer);
+            //             }
+                            
+            //         }
+            //         if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
+            //                 foundOrderBuyEntryPoint = false
+            //                 orderBuyEntryPointflag =false;
+            //                 testResult.push({
+            //                     'entry': tmpDataIn.data_id,
+            //                     'type' : tmpDataIn.type,
+            //                     'exit': data[data.length-1][4]
+            //                 })
+            //                 tmpDataIn = null;
+            //                 console.log('save order buy exit point ' )
+            //         } 
+            //     }
 
-            }   
+            //     if(foundOrderSellEntryPoint === false){  
+            //             foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
+            //         }else{
+                
+            //         if(orderSellEntryPointflag == false){
+            //             console.log('save order sell intry')
+    
+            //             tmpDataIn = {
+            //                 'type': 'Order sell (Trend)',
+            //                 'data_id': data[data.length-1][4]
+            //             };
+                    
+            //             orderSellEntryPointflag =true;
+            //             if ($('#checkFirstFound').is(":checked")){
+            //                 Swal.fire({
+            //                     icon: 'info',
+            //                     title: 'Found',
+            //                     text: 'First Found exit is enable. Searching is paused',
+            //                 })
+            //                 $('#autotest').removeClass('start');
+            //                 $('#autotest').text("Auto Test") ;
+            //                 clearInterval(backtestTimer);
+            //             }
+            //         }
+                
+            //         if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
+            //                 foundOrderSellEntryPoint = false
+            //                 orderSellEntryPointflag =false;
+            //                 testResult.push({
+            //                     'entry': tmpDataIn.data_id,
+            //                     'type' : tmpDataIn.type,
+            //                     'exit': data[data.length-1][4]
+            //                 })
+            //                 tmpDataIn = null;
+            //                 console.log('save order sell exit point '  )
+            //         } 
+            //     }
+            // }
+
+            // if(searchType.pattern == 1){ // search pattern   
+            //     if(momenttumBar.foundBar == true){
+            //         if(momenttumBar.type == 1){
+            //             testResult.push({
+            //                 'entry': momenttumBar.id,
+            //                 'type' : 'Order sell (Momentum)',
+            //                 'exit': momenttumBar.id
+            //             })  
+                        
+            //             console.log('found Order sell (Momentum)')
+            //             if ($('#checkFirstFound').is(":checked")){
+            //                 Swal.fire({
+            //                     icon: 'info',
+            //                     title: 'Found',
+            //                     text: 'First Found exit is enable. Searching is paused',
+            //                 })
+            //                 $('#autotest').removeClass('start');
+            //                 $('#autotest').text("Auto Test") ;
+            //                 clearInterval(backtestTimer);
+            //             }
+            //         }else if(momenttumBar.type == 2){
+            //             testResult.push({
+            //                 'entry': momenttumBar.id,
+            //                 'type' : 'Order buy (Momentum)',
+            //                 'exit': momenttumBar.id
+            //             })  
+                        
+            //             if ($('#checkFirstFound').is(":checked")){
+            //                 Swal.fire({
+            //                     icon: 'info',
+            //                     title: 'Found',
+            //                     text: 'First Found exit is enable. Searching is paused',
+            //                 })
+            //                 $('#autotest').removeClass('start');
+            //                 $('#autotest').text("Auto Test") ;
+            //                 clearInterval(backtestTimer);
+            //             }
+            //             console.log('found Order buy (Momentum)')
+            //         }
+            //     }
+
+            //     if(trendPattern.foundBar == true){
+            //         if(trendPattern.type == 1){
+            //             testResult.push({
+            //                 'entry': trendPattern.id,
+            //                 'type' : 'Order sell (Pattern down trend)',
+            //                 'exit': trendPattern.id
+            //             })  
+            //             if ($('#checkFirstFound').is(":checked")){
+            //                 Swal.fire({
+            //                     icon: 'info',
+            //                     title: 'Found',
+            //                     text: 'First Found exit is enable. Searching is paused',
+            //                 })
+            //                 $('#autotest').removeClass('start');
+            //                 $('#autotest').text("Auto Test") ;
+            //                 clearInterval(backtestTimer);
+            //             } 
+            //             console.log('found Order sell (Pattern down trend)')
+            //         }else if(trendPattern.type == 2){
+            //             testResult.push({
+            //                 'entry': trendPattern.id,
+            //                 'type' : 'Order buy (Pattern up trend)',
+            //                 'exit': trendPattern.id
+            //             })  
+            //             if ($('#checkFirstFound').is(":checked")){
+            //                 Swal.fire({
+            //                     icon: 'info',
+            //                     title: 'Found',
+            //                     text: 'First Found exit is enable. Searching is paused',
+            //                 })
+            //                 $('#autotest').removeClass('start');
+            //                 $('#autotest').text("Auto Test") ;
+            //                 clearInterval(backtestTimer);
+            //             }
+            //             console.log('found Order buy (Pattern up trend)')
+            //         }
+            //     }
+            // }   
          
 
 
@@ -1591,6 +1610,11 @@
             }
         }
 
+        canndleStickChart.on('click', function(params) {
+            // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
+            console.log(Math.abs(params.data[1]-params.data[2]))
+        });
+
         
         $(document).on('click','#zoomatoposition',function(){
             let firstIndex = _rawData[0].index;
@@ -2017,7 +2041,7 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                console.log(_ordersell_close_specs)
+                // console.log(_ordersell_close_specs)
 
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
@@ -2112,9 +2136,9 @@
             if ($(this).is(":checked")){
                 status = 2;
             }
-            console.log(status)
+            // console.log(status)
             saveFirstFoundStatus(status).then(data => { //0=order on Buy 1=order on Sell
-                console.log(data)
+                // console.log(data)
             }).catch(error => {})
        })
 
