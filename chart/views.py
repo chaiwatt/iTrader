@@ -341,7 +341,7 @@ def demotrade(request):
     
 
     return render(request,'demotrade.html',{
-        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id).exclude(m1=None, m5=None,m15=None, m30=None, h1=None, h4=None, d1=None, w1=None),
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
         'backtest':backtest,

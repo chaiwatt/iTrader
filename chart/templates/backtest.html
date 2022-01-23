@@ -1463,6 +1463,11 @@
             }
         }
 
+        canndleStickChart.on('click', function(params) {
+            console.log(Math.abs(params.data[1]-params.data[2]))
+        });
+
+
         
         $(document).on('click','#zoomatoposition',function(){
             let firstIndex = _rawData[0].index;
