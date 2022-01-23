@@ -402,7 +402,7 @@
         var lineLenght = 10;
         var momenttumBar = false;
         var trendPattern = false;
-   
+        var barSize = null;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -2040,7 +2040,9 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                // console.log(_ordersell_close_specs)
+                
+                barSize = data.barsizes
+                console.log(barSize)
 
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({

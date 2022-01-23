@@ -414,6 +414,17 @@ def getbacktestjob(request):
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
     id = request.POST.get('id')
     symbolid = request.POST.get('symbol_id')
+    symbol = Symbol.objects.filter(id = symbolid).first()
+    barsize = {
+        'm1':symbol.m1,
+        'm5':symbol.m5,
+        'm15':symbol.m15,
+        'm30':symbol.m30,
+        'h1':symbol.h1,
+        'h4':symbol.h4,
+        'd1':symbol.d1,
+        'w1':symbol.w1,
+    }
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
         'symbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
@@ -423,6 +434,7 @@ def getbacktestjob(request):
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
+        'barsizes' : barsize
     }
     return JsonResponse(data)    
 
