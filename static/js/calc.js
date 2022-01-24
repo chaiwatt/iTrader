@@ -512,8 +512,8 @@
 
         if(Math.abs(presentbarsize) > barSize && Math.abs(previous1) > barSize && Math.abs(previous2) > barSize && presentbarsize > 0 && previous1 > 0 && previous2 > 0){
             if(_data[_data.length-1][3] < _data[_data.length-2][3] && _data[_data.length-2][3] < _data[_data.length-3][3] &&  _data[_data.length-1][2] < _data[_data.length-2][2] && _data[_data.length-2][2] < _data[_data.length-3][2]){
-                // console.log('found two bar down')
-                console.log(`${presentbarsize} ${previous1} ${previous2}`)
+                console.log('found two bar down')
+                // console.log(`${presentbarsize} ${previous1} ${previous2}`)
                 return true
             }else{
                 return false 
