@@ -149,7 +149,7 @@
                                     <select class="form-control" name="selectedBacktestJob" id="selectedBacktestJob" >
                                         <option value="">== select job ==</option>
                                         {% for backtestjob in backtestjobs %}
-                                            <option value="{{ backtestjob.id }}" data-id="{{ backtestjob.symbol_id }}" data-name="{{ backtestjob.symbolname }}">{{ backtestjob.symbolname }} {{ backtestjob.timeframename }} {{ backtestjob.code }}</option>
+                                            <option value="{{ backtestjob.id }}" data-timeframe="{{ backtestjob.timeframename }}" data-id="{{ backtestjob.symbol_id }}" data-name="{{ backtestjob.symbolname }}">{{ backtestjob.symbolname }} {{ backtestjob.timeframename }} {{ backtestjob.code }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -403,6 +403,7 @@
         var momenttumBar = false;
         var trendPattern = false;
         var barSize = null;
+        var selectedTimeframe = '';
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -431,7 +432,6 @@
         
             data = getData(_forexData);
             // console.log(data[data.length-1])
-
             closedPrice = getClosedPrice(_forexData);
             lowPrice = getLowPrice(_forexData);
             highPrice = getHighPrice(_forexData);
@@ -525,11 +525,7 @@
 
             dataResult = createResult()
             
-            
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
-
-            
-            
             
             // if(foundOrderBuyEntryPoint == false){
             //     foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
@@ -537,17 +533,44 @@
             //     let check = isContinuityUpTrendrend(data,dataMA100)
             //     console.log(check)
             // }
+
+            if(foundOrderBuyEntryPoint == false){
+                foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
+            }
     
-            // console.log(foundOrderSellEntryPoint)
             if(foundOrderSellEntryPoint == false){
                 foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
             }
 
-            if(foundOrderSellEntryPoint == true){
-                if (isContinuityDownTrend(data,dataMA100) == true){
-                    console.log('found continue down')
-                }
+            if(foundOrderBuyEntryPoint == true){
                 
+   
+                if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
+                    foundOrderBuyEntryPoint = false
+                    orderBuyEntryPointflag =false;
+                    // console.log('exit uptrend ' )
+                }else{
+                    twoBarsUp(data,barSize[selectedTimeframe])
+                    // console.log('now is uptrend')
+
+                    momentumBarUp(data,barSize[selectedTimeframe],0.4,3)
+                } 
+
+                
+            
+            }
+
+            if(foundOrderSellEntryPoint == true){
+                if(findOrderSellExitPoint(dataResult, ordersell_close_specs)) {
+                        foundOrderSellEntryPoint = false
+                        orderSellEntryPointflag =false;
+                        // console.log('exit downtrend '  )
+                }else{
+                    twoBarsDown(data,barSize[selectedTimeframe])
+                    // console.log('now is downtrend')
+                    momentumBarDown(data,barSize[selectedTimeframe],0.45,3)
+                }
+           
             }
 
             // if(searchType.trend == 1){ 
@@ -1610,10 +1633,26 @@
             }
         }
 
-        // canndleStickChart.on('click', function(params) {
-        //     console.log(Math.abs(params.data[1]-params.data[2]))
-        // });
-
+        canndleStickChart.on('click', function(params) {
+            console.log(params.data[1] - params.data[2])
+            let openSubtractClose = params.data[1] - params.data[2]
+            if(openSubtractClose > 0){
+                console.log('bear')
+                let wick = params.data[4] - params.data[1]
+                let diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+                let tail = params.data[3] - params.data[2]
+                let diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+                console.log(diffbodywick + ' ' + diffbodytail)
+            }else{
+                console.log('bull')
+                let wick = params.data[4] - params.data[2]
+                let diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+                let tail = params.data[3] - params.data[1]
+                let diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+                console.log(diffbodywick + ' ' + diffbodytail)
+            }
+            console.log(Math.abs(params.data[1]-params.data[2]))
+        });
         
         $(document).on('click','#zoomatoposition',function(){
             let firstIndex = _rawData[0].index;
@@ -1678,7 +1717,7 @@
         function renderBacktestJobLists(jobs){
             let html = `<option value="">== select job ==</option>`;
             JSON.parse(jobs).forEach(job => {
-                html += `<option value="${job.pk}"  data-id="${job.fields.symbol}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
+                html += `<option value="${job.pk}" data-timeframe="${job.fields.timeframename}"  data-id="${job.fields.symbol}" data-name="${job.fields.symbolname}">${job.fields.symbolname} ${job.fields.timeframename} ${job.fields.code}</option>`
             });
             $('#selectedBacktestJob').html(html);
         }
@@ -2026,6 +2065,8 @@
             let html_interval = ``
             let html_openbuy_testspecs = ``
             let html_opensell_testspecs = ``
+            selectedTimeframe = $(this).find(':selected').data('timeframe')
+            console.log(selectedTimeframe)
 
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
@@ -2042,7 +2083,8 @@
                 ordersell_entry_specs = _ordersell_entry_specs;
                 
                 barSize = data.barsizes
-                console.log(barSize)
+                console.log(barSize[selectedTimeframe])
+
 
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({

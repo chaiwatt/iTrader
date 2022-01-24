@@ -416,14 +416,14 @@ def getbacktestjob(request):
     symbolid = request.POST.get('symbol_id')
     symbol = Symbol.objects.filter(id = symbolid).first()
     barsize = {
-        'm1':symbol.m1,
-        'm5':symbol.m5,
-        'm15':symbol.m15,
-        'm30':symbol.m30,
-        'h1':symbol.h1,
-        'h4':symbol.h4,
-        'd1':symbol.d1,
-        'w1':symbol.w1,
+        'M1':symbol.m1,
+        'M5':symbol.m5,
+        'M15':symbol.m15,
+        'M30':symbol.m30,
+        'H1':symbol.h1,
+        'H4':symbol.h4,
+        'D1':symbol.d1,
+        'W1':symbol.w1,
     }
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),

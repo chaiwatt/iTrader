@@ -487,6 +487,127 @@
         }
     }
 
+    function twoBarsUp(_data,barSize){
+        let presentbarsize = _data[_data.length-1][1] - _data[_data.length-1][0] 
+        let previous1 = _data[_data.length-2][1] -_data[_data.length-2][0]
+        let previous2 = _data[_data.length-3][1] - _data[_data.length-3][0]
+
+        if(Math.abs(presentbarsize) > barSize && Math.abs(previous1) > barSize && Math.abs(previous2) > barSize && presentbarsize > 0 && previous1 > 0 && previous2 > 0){
+            if(_data[_data.length-1][3] > _data[_data.length-2][3] && _data[_data.length-2][3] > _data[_data.length-3][3] &&  _data[_data.length-1][2] > _data[_data.length-2][2] && _data[_data.length-2][2] > _data[_data.length-3][2]){
+                console.log('found two bar up')
+                // console.log(`${presentbarsize} ${previous1} ${previous2}`)
+                return true
+            }else{
+                return false 
+            }
+        }else{
+            return false
+        }
+    }
+
+    function twoBarsDown(_data,barSize){
+        let presentbarsize = _data[_data.length-1][0] - _data[_data.length-1][1]
+        let previous1 = _data[_data.length-2][0] - _data[_data.length-2][1]
+        let previous2 = _data[_data.length-3][0] - _data[_data.length-3][1]
+
+        if(Math.abs(presentbarsize) > barSize && Math.abs(previous1) > barSize && Math.abs(previous2) > barSize && presentbarsize > 0 && previous1 > 0 && previous2 > 0){
+            if(_data[_data.length-1][3] < _data[_data.length-2][3] && _data[_data.length-2][3] < _data[_data.length-3][3] &&  _data[_data.length-1][2] < _data[_data.length-2][2] && _data[_data.length-2][2] < _data[_data.length-3][2]){
+                // console.log('found two bar down')
+                console.log(`${presentbarsize} ${previous1} ${previous2}`)
+                return true
+            }else{
+                return false 
+            }
+        }else{
+            return false
+        }
+
+    }
+
+    function momentumBarUp(_data,_barSize,barSizeRatio,gain){
+        let barSize = _barSize*barSizeRatio
+        // console.log('barSize' + barSize)
+        let presentbarsize = _data[_data.length-1][0] - _data[_data.length-1][1]
+        let previous1 = _data[_data.length-2][0] - _data[_data.length-2][1]
+        let previous2 = _data[_data.length-3][0] - _data[_data.length-3][1]
+        let positive = _data[_data.length-1][1] - _data[_data.length-2][1] 
+
+        if(Math.abs(previous1) > barSize && Math.abs(previous2) > barSize && Math.abs(presentbarsize) > gain*Math.abs(previous1) && Math.abs(presentbarsize) > gain*Math.abs(previous2) && positive > 0 ){
+            // let wick = params.data[4] - params.data[2]
+            // console.log('found bullish engulfing')
+            let diffbody_previouswick_1 = 0
+            let diffbodytail_1 = 0
+            let diffbody_previouswick_2 = 0
+            let diffbodytail_2 = 0
+            if(previous1 < 0){
+                let previouswick_1 = _data[_data.length-2][3] -  _data[_data.length-2][1]
+                diffbody_previouswick_1 = 100-((Math.abs(previous1) - Math.abs(previouswick_1))*100/Math.abs(previous1))
+                let previoustail_1 = _data[_data.length-2][2] -  _data[_data.length-2][0]
+                diffbodytail_1 = 100-((Math.abs(previous1) - Math.abs(previoustail_1))*100/Math.abs(previous1))
+                // console.log('แท่ง1')
+                // console.log(previous1 + ' ' +previouswick_1 + ' ' + diffbody_previouswick_1 + ' ' + diffbodytail_1 )
+                
+            }else{
+                let previouswick_1 = _data[_data.length-2][3] -  _data[_data.length-2][0]
+                diffbody_previouswick_1 = 100-((Math.abs(previous1) - Math.abs(previouswick_1))*100/Math.abs(previous1))
+                let previoustail_1 = _data[_data.length-2][2] -  _data[_data.length-2][1]
+                diffbodytail_1 = 100-((Math.abs(previous1) - Math.abs(previoustail_1))*100/Math.abs(previous1))
+                // console.log('แท่ง1')
+                // console.log(previous1 + ' ' +previouswick_1 + ' ' + diffbody_previouswick_1 + ' ' + diffbodytail_1 )
+               
+            }
+
+            if(previous2 < 0){
+                let previouswick_2 = _data[_data.length-3][3] -  _data[_data.length-3][1]
+                diffbody_previouswick_2 = 100-((Math.abs(previous2) - Math.abs(previouswick_2))*100/Math.abs(previous2))
+    
+                let previoustail_2 = _data[_data.length-3][2] -  _data[_data.length-3][0]
+                diffbodytail_2 = 100-((Math.abs(previous2) - Math.abs(previoustail_2))*100/Math.abs(previous2))
+                // console.log('แท่ง2')
+                // console.log(previous2 + ' ' +previouswick_2 + ' ' + diffbody_previouswick_2 + ' ' + diffbodytail_2 )
+             
+            }else{
+                let previouswick_2 = _data[_data.length-3][3] -  _data[_data.length-3][0]
+                diffbody_previouswick_2 = 100-((Math.abs(previous2) - Math.abs(previouswick_2))*100/Math.abs(previous2))
+    
+                let previoustail_2 = _data[_data.length-3][2] -  _data[_data.length-3][1]
+                diffbodytail_2 = 100-((Math.abs(previous2) - Math.abs(previoustail_2))*100/Math.abs(previous2))
+                // console.log('แท่ง2')
+                // console.log(previous2 + ' ' +previouswick_2 + ' ' + diffbody_previouswick_2 + ' ' + diffbodytail_2 ) 
+            }
+            
+            if(diffbody_previouswick_1 < 150 && diffbodytail_1 < 150 && diffbody_previouswick_2 < 150 && diffbodytail_2 < 150){
+                console.log('found bullish engulfing 555')
+                return true
+            }else{
+                return false
+            }
+            
+        }else{
+            // console.log('not good')
+            return false
+        }
+
+    }
+
+    function momentumBarDown(_data,_barSize,barSizeRatio,gain){
+        let barSize = _barSize*barSizeRatio
+        // console.log('barSize' + barSize)
+        let presentbarsize = _data[_data.length-1][0] - _data[_data.length-1][1]
+        let previous1 = _data[_data.length-2][0] - _data[_data.length-2][1]
+        let previous2 = _data[_data.length-3][0] - _data[_data.length-3][1]
+        let negative = _data[_data.length-1][1] - _data[_data.length-2][1] 
+
+        if(Math.abs(previous1) > barSize && Math.abs(previous2) > barSize && Math.abs(presentbarsize) > gain*Math.abs(previous1) && Math.abs(presentbarsize) > gain*Math.abs(previous2) && negative < 0){
+            console.log('bearish engulfing')
+            return true
+        }else{
+            // console.log('not good')
+            return false
+        }
+    }
+
+
     function isContinuityDownTrend(_data,sma100,trend){
         let uptren0 = _data[_data.length-1][2] -  sma100[sma100.length-1] 
         let uptren1 = _data[_data.length-2][2] - sma100[sma100.length-2]

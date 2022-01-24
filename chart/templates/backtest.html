@@ -1464,6 +1464,23 @@
         }
 
         canndleStickChart.on('click', function(params) {
+            console.log(params.data[1] - params.data[2])
+            let openSubtractClose = params.data[1] - params.data[2]
+            if(openSubtractClose > 0){
+                console.log('bear')
+                let wick = params.data[4] - params.data[1]
+                let diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+                let tail = params.data[3] - params.data[2]
+                let diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+                console.log(diffbodywick + ' ' + diffbodytail)
+            }else{
+                console.log('bull')
+                let wick = params.data[4] - params.data[2]
+                let diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+                let tail = params.data[3] - params.data[1]
+                let diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+                console.log(diffbodywick + ' ' + diffbodytail)
+            }
             console.log(Math.abs(params.data[1]-params.data[2]))
         });
 
