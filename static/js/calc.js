@@ -535,6 +535,28 @@
         return true
     }
 
+    function bullishMomentum(_data,barsize,upgain,downgain,numbars){
+        let result = true;
+        let open = _data[_data.length-1][0]
+        let close = _data[_data.length-1][1]
+        let body = close - open
+        // console.log('body ' + body)
+        if(body < 0  ||  Math.abs(body) < barsize*upgain){
+            
+            return false
+        }
+        for (let i = 1 ; i <= numbars; i++){
+            let open = _data[_data.length-i-1][0]
+            let close = _data[_data.length-i-1][1]
+            let body = close - open
+            // console.log(body)
+            if(Math.abs(body) > barsize*downgain){
+                return false
+            }
+        }
+        return true
+    }
+
     function bearishTrend(_data,barsize,gain,numbars){
         for (let i = 1 ; i <= numbars; i++){
             let open = _data[_data.length-i][0]
@@ -559,6 +581,26 @@
                 return false
             }
             if(preclose > postclose){
+                return false
+            }
+        }
+        return true
+    }
+
+    function bearishMomentum(_data,barsize,upgain,downgain,numbars){
+        let open = _data[_data.length-1][0]
+        let close = _data[_data.length-1][1]
+        let body = open - close
+
+        if(body < 0  || Math.abs(body) < barsize*upgain){
+            return false
+        }
+        for (let i = 1 ; i <= numbars; i++){
+            let open = _data[_data.length-i-1][0]
+            let close = _data[_data.length-i-1][1]
+            let body = close - open
+  
+            if(Math.abs(body) > barsize*downgain){
                 return false
             }
         }

@@ -562,8 +562,11 @@
                         }
                     }
 
+                    if(bullishMomentum(data,barSize[selectedTimeframe],2,0.5,2) == true){
+                        console.log('found bullish momentum')
+                    }
 
-                    momentumBarUp(data,barSize[selectedTimeframe],0.4,3)
+
                 } 
 
                 
@@ -583,7 +586,9 @@
                         }
                     }
    
-                    // momentumBarDown(data,barSize[selectedTimeframe],0.45,3)
+                    if(bearishMomentum(data,barSize[selectedTimeframe],2,0.5,2) == true){
+                        console.log('found bearish momentum')
+                    }
                 }
            
             }
