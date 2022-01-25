@@ -505,6 +505,66 @@
         }
     }
 
+    function bullishBars(_data,barsize,gain,numbars){
+        for (let i = 1 ; i <= numbars; i++){
+            let open = _data[_data.length-i][0]
+            let close = _data[_data.length-i][1]
+            let body = close - open
+            if(body < 0 || Math.abs(body) < barsize*gain){
+                return false
+            }
+        }
+        return true
+    }
+
+    function bullishLadder(_data,numbars){
+        for (let i = 1 ; i < numbars; i++){
+            let preopen = _data[_data.length-i][0]
+            let postopen = _data[_data.length-i-1][0]
+
+            let preclose = _data[_data.length-i][1]
+            let postclose = _data[_data.length-i-1][1]
+       
+            if(preopen < postopen){
+                return false
+            }
+            if(preclose < postclose){
+                return false
+            }
+        }
+        return true
+    }
+
+    function bearishTrend(_data,barsize,gain,numbars){
+        for (let i = 1 ; i <= numbars; i++){
+            let open = _data[_data.length-i][0]
+            let close = _data[_data.length-i][1]
+            let body = open - close 
+            if(body < 0 || Math.abs(body) < barsize*gain){
+                return false
+            }
+        }
+        return true
+    }
+
+    function bearishLadder(_data,numbars){
+        for (let i = 1 ; i < numbars; i++){
+            let preopen = _data[_data.length-i][0]
+            let postopen = _data[_data.length-i-1][0]
+
+            let preclose = _data[_data.length-i][1]
+            let postclose = _data[_data.length-i-1][1]
+       
+            if(preopen > postopen){
+                return false
+            }
+            if(preclose > postclose){
+                return false
+            }
+        }
+        return true
+    }
+
     function twoBarsDown(_data,barSize){
         let presentbarsize = _data[_data.length-1][0] - _data[_data.length-1][1]
         let previous1 = _data[_data.length-2][0] - _data[_data.length-2][1]
