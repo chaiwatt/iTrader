@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport,StdBarSize
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -341,7 +341,7 @@ def demotrade(request):
     
 
     return render(request,'demotrade.html',{
-        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id).exclude(m1=None, m5=None,m15=None, m30=None, h1=None, h4=None, d1=None, w1=None),
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
         'backtest':backtest,
@@ -415,15 +415,9 @@ def getbacktestjob(request):
     id = request.POST.get('id')
     symbolid = request.POST.get('symbol_id')
     symbol = Symbol.objects.filter(id = symbolid).first()
+ 
     barsize = {
-        'M1':symbol.m1,
-        'M5':symbol.m5,
-        'M15':symbol.m15,
-        'M30':symbol.m30,
-        'H1':symbol.h1,
-        'H4':symbol.h4,
-        'D1':symbol.d1,
-        'W1':symbol.w1,
+        'barsize': StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe')).first().value,
     }
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
@@ -434,7 +428,7 @@ def getbacktestjob(request):
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
-        'barsizes' : barsize
+        'barsize' : barsize
     }
     return JsonResponse(data)    
 
@@ -1009,3 +1003,14 @@ def savefirstfoundstatus(request):
     }
     
     return JsonResponse(data)
+
+def updatestdbarsize(request):
+
+    barsize = StdBarSize.objects.filter(symbol_id = request.POST.get('symbol_id'), timeframe= request.POST.get('timeframe')).first()
+    barsize.value = request.POST.get('value')
+    barsize.save()
+    data = {
+        'nothing': '',
+    }
+    
+    return JsonResponse(data)    

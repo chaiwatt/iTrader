@@ -47,5 +47,6 @@ urlpatterns = [
     path('manualcloseorder',views.manualcloseorder,name='manualcloseorder'),
     path('getSampleOhlc',views.getSampleOhlc,name='getSampleOhlc'),
     path('savefirstfoundstatus',views.savefirstfoundstatus,name='savefirstfoundstatus'),
+    path('updatestdbarsize',views.updatestdbarsize,name='updatestdbarsize'),
     
 ]

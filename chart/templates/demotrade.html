@@ -402,7 +402,7 @@
         var lineLenght = 10;
         var momenttumBar = false;
         var trendPattern = false;
-        var barSize = null;
+        var barSize = 0;
         var selectedTimeframe = '';
         $( document ).ready(function () {   
             //  setInterval(function(){
@@ -554,7 +554,7 @@
                     orderBuyEntryPointflag =false;
                     // console.log('exit uptrend ' )
                 }else{
-                    if(bullishBars(data,barSize[selectedTimeframe],1,3) == true){
+                    if(bullishBars(data,barSize,1,3) == true){
                         // console.log('found bullish trend')
                     
                         if(bullishLadder(data,3) == true){
@@ -562,7 +562,7 @@
                         }
                     }
 
-                    if(bullishMomentum(data,barSize[selectedTimeframe],2,0.5,2) == true){
+                    if(bullishMomentum(data,barSize,2,0.5,2) == true){
                         console.log('found bullish momentum')
                     }
 
@@ -579,14 +579,14 @@
                         orderSellEntryPointflag =false;
                         // console.log('exit downtrend '  )
                 }else{
-                    if(bearishTrend(data,barSize[selectedTimeframe],1,3) == true){
+                    if(bearishTrend(data,barSize,1,3) == true){
                         // console.log('found bearish trend')
                         if(bearishLadder(data,3) == true){
                             console.log('found bearish trend and ladder')
                         }
                     }
    
-                    if(bearishMomentum(data,barSize[selectedTimeframe],2,0.5,2) == true){
+                    if(bearishMomentum(data,barSize,2,0.5,2) == true){
                         console.log('found bearish momentum')
                     }
                 }
@@ -1654,24 +1654,72 @@
         }
 
         canndleStickChart.on('click', function(params) {
-            console.log(params.data[1] - params.data[2])
+            let type = `Bullish`;
+            let body = 0;
+            let diffbodywick = 0;
+            let diffbodytail = 0;
+
+            // console.log(params.data[1] - params.data[2])
             let openSubtractClose = params.data[1] - params.data[2]
             if(openSubtractClose > 0){
+                type = `Bearish`
                 console.log('bear')
                 let wick = params.data[4] - params.data[1]
-                let diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+                diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
                 let tail = params.data[3] - params.data[2]
-                let diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+                diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
                 console.log(diffbodywick + ' ' + diffbodytail)
             }else{
                 console.log('bull')
                 let wick = params.data[4] - params.data[2]
-                let diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+                diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
                 let tail = params.data[3] - params.data[1]
-                let diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+                diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
                 console.log(diffbodywick + ' ' + diffbodytail)
             }
             console.log(Math.abs(params.data[1]-params.data[2]))
+
+            Swal.fire({
+                title: `${$('#selectedBacktestJob option:selected').data('name')} ${$('#selectedBacktestJob option:selected').data('timeframe')}`,
+                html: `<h3>STD Bar size: ${barSize} <br>Type : ${type} <br>Bar size: ${parseFloat(Math.abs(openSubtractClose).toFixed(6))} <br>% Wick: ${diffbodywick.toFixed(2)} <br>% Tail: ${diffbodytail.toFixed(2)} <h3>`,
+                showDenyButton: true,
+                showCancelButton: true,
+                showConfirmButton:false,
+                confirmButtonText: 'Save',
+                denyButtonText: `Change STD Bar size`,
+                }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isDenied) {
+                    Swal.fire({
+                    title: 'Enter New STD Bar size',
+                    input: 'text',
+                    inputValue: parseFloat(Math.abs(openSubtractClose).toFixed(6)),
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                    showLoaderOnConfirm: true,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (isNaN(result.value) === false) {
+                                
+                                updateStdarsize($('#selectedBacktestJob option:selected').data("id"),$('#selectedBacktestJob option:selected').data('timeframe'),result.value).then(data => {
+                                    toastr.info(`STD Bar size has been updated to ${result.value}`)
+                                }).catch(error => {})
+                            }else{
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Error',
+                                    text: 'STD bar size is not correct',
+                                })
+                            }    
+                            
+                        }
+                    })
+                }
+            })
+
         });
         
         $(document).on('click','#zoomatoposition',function(){
@@ -2088,7 +2136,7 @@
             selectedTimeframe = $(this).find(':selected').data('timeframe')
             console.log(selectedTimeframe)
 
-            getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id')).then(data => {
+            getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id'),$(this).find(':selected').data('timeframe')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 let _orderbuy_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 1);
@@ -2101,9 +2149,9 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                
-                barSize = data.barsizes
-                console.log(barSize[selectedTimeframe])
+                // console.log(data.barsize) 
+                barSize = data.barsize.barsize
+                console.log(barSize)
 
 
                 if(JSON.parse(data.entryspecs).length == 0) {
@@ -2172,16 +2220,40 @@
             }).catch(error => {})
         })
 
-        function getBacktestJob(id,symbol_id){
+        function getBacktestJob(id,symbol_id,timeframe){
             return new Promise((resolve, reject) => {
                 data = {
                     id: id,
                     symbol_id : symbol_id,
+                    timeframe : timeframe,
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
                 }
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'getbacktestjob' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+
+        function updateStdarsize(symbol_id,timeframe,value){
+            return new Promise((resolve, reject) => {
+                data = {
+                    symbol_id: symbol_id,
+                    timeframe : timeframe,
+                    value : value,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'updatestdbarsize' %}",
                     dataType : "json",
                     data: data,
                     success: function(data) {

@@ -33,14 +33,7 @@ class Symbol(models.Model):
     broker=models.ForeignKey(Broker, on_delete=models.CASCADE)
     name=models.CharField(max_length=20)
     status=models.CharField(max_length=1)
-    m1=models.FloatField(max_length=15, null=True)
-    m5=models.FloatField(max_length=15, null=True)
-    m15=models.FloatField(max_length=15, null=True)
-    m30=models.FloatField(max_length=15, null=True)
-    h1=models.FloatField(max_length=15, null=True)
-    h4=models.FloatField(max_length=15, null=True)
-    d1=models.FloatField(max_length=15, null=True)
-    w1=models.FloatField(max_length=15, null=True)
+
     class Meta:
         db_table = "symbols"
 
@@ -131,5 +124,11 @@ class SearchReport(models.Model):
     class Meta:
         db_table = "search_reports"   
 
-
+class StdBarSize(models.Model):
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    symbolname=models.CharField(max_length=100, default=None)
+    timeframe=models.CharField(max_length=10, default=None)
+    value=models.FloatField(max_length=15, null=True)
+    class Meta:
+        db_table = "std_bar_sizes"   
             
