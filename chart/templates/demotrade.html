@@ -558,16 +558,31 @@
                         // console.log('found bullish trend')
                     
                         if(bullishLadder(data,3) == true){
-                            console.log('found bullish trend and ladder')
+                            console.log('Bullish Trend Ladder')
+                            testResult.push({
+                                'entry': data[data.length-1][4],
+                                'type' : 'Bullish Trend Ladder',
+                                'exit': data[data.length-1][4]
+                            })
                         }
                     }
 
-                    if(bullishMomentum(data,barSize,2,0.5,2) == true){
-                        console.log('found bullish momentum')
+                    if(bullishMomentum(data,barSize,3,0.5,2) == true){
+                        console.log('Bullish Momentum')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bullish Momentum',
+                            'exit': data[data.length-1][4]
+                        })
                     }
 
                     if(shootingStar(data,barSize,0.5,500,100) == true){
-                        console.log('found bearish shooting star')
+                        console.log('Bearish Shooting Star')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bearish Shooting Star',
+                            'exit': data[data.length-1][4]
+                        })
                     }
                 } 
 
@@ -584,16 +599,31 @@
                     if(bearishTrend(data,barSize,1,3) == true){
                         // console.log('found bearish trend')
                         if(bearishLadder(data,3) == true){
-                            console.log('found bearish trend and ladder')
+                            console.log('Bearish Trend Ladder')
+                            testResult.push({
+                                'entry': data[data.length-1][4],
+                                'type' : 'Bearish Trend Ladder',
+                                'exit': data[data.length-1][4]
+                            })
                         }
                     }
    
-                    if(bearishMomentum(data,barSize,2,0.5,2) == true){
-                        console.log('found bearish momentum')
+                    if(bearishMomentum(data,barSize,3,0.5,2) == true){
+                        console.log('Bearish Momentum')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bearish Momentum',
+                            'exit': data[data.length-1][4]
+                        })
                     }
 
                     if(hammer(data,barSize,0.5,100,500) == true){
-                        console.log('found bullish hammer')
+                        console.log('Bullis Hammer')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bullis Hammer',
+                            'exit': data[data.length-1][4]
+                        })
                     }
 
                 }
