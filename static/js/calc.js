@@ -607,6 +607,82 @@
         return true
     }
 
+    function shootingStar(_data,barsize,downgain,percentwick,percenttail){
+        let open = _data[_data.length-1][0]
+        let close = _data[_data.length-1][1]
+        let body = open - close
+
+        let diffbodywick = 0;
+        let diffbodytail = 0;
+     
+        if(body < 0 ){
+
+            return false
+        }
+        
+        let openSubtractClose = _data[_data.length-2][0] - _data[_data.length-2][1]
+        let bodysize = Math.abs(openSubtractClose)
+        if(openSubtractClose > 0){
+            let wick = _data[_data.length-2][3] - _data[_data.length-2][0]
+            diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+            let tail = _data[_data.length-2][2] - _data[_data.length-2][1]
+            diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+            // console.log(diffbodywick + ' ' + diffbodytail)
+        }else{
+            let wick = _data[_data.length-2][3] - _data[_data.length-2][1]
+            diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+
+            let tail = _data[_data.length-2][2] - _data[_data.length-2][0]
+            diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+            // 
+        }
+        // console.log(diffbodywick + ' ' + percentwick + ' ' + diffbodytail + ' ' + percenttail)
+        if(diffbodywick > percentwick && diffbodytail < percenttail && bodysize > barsize*downgain){
+            return true
+        }else{
+            return false
+        }
+
+    }
+
+    function hammer(_data,barsize,downgain,percentwick,percenttail){
+        let open = _data[_data.length-1][0]
+        let close = _data[_data.length-1][1]
+        let body =  close - open
+
+        let diffbodywick = 0;
+        let diffbodytail = 0;
+     
+        if(body < 0 ){
+
+            return false
+        }
+        
+        let openSubtractClose = _data[_data.length-2][1] - _data[_data.length-2][0]
+        let bodysize = Math.abs(openSubtractClose)
+        if(openSubtractClose < 0){
+            let wick = _data[_data.length-2][3] - _data[_data.length-2][0]
+            diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+            let tail = _data[_data.length-2][2] - _data[_data.length-2][1]
+            diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+            // console.log(diffbodywick + ' ' + diffbodytail)
+        }else{
+            let wick = _data[_data.length-2][3] - _data[_data.length-2][1]
+            diffbodywick = 100-((Math.abs(openSubtractClose) - Math.abs(wick))*100/Math.abs(openSubtractClose))
+
+            let tail = _data[_data.length-2][2] - _data[_data.length-2][0]
+            diffbodytail = 100-((Math.abs(openSubtractClose) - Math.abs(tail))*100/Math.abs(openSubtractClose))
+            // 
+        }
+        // console.log(diffbodywick + ' ' + percentwick + ' ' + diffbodytail + ' ' + percenttail)
+        if(diffbodywick < percentwick && diffbodytail > percenttail && bodysize > barsize*downgain){
+            return true
+        }else{
+            return false
+        }
+
+    }
+
     function twoBarsDown(_data,barSize){
         let presentbarsize = _data[_data.length-1][0] - _data[_data.length-1][1]
         let previous1 = _data[_data.length-2][0] - _data[_data.length-2][1]

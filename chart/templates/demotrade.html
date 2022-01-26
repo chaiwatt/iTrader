@@ -566,7 +566,9 @@
                         console.log('found bullish momentum')
                     }
 
-
+                    if(shootingStar(data,barSize,0.5,500,100) == true){
+                        console.log('found bearish shooting star')
+                    }
                 } 
 
                 
@@ -589,6 +591,11 @@
                     if(bearishMomentum(data,barSize,2,0.5,2) == true){
                         console.log('found bearish momentum')
                     }
+
+                    if(hammer(data,barSize,0.5,100,500) == true){
+                        console.log('found bullish hammer')
+                    }
+
                 }
            
             }
