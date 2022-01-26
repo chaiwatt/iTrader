@@ -452,10 +452,10 @@ def getbacktestjob(request):
     barsize = {
         'barsize': StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe')).first().value,
     }
-    
+    ids = StdBarSize.objects.all().values('symbol_id').distinct()
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
-        'symbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
+        'symbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id,id__in = ids)),
         'timeframes': serializers.serialize('json', TimeFrame.objects.all()),
         'intervals': serializers.serialize('json', BackTestInterval.objects.all()),
         'backtestsizes': serializers.serialize('json', BackTestSize.objects.all()),
