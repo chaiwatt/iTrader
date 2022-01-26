@@ -428,6 +428,8 @@ def getbacktestjob(request):
     symbolid = request.POST.get('symbol_id')
     symbol = Symbol.objects.filter(id = symbolid).first()
     symbol_info=mt5.symbol_info(symbol.name)
+
+    print(symbol_info)
  
     print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
 
@@ -442,8 +444,9 @@ def getbacktestjob(request):
         'bid' : symbol_info.bid,
         'ask' : symbol_info.ask,
         'degit' : symbol_info.digits,
+        'spread' : symbol_info.spread,
         'trade_contract_size' : symbol_info.trade_contract_size,
-        'balance' : accountinfo.balance
+        'balance' : accountinfo.balance,
     }
 
     barsize = {

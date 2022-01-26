@@ -404,6 +404,7 @@
         var trendPattern = false;
         var barSize = 0;
         var selectedTimeframe = '';
+        var calculationinfo = null;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -2281,15 +2282,20 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                console.log(data.calculationInfo.degit) 
+                calculationinfo = data.calculationInfo;
 
-                console.log(pipChange(data.calculationInfo.bid,data.calculationInfo.ask,data.calculationInfo.degit))
+                // console.log(calculationinfo.degit) 
 
-                let pippriceperlotsize = pipPricePerLotsize(data.calculationInfo.symbol,data.calculationInfo.degit,data.calculationInfo.ask,data.calculationInfo.trade_contract_size,1);
+                // let spread = pipChange(calculationinfo.bid,calculationinfo.ask,calculationinfo.degit)
+                
+                console.log(calculationinfo.ask - calculationinfo.bid)
+                let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                
-                console.log(pippriceperlotsize)
+                console.log('1 pip for 1 lot ' + pippriceperlotsize.toFixed(5))
 
-                let stoplossprice = stopLossPrice(0.1,data.calculationInfo.balance)
+                console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
+
+                let stoplossprice = stopLossPrice(0.1,calculationinfo.balance)
 
                 console.log(stoplossprice)
 
