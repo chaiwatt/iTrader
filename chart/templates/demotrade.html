@@ -25,6 +25,54 @@
      
           <div class="row">
             <div class="col-lg-9">
+                <div class="row">
+
+                    <!-- /.col -->
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box bg-primary">
+                            <span class="info-box-icon"><i class="fas fa-sort-amount-up-alt"></i></span>
+            
+                            <div class="info-box-content">
+                            <span class="info-box-text" style="font-size: 20px;">SPREAD (POINTS)</span>
+                            <span class="info-box-number" id="spread" style="font-size: 26px;"></span>
+            
+                            
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-4 col-sm-6 col-12">
+                          <div class="info-box bg-success">
+                            <span class="info-box-icon"><i class="far fa-money-bill-alt"></i></span>
+              
+                            <div class="info-box-content">
+                              <span class="info-box-text" style="font-size: 20px;">SPREAD PRICE/LOT</span>
+                              <span class="info-box-number" id="spreadprice" style="font-size: 26px;"></span>
+              
+                           
+                            </div>
+                            <!-- /.info-box-content -->
+                          </div>
+                          <!-- /.info-box -->
+                        </div>
+             
+                        <div class="col-md-4 col-sm-6 col-12">
+                          <div class="info-box bg-info">
+                            <span class="info-box-icon"><i class="fas fa-search-dollar"></i></span>
+              
+                            <div class="info-box-content">
+                              <span class="info-box-text" style="font-size: 20px;">PIP PRICE/LOT</span>
+                              <span class="info-box-number" id="pipprice" style="font-size: 26px;"></span>
+              
+                            </div>
+                            <!-- /.info-box-content -->
+                          </div>
+                          <!-- /.info-box -->
+                        </div>
+                        <!-- /.col -->
+                      </div>
               <div class="card">
                 <div class="card-body">
       
@@ -2291,9 +2339,9 @@
                 console.log(calculationinfo.ask - calculationinfo.bid)
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                
-                console.log('1 pip for 1 lot ' + pippriceperlotsize.toFixed(5))
+                // console.log('1 pip for 1 lot ' + pippriceperlotsize.toFixed(5))
 
-                console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
+                // console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
 
                 let stoplossprice = stopLossPrice(0.1,calculationinfo.balance)
 
@@ -2358,6 +2406,9 @@
                     html_interval += `<option value="${interval_item.pk}" ${_selectText}>${interval_item.fields.interval}</option>`
                 });
                 
+                $('#spread').html(calculationinfo.spread);
+                $('#spreadprice').html(-(calculationinfo.spread * pippriceperlotsize/10).toFixed(5));
+                $('#pipprice').html(pippriceperlotsize.toFixed(5));
                 $('#symbolname').html(`(${$(this).find(':selected').data('name')})`);
                 $('#symbols').html(html_symbol);
                 $('#backtesttimeframe').html(html_timeframe);
