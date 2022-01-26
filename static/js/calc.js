@@ -505,7 +505,7 @@
         }
     }
 
-    function bullishBars(_data,barsize,gain,numbars){
+    function bullishTrend(_data,barsize,gain,numbars){
         for (let i = 1 ; i <= numbars; i++){
             let open = _data[_data.length-i][0]
             let close = _data[_data.length-i][1]
@@ -524,6 +524,8 @@
 
             let preclose = _data[_data.length-i][1]
             let postclose = _data[_data.length-i-1][1]
+
+      
        
             if(preopen < postopen){
                 return false
@@ -531,7 +533,21 @@
             if(preclose < postclose){
                 return false
             }
+
+            // let body = _data[_data.length-i][1] - _data[_data.length-i][0]
+   
+            // let wick = _data[_data.length-i][3] - _data[_data.length-i][1]
+            // diffbodywick = 100-((Math.abs(body) - Math.abs(wick))*100/Math.abs(body))
+
+            // let tail = _data[_data.length-i][0] - _data[_data.length-i][2]
+            // diffbodytail = 100-((Math.abs(body) - Math.abs(tail))*100/Math.abs(body))
+            // console.log(i + ' ' + diffbodywick + ' ' + diffbodytail)
+            // if(diffbodywick > percentwicktail || diffbodytail > percentwicktail){
+            //     return false
+            // }
+       
         }
+
         return true
     }
 
@@ -576,6 +592,8 @@
 
             let preclose = _data[_data.length-i][1]
             let postclose = _data[_data.length-i-1][1]
+
+            // console.log( preopen + ' ' +  postopen + ' ' + preclose + ' ' +  postclose)
        
             if(preopen > postopen){
                 return false

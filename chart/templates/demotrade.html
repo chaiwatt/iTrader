@@ -554,9 +554,16 @@
                     orderBuyEntryPointflag =false;
                     // console.log('exit uptrend ' )
                 }else{
-                    if(bullishBars(data,barSize,1,3) == true){
+                    if(bullishLadder(data,7) == true){
+                        console.log('Long Bullish Trend Ladder')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Long Bullish Trend Ladder',
+                            'exit': data[data.length-1][4]
+                        })
+                    }
+                    if(bullishTrend(data,barSize,1,3) == true){
                         // console.log('found bullish trend')
-                    
                         if(bullishLadder(data,3) == true){
                             console.log('Bullish Trend Ladder')
                             testResult.push({
@@ -596,6 +603,14 @@
                         orderSellEntryPointflag =false;
                         // console.log('exit downtrend '  )
                 }else{
+                    if(bearishLadder(data,7) == true){
+                        console.log('Long Bearish Trend Ladder')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'long Bearish Trend Ladder',
+                            'exit': data[data.length-1][4]
+                        })
+                    }
                     if(bearishTrend(data,barSize,1,3) == true){
                         // console.log('found bearish trend')
                         if(bearishLadder(data,3) == true){
