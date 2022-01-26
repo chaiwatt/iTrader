@@ -409,16 +409,47 @@ def deletebacktest(request):
     return JsonResponse(data)
 
 def getbacktestjob(request):
+
+
     setting = Setting.objects.first()
     
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+
+    
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    mt5.login(myaccount.login,myaccount.password,myaccount.server)
+
+    accountinfo = mt5.account_info()
+
     id = request.POST.get('id')
     symbolid = request.POST.get('symbol_id')
     symbol = Symbol.objects.filter(id = symbolid).first()
+    symbol_info=mt5.symbol_info(symbol.name)
  
+    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
+
+    print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+
+    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+    # print(stopLossPrice(0.1,accountinfo.balance))
+    # print(getLotSize(stopLossPrice(0.01,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
+
+    calculationInfo ={
+        'symbol': symbol_info.name,
+        'bid' : symbol_info.bid,
+        'ask' : symbol_info.ask,
+        'degit' : symbol_info.digits,
+        'trade_contract_size' : symbol_info.trade_contract_size,
+        'balance' : accountinfo.balance
+    }
+
     barsize = {
         'barsize': StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe')).first().value,
     }
+    
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
         'symbols': serializers.serialize('json', Symbol.objects.filter(status="1",broker_id=myaccount.broker_id)),
@@ -428,7 +459,8 @@ def getbacktestjob(request):
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
-        'barsize' : barsize
+        'barsize' : barsize,
+        'calculationInfo' : calculationInfo
     }
     return JsonResponse(data)    
 

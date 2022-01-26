@@ -592,8 +592,6 @@
 
             let preclose = _data[_data.length-i][1]
             let postclose = _data[_data.length-i-1][1]
-
-            // console.log( preopen + ' ' +  postopen + ' ' + preclose + ' ' +  postclose)
        
             if(preopen > postopen){
                 return false

@@ -561,6 +561,16 @@
                             'type' : 'Long Bullish Trend Ladder',
                             'exit': data[data.length-1][4]
                         })
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }
                     if(bullishTrend(data,barSize,1,3) == true){
                         // console.log('found bullish trend')
@@ -571,6 +581,16 @@
                                 'type' : 'Bullish Trend Ladder',
                                 'exit': data[data.length-1][4]
                             })
+                            if ($('#checkFirstFound').is(":checked")){
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Found',
+                                    text: 'First Found exit is enable. Searching is paused',
+                                })
+                                $('#autotest').removeClass('start');
+                                $('#autotest').text("Auto Test") ;
+                                clearInterval(backtestTimer);
+                            }
                         }
                     }
 
@@ -581,6 +601,16 @@
                             'type' : 'Bullish Momentum',
                             'exit': data[data.length-1][4]
                         })
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }
 
                     if(shootingStar(data,barSize,0.5,500,100) == true){
@@ -590,6 +620,16 @@
                             'type' : 'Bearish Shooting Star',
                             'exit': data[data.length-1][4]
                         })
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }
                 } 
 
@@ -610,6 +650,16 @@
                             'type' : 'long Bearish Trend Ladder',
                             'exit': data[data.length-1][4]
                         })
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }
                     if(bearishTrend(data,barSize,1,3) == true){
                         // console.log('found bearish trend')
@@ -620,6 +670,16 @@
                                 'type' : 'Bearish Trend Ladder',
                                 'exit': data[data.length-1][4]
                             })
+                            if ($('#checkFirstFound').is(":checked")){
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Found',
+                                    text: 'First Found exit is enable. Searching is paused',
+                                })
+                                $('#autotest').removeClass('start');
+                                $('#autotest').text("Auto Test") ;
+                                clearInterval(backtestTimer);
+                            }
                         }
                     }
    
@@ -630,6 +690,16 @@
                             'type' : 'Bearish Momentum',
                             'exit': data[data.length-1][4]
                         })
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }
 
                     if(hammer(data,barSize,0.5,100,500) == true){
@@ -639,6 +709,16 @@
                             'type' : 'Bullis Hammer',
                             'exit': data[data.length-1][4]
                         })
+                        if ($('#checkFirstFound').is(":checked")){
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Found',
+                                text: 'First Found exit is enable. Searching is paused',
+                            })
+                            $('#autotest').removeClass('start');
+                            $('#autotest').text("Auto Test") ;
+                            clearInterval(backtestTimer);
+                        }
                     }
 
                 }
@@ -2201,7 +2281,7 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                // console.log(data.barsize) 
+                console.log(data.calculationInfo) 
                 barSize = data.barsize.barsize
                 console.log(barSize)
 
