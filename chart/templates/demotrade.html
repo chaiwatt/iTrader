@@ -28,7 +28,7 @@
                 <div class="row">
 
                     <!-- /.col -->
-                    <div class="col-md-4 col-sm-6 col-12">
+                    <div class="col-md-3 col-sm-6 col-12">
                         <div class="info-box bg-primary">
                             <span class="info-box-icon"><i class="fas fa-sort-amount-up-alt"></i></span>
             
@@ -43,7 +43,7 @@
                         <!-- /.info-box -->
                         </div>
                         <!-- /.col -->
-                        <div class="col-md-4 col-sm-6 col-12">
+                        <div class="col-md-3 col-sm-6 col-12">
                           <div class="info-box bg-success">
                             <span class="info-box-icon"><i class="far fa-money-bill-alt"></i></span>
               
@@ -58,7 +58,7 @@
                           <!-- /.info-box -->
                         </div>
              
-                        <div class="col-md-4 col-sm-6 col-12">
+                        <div class="col-md-3 col-sm-6 col-12">
                           <div class="info-box bg-info">
                             <span class="info-box-icon"><i class="fas fa-search-dollar"></i></span>
               
@@ -71,6 +71,19 @@
                           </div>
                           <!-- /.info-box -->
                         </div>
+
+                        <div class="col-md-3 col-sm-6 col-12">
+                            <div id="pricechange_wrapper" class="info-box bg-danger">
+                              <span class="info-box-icon"><i id="pricechange_icon" class="far fa-arrow-alt-circle-down"></i></span>
+                              <div class="info-box-content">
+                                <span class="info-box-text" style="font-size: 20px;">PRICE CHANGE</span>
+                                <span class="info-box-number" id="pricechange" style="font-size: 26px;"></span>
+                
+                              </div>
+                              <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                          </div>
                         <!-- /.col -->
                       </div>
               <div class="card">
@@ -1057,8 +1070,7 @@
                 return result;
             }
 
-            function isFirstFound(inorder,state,val){
-                let ordertype = 1
+            function isFirstFound(inorder,state,ordertype){
                 if(inorder == true) return
                 if(state == true){
                     Swal.fire({
@@ -1069,6 +1081,7 @@
                     $('#autotest').removeClass('start');
                     $('#autotest').text("Auto Test") ;
                     $('#price').val(data[data.length-1][1])
+
                     $("#ordertype option[value='" + ordertype +"']").attr("selected","selected");
                     clearInterval(backtestTimer);
                 }
