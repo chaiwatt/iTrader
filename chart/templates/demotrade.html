@@ -220,13 +220,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="stoplost">Stop Lost</label>
+                                    <label for="stoplost">Stop Lost (0.01%)</label>
                                     <input type="text" class="form-control" id="stoplost" value="" >
                                 </div>
                              </div>
                              <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="takeprofit">Take Profit (3xSL)</label>
+                                    <label for="takeprofit">Take Profit (2xSL)</label>
                                     <input type="text" class="form-control" id="takeprofit" value="" >
                                 </div>
                              </div>
@@ -271,6 +271,12 @@
                              
                         </div>
                         <div class="form-group">
+                            <div class="icheck-success d-inline ml-2">
+                                <input type="checkbox" id="checkEnterOrder">
+                                <label for="checkEnterOrder">
+                                   Enter Order
+                                </label>
+                              </div>
                             <button type="button" id="jogtrade" class="btn btn-primary mr-1 float-right">Trade</button>
                         </div>
                     </div>
@@ -583,12 +589,6 @@
             //     console.log(check)
             // }
 
-
-     
-
-           
-            
-
             if(foundOrderBuyEntryPoint == false){
                 foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
             }
@@ -610,16 +610,8 @@
                             'type' : 'Long Bullish Trend Ladder',
                             'exit': data[data.length-1][4]
                         })
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
+
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),0)
                     }
                     if(bullishTrend(data,barSize,1,3) == true){
                         // console.log('found bullish trend')
@@ -630,16 +622,8 @@
                                 'type' : 'Bullish Trend Ladder',
                                 'exit': data[data.length-1][4]
                             })
-                            if ($('#checkFirstFound').is(":checked")){
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: 'Found',
-                                    text: 'First Found exit is enable. Searching is paused',
-                                })
-                                $('#autotest').removeClass('start');
-                                $('#autotest').text("Auto Test") ;
-                                clearInterval(backtestTimer);
-                            }
+
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),0)
                         }
                     }
 
@@ -650,16 +634,8 @@
                             'type' : 'Bullish Momentum',
                             'exit': data[data.length-1][4]
                         })
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
+
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),0)
                     }
 
                     if(shootingStar(data,barSize,0.5,500,100) == true){
@@ -669,16 +645,8 @@
                             'type' : 'Bearish Shooting Star',
                             'exit': data[data.length-1][4]
                         })
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
+
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),1)
                     }
                 } 
 
@@ -699,16 +667,7 @@
                             'type' : 'long Bearish Trend Ladder',
                             'exit': data[data.length-1][4]
                         })
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),1)
                     }
                     if(bearishTrend(data,barSize,1,3) == true){
                         // console.log('found bearish trend')
@@ -719,16 +678,8 @@
                                 'type' : 'Bearish Trend Ladder',
                                 'exit': data[data.length-1][4]
                             })
-                            if ($('#checkFirstFound').is(":checked")){
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: 'Found',
-                                    text: 'First Found exit is enable. Searching is paused',
-                                })
-                                $('#autotest').removeClass('start');
-                                $('#autotest').text("Auto Test") ;
-                                clearInterval(backtestTimer);
-                            }
+
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),1)
                         }
                     }
    
@@ -739,16 +690,8 @@
                             'type' : 'Bearish Momentum',
                             'exit': data[data.length-1][4]
                         })
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
+
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),1)
                     }
 
                     if(hammer(data,barSize,0.5,100,500) == true){
@@ -758,21 +701,14 @@
                             'type' : 'Bullis Hammer',
                             'exit': data[data.length-1][4]
                         })
-                        if ($('#checkFirstFound').is(":checked")){
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Found',
-                                text: 'First Found exit is enable. Searching is paused',
-                            })
-                            $('#autotest').removeClass('start');
-                            $('#autotest').text("Auto Test") ;
-                            clearInterval(backtestTimer);
-                        }
+                        isFirstFound($('#checkEnterOrder').is(":checked"),$('#checkFirstFound').is(":checked"),0)
                     }
 
                 }
            
             }
+
+      
 
             // if(searchType.trend == 1){ 
             //     if(foundOrderBuyEntryPoint === false){  
@@ -1119,6 +1055,25 @@
                     }
                 });
                 return result;
+            }
+
+            function isFirstFound(inorder,state,val){
+                let ordertype = 1
+                if(inorder == true) return
+                if(state == true){
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Found',
+                        text: 'First Found exit is enable. Searching is paused',
+                    })
+                    $('#autotest').removeClass('start');
+                    $('#autotest').text("Auto Test") ;
+                    $('#price').val(data[data.length-1][1])
+                    $("#ordertype option[value='" + ordertype +"']").attr("selected","selected");
+                    clearInterval(backtestTimer);
+                }
+
+                return ;
             }
 
             function findOrderSellEntryPoint(_reading,_ordersell_rawSpec){
@@ -2343,8 +2298,11 @@
 
                 // console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
 
-                let stoplossprice = stopLossPrice(0.1,calculationinfo.balance)
-
+                let stoplossprice = stopLossPrice(0.01,calculationinfo.balance)
+                $('#stoplost').val(stoplossprice)
+                $('#takeprofit').val(2*stoplossprice)
+                $('#takeprofit').val(2*stoplossprice)
+                $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3))
                 console.log(stoplossprice)
 
                 console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
@@ -2473,10 +2431,26 @@
             if ($(this).is(":checked")){
                 status = 2;
             }
-            // console.log(status)
             saveFirstFoundStatus(status).then(data => { //0=order on Buy 1=order on Sell
-                // console.log(data)
             }).catch(error => {})
+       })
+
+       $(document).on('change','#checkEnterOrder', function(){
+        if ($(this).is(":checked")){
+                if($('#stoplost').val() == '' || $('#takeprofit').val() == ''){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Error',
+                        text: 'Stop Lost and Take Profit not correct!',
+                    }).then((result) => {
+                        $(this).prop( "checked", false );
+                    })                   
+                    return;
+                }
+                $('label[for=checkEnterOrder]').html('Close Order')
+            }else{
+                $('label[for=checkEnterOrder]').html('Enter Order')
+            }
        })
 
        function saveFirstFoundStatus(status){
