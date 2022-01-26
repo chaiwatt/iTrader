@@ -585,6 +585,30 @@
         return true
     }
 
+    function pipChange(fromPrice,toPrice,degit){
+        let multipleNum = 10
+        if (degit % 2 == 0){
+            multipleNum = 1
+        }
+        return ((toPrice - fromPrice) * Math.pow(10, 1*degit))/multipleNum 
+    }
+
+    function pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize){
+        if(symbol.substring(0, 3) == 'USD'){
+            return (((Math.pow(10, (-1)*degit))/currentPrice)*contractSize)*lotsize
+        }else{
+            return ((Math.pow(10, (-1)*degit))*contractSize)*lotsize
+        }
+    }
+
+    function stopLossPrice(percent,balance){
+        return percent * balance
+    }
+
+    function getLotSize(stoplostPrice,numPips,pipPrice){
+        return stoplostPrice/(numPips*pipPrice)
+    }
+    
     function bearishLadder(_data,numbars){
         for (let i = 1 ; i < numbars; i++){
             let preopen = _data[_data.length-i][0]

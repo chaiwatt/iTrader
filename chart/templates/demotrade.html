@@ -2281,7 +2281,20 @@
 
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
-                console.log(data.calculationInfo) 
+                console.log(data.calculationInfo.degit) 
+
+                console.log(pipChange(data.calculationInfo.bid,data.calculationInfo.ask,data.calculationInfo.degit))
+
+                let pippriceperlotsize = pipPricePerLotsize(data.calculationInfo.symbol,data.calculationInfo.degit,data.calculationInfo.ask,data.calculationInfo.trade_contract_size,1);
+               
+                console.log(pippriceperlotsize)
+
+                let stoplossprice = stopLossPrice(0.1,data.calculationInfo.balance)
+
+                console.log(stoplossprice)
+
+                console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
+
                 barSize = data.barsize.barsize
                 console.log(barSize)
 

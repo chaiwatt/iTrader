@@ -134,7 +134,7 @@ def pipChange(fromPrice,toPrice,degit):
     if degit % 2 == 0:
         multipleNum = 1
     
-    math.pow(10, 1*degit)
+    # math.pow(10, 1*degit)
     pip = ((toPrice - fromPrice) * math.pow(10, 1*degit))/multipleNum
     return pip 
 
@@ -434,8 +434,8 @@ def getbacktestjob(request):
     print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
 
     print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-    # print(stopLossPrice(0.1,accountinfo.balance))
-    # print(getLotSize(stopLossPrice(0.01,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
+    print(stopLossPrice(0.1,accountinfo.balance))
+    print(getLotSize(stopLossPrice(0.1,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
 
     calculationInfo ={
         'symbol': symbol_info.name,
