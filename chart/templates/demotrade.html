@@ -626,7 +626,26 @@
                         $("#pricechange_icon").addClass("fa-arrow-alt-circle-down").removeClass("fa-arrow-alt-circle-up");
                     }
                     $('#pricechange').html(accumulateprice.toFixed(3))
-                    console.log(orderStatus)
+                    // console.log(orderinfo)
+                    if(accumulateprice.toFixed(3) > orderinfo.takeprofit){
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sell',
+                            text: 'Profit greater than Take profit',
+                        })
+                        $('#autotest').removeClass('start');
+                        $('#autotest').text("Auto Test") ;
+                        clearInterval(backtestTimer);
+                    }else if(accumulateprice.toFixed(3) < (orderinfo.stoploss*-1)){
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Sell',
+                            text: 'Lost than stop lost',
+                        })
+                        $('#autotest').removeClass('start');
+                        $('#autotest').text("Auto Test") ;
+                        clearInterval(backtestTimer);
+                    }
                    
                 }
             }
@@ -2044,7 +2063,6 @@
                 if (result.isConfirmed) {
                     deleteAllBacktest().then(data => {
                         Swal.fire({
-                            //position: 'top-end',
                             icon: 'success',
                             title: 'All Jobs have been deleted',
                             showConfirmButton: false,
@@ -2098,7 +2116,6 @@
                 if (result.isConfirmed) {
                     deleteBacktest(selectedOption.val()).then(data => {
                         Swal.fire({
-                            //position: 'top-end',
                             icon: 'success',
                             title: 'Job has been deleted',
                             showConfirmButton: false,
@@ -2140,7 +2157,6 @@
        }
        
        $(document).on("click","#jogtest",function() {
-            // $('#report_table').html('');
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -2216,8 +2232,7 @@
                         title: 'Finished',
                         text: 'Back testing is finished!',
                     })
-                    // console.log(testResult);
-                   
+                    // console.log(testResult);  
                     // let html ='';
                     // if(testResult.length > 0){
                     //     testResult.forEach((result,key )=> {
@@ -2264,14 +2279,12 @@
             })
 
             createData(_rawData);
-            // console.log(_rawData)
             canndleStickChart.dispatchAction({
                 type: 'dataZoom',
                 start: 0,
                 end: 100
             });
         }
-
 
         function resetCounter(){
             count = 0;
@@ -2320,22 +2333,21 @@
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                
                 // console.log('1 pip for 1 lot ' + pippriceperlotsize.toFixed(5))
-
                 // console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
 
-                let stoplossprice = stopLossPrice(0.01,parseFloat($('#presentbalance').html()))
+                let stoplossprice = stopLossPrice(0.02,parseFloat($('#presentbalance').html()))
                 // console.log('balance ' + parseFloat($('#presentbalance').html()))
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
-                $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3))
+                $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3)*4)
                 // $('#pricechange').htme('0')
                 // console.log(stoplossprice)
 
                 // console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
 
                 barSize = data.barsize.barsize
-                console.log(barSize)
+                // console.log(barSize)
 
 
                 if(JSON.parse(data.entryspecs).length == 0) {
@@ -2410,9 +2422,7 @@
                         showConfirmButton: false,
                         timer: 1500
                     }).then(function (result) {
-                        
                     })
-
                 }
                 
                 $('#spread').html(calculationinfo.spread);
@@ -2429,16 +2439,6 @@
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
-                // orderinfo = null;
-                // orderStatus = false
-                // accumulateprice = 0;
-                // $("#closeorder_wrapper").html('');
-                // $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
-                // $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
-                // $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
-
-
-
                 
             }).catch(error => {})
         })
@@ -2498,23 +2498,6 @@
             }).catch(error => {})
        })
 
-    //    $(document).on('change','#checkEnterOrder', function(){
-    //     if ($(this).is(":checked")){
-    //             if($('#stoplost').val() == '' || $('#takeprofit').val() == ''){
-    //                 Swal.fire({
-    //                     icon: 'warning',
-    //                     title: 'Error',
-    //                     text: 'Stop Lost and Take Profit not correct!',
-    //                 }).then((result) => {
-    //                     $(this).prop( "checked", false );
-    //                 })                   
-    //                 return;
-    //             }
-    //             $('label[for=checkEnterOrder]').html('Close Order')
-    //         }else{
-    //             $('label[for=checkEnterOrder]').html('Enter Order')
-    //         }
-    //    })
 
        function saveFirstFoundStatus(status){
             return new Promise((resolve, reject) => {
@@ -2552,7 +2535,6 @@
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
 
-
                 Swal.fire({
                     icon: 'success',
                     title: 'Order was closed',
@@ -2579,9 +2561,7 @@
                 }
                 $("#pricechange").html(spread.toFixed(3));
                 accumulateprice = spread * -1
-                
             }
-           
         })
 
         $(document).on('click','#closeorder', function(){
@@ -2596,7 +2576,6 @@
             $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
             $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
             Swal.fire({
-                //position: 'top-end',
                 icon: 'success',
                 title: 'Order was closed',
                 showConfirmButton: false,
