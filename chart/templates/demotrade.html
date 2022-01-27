@@ -467,6 +467,7 @@
         var selectedTimeframe = '';
         var calculationinfo = null;
         var orderStatus = false;
+        var orderinfo = null;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -1806,18 +1807,31 @@
         canndleStickChart.on('contextmenu', function(params) {
             var e = window.event
             e.preventDefault();
-            console.log(orderStatus)
+            // console.log(orderStatus)
 
-            $('#price').val(params.data[2])
+          
+
+           
             if(orderStatus == true){
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
 
-
+                $('#stoplost').val(orderinfo.stoploss)
+                $('#takeprofit').val(orderinfo.takeprofit)
+                $('#price').val(orderinfo.price)
+                $('#lotsize').val(orderinfo.lotsize)
+                $("#ordertype option[value='" + orderinfo.ordertype +"']").attr("selected","selected");
+        
             }else{
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+                $('#price').val(params.data[2])
+                
+                $("#ordertype option[selected]").removeAttr("selected");   
+                $("#ordertype option[value='0']").attr("selected","selected");
+
             }
+            
             $('#modal-default').modal('show');
         })
         canndleStickChart.on('click', function(params) {
@@ -2284,7 +2298,7 @@
                 let stoplossprice = stopLossPrice(0.01,calculationinfo.balance)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
-                $('#takeprofit').val(2*stoplossprice)
+                // $('#takeprofit').val(2*stoplossprice)
                 $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3))
                 // $('#pricechange').htme('0')
                 console.log(stoplossprice)
@@ -2463,6 +2477,7 @@
             // $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
           
             if(orderStatus == true){
+                orderinfo = null;
                 orderStatus = false
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
@@ -2470,6 +2485,15 @@
                 orderStatus = true
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
+
+                orderinfo = {
+                    stoploss : parseFloat($('#stoplost').val()),
+                    takeprofit: parseFloat($('#takeprofit').val()),
+                    lotsize: parseFloat($('#lotsize').val()),
+                    price: parseFloat($('#price').val()),
+                    ordertype: parseInt($('#ordertype option:selected').val())
+                }
+                // console.log(orderinfo)
             }
            
         })
