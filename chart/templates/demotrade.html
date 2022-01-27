@@ -611,6 +611,9 @@
                     
                     
                     let currentprice =  (pipchange*_pippriceperlot)
+                    if(ordertype.orderinfo = 1){
+                        currentprice = currentprice*-1
+                    }
 
                     // console.log('cPrice ' + currentprice + ' sum: ' + (currentprice+accumulateprice))
 
