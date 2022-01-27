@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">DEMO TRADE: <span id="symbol"></span> <span id="timeframe"></span></h1>
+              <h1 class="m-0 " >DEMO TRADE: <span id="symbol"></span> <span id="timeframe"></span> <span id="headerinfo" ></span> </h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -1835,10 +1835,8 @@
             e.preventDefault();
             // console.log(orderStatus)
 
-          
-
-           
             if(orderStatus == true){
+                $("#headerinfo").html('(ON ORDER)').addClass("text-danger").addClass("blink");
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
 
@@ -1849,6 +1847,7 @@
                 $("#ordertype option[value='" + orderinfo.ordertype +"']").attr("selected","selected");
         
             }else{
+                $("#headerinfo").html('').removeClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
                 $('#price').val(params.data[2])
@@ -2403,7 +2402,11 @@
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
-                
+                orderinfo = null;
+                orderStatus = false
+                $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
+                $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+                $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
                 
             }).catch(error => {})
         })
@@ -2503,15 +2506,18 @@
         }
        
         $(document).on('click','#ordering',function(){          
-            // $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+            
           
             if(orderStatus == true){
                 orderinfo = null;
                 orderStatus = false
+                $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
             }else{
                 orderStatus = true
+               
+                $("#headerinfo").html('(ON ORDER)').addClass("text-danger").addClass("blink");
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
                 spread = parseFloat($('#spreadprice').html()) * parseFloat($('#lotsize').val())
