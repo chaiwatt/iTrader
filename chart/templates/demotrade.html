@@ -217,8 +217,8 @@
                                 <div class="form-group float-right">
                                     <button type="button" id="deleteallbacktest" class="btn btn-danger mr-1">Delete All</button>
                                     <button type="button" id="deletebacktest" class="btn btn-danger mr-1">Delete</button>
-                                    <button type="button" id="jogtest" class="btn btn-primary mr-1">Jog Test</button>
-                                    <button type="button" id="autotest" class="btn btn-primary ">Auto Test</button>
+                                    <button type="button" id="jogtest" class="btn btn-primary mr-1">Search</button>
+                                    <button type="button" id="autotest" class="btn btn-primary ">Auto Search</button>
                                 </div>
                             </div>
                         </div>
@@ -2588,7 +2588,7 @@
                 $('#presentbalance').html(data.balance.toFixed(2))
             }).catch(error => {})
             accumulateprice = 0;
-            orderStatus = false
+            orderStatus = false;
             $("#closeorder_wrapper").html('');
             $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
             $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
