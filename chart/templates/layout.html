@@ -74,6 +74,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <!-- <a class="nav-link"></a> -->
+        {% if request.path != '/demotrade' %}
         <span class="nav-link">User: <strong>{{ accountinfo.login }} ({{ accountinfo.name }})</strong> Balance: <strong>{{ accountinfo.balance }}</strong> Equity: <strong>{{ accountinfo.equity }}</strong> 
           Mode: 
           {% if accountinfo.trade_mode == 0 %} 
@@ -82,6 +83,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <strong>Real</strong>
           {% endif %}
           Broker: <strong>{{ accountinfo.company }}</strong> </span>
+
+          {%else%}
+          
+          <span class="nav-link">Demo Balance: <strong><span id="presentbalance">{{setting.demobalance}}</span>$</strong></span>
+        {% endif %} 
+
       </li>
     </ul>
 

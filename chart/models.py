@@ -12,6 +12,7 @@ class MyAccount(models.Model):
     password=models.CharField(max_length=100)
     server=models.CharField(max_length=100)
     account_type=models.CharField(max_length=1)
+   
     class Meta:
         db_table = "my_accounts" 
 
@@ -21,6 +22,7 @@ class Setting(models.Model):
     autocloseprice=models.FloatField(max_length=10, default = 0)
     reportsymbolsort=models.CharField(max_length=1, default = 1)
     firstfoundstatus=models.CharField(max_length=1, default = 1)
+    demobalance=models.FloatField(default = 1000)
     class Meta:
         db_table = "settings" 
 
