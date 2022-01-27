@@ -1049,3 +1049,15 @@ def updatestdbarsize(request):
     }
     
     return JsonResponse(data)    
+
+def updatedemobalance(request):
+    # print(request.POST.get('profit'))
+    setting = Setting.objects.first()
+    balance = setting.demobalance + float(request.POST.get('profit'))
+    setting.demobalance = balance
+    setting.save()
+    data = {
+        'balance': setting.demobalance,
+    }
+    
+    return JsonResponse(data)        

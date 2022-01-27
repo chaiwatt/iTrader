@@ -86,7 +86,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
           {%else%}
           
-          <span class="nav-link">Demo Balance: <strong><span id="presentbalance">{{setting.demobalance}}</span>$</strong></span>
+          <span class="nav-link">Demo Balance: <strong><span id="presentbalance">{{ setting.demobalance|floatformat:'2' }}</span>$</strong></span>
         {% endif %} 
 
       </li>

@@ -626,6 +626,7 @@
                         $("#pricechange_icon").addClass("fa-arrow-alt-circle-down").removeClass("fa-arrow-alt-circle-up");
                     }
                     $('#pricechange').html(accumulateprice.toFixed(3))
+                    console.log(orderStatus)
                    
                 }
             }
@@ -2389,8 +2390,30 @@
                     if(interval_item.pk == backtest.interval) _selectText = 'selected'
                     html_interval += `<option value="${interval_item.pk}" ${_selectText}>${interval_item.fields.interval}</option>`
                 });
+
+                if(orderStatus == true){
+                    orderinfo = null;
+                    orderStatus = false
+                    accumulateprice = 0;
+                    updateDemoBalance(parseFloat($('#pricechange').html())).then(data => {
+                        $('#presentbalance').html(data.balance.toFixed(2))
+                    }).catch(error => {})
+                    $("#closeorder_wrapper").html('');
+                    $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
+                    $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+                    $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order was closed',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function (result) {
+                        
+                    })
+
+                }
                 
-                $('#pricechange').html("0");
                 $('#spread').html(calculationinfo.spread);
                 $('#spreadprice').html(-(calculationinfo.spread * pippriceperlotsize/10).toFixed(5));
                 $('#pricechange').html(0);
@@ -2413,25 +2436,7 @@
                 // $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 // $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
 
-                if(orderStatus == true){
-                    orderinfo = null;
-                    orderStatus = false
-                    accumulateprice = 0;
-                    $("#closeorder_wrapper").html('');
-                    $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
-                    $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
-                    $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Order was closed',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(function (result) {
-                        
-                    })
-
-                }
 
                 
             }).catch(error => {})
@@ -2536,10 +2541,16 @@
                 orderinfo = null;
                 orderStatus = false
                 accumulateprice = 0;
+                console.log('update balance')
+                updateDemoBalance(parseFloat($('#pricechange').html())).then(data => {
+                    $('#presentbalance').html(data.balance.toFixed(2))
+                }).catch(error => {})
+
                 $("#closeorder_wrapper").html('');
                 $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+
 
                 Swal.fire({
                     icon: 'success',
@@ -2573,7 +2584,11 @@
         })
 
         $(document).on('click','#closeorder', function(){
+            updateDemoBalance(parseFloat($('#pricechange').html())).then(data => {
+                $('#presentbalance').html(data.balance.toFixed(2))
+            }).catch(error => {})
             accumulateprice = 0;
+            orderStatus = false
             $("#closeorder_wrapper").html('');
             $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
             $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
@@ -2589,6 +2604,28 @@
             })
         })
        
+
+        function updateDemoBalance(profit){
+            return new Promise((resolve, reject) => {
+                data = {
+                    profit : profit,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'updatedemobalance' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+
     </script>
 
 {% endblock %} 
