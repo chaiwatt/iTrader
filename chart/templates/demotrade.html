@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 " >DEMO TRADE: <span id="symbol"></span> <span id="timeframe"></span> <span id="headerinfo" ></span> </h1>
+              <h1 class="m-0 " >DEMO TRADE: <span id="symbol"></span> <span id="timeframe"></span> <span id="headerinfo" > </span> <span id="closeorder_wrapper"></span>  </h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -1836,6 +1836,7 @@
             // console.log(orderStatus)
 
             if(orderStatus == true){
+                $("#closeorder_wrapper").html('<button class="btn btn-danger" id="closeorder">Close Order</button>');
                 $("#headerinfo").html('(ON ORDER)').addClass("text-danger").addClass("blink");
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
@@ -1847,6 +1848,7 @@
                 $("#ordertype option[value='" + orderinfo.ordertype +"']").attr("selected","selected");
         
             }else{
+                $("#closeorder_wrapper").html('');
                 $("#headerinfo").html('').removeClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
@@ -2404,6 +2406,8 @@
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
                 orderinfo = null;
                 orderStatus = false
+                accumulateprice = 0;
+                $("#closeorder_wrapper").html('');
                 $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
@@ -2511,12 +2515,13 @@
             if(orderStatus == true){
                 orderinfo = null;
                 orderStatus = false
+                $("#closeorder_wrapper").html('');
                 $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
             }else{
                 orderStatus = true
-               
+                $("#closeorder_wrapper").html('<button class="btn btn-danger" id="closeorder">Close Order</button>');
                 $("#headerinfo").html('(ON ORDER)').addClass("text-danger").addClass("blink");
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
@@ -2534,6 +2539,23 @@
                 
             }
            
+        })
+
+        $(document).on('click','#closeorder', function(){
+            accumulateprice = 0;
+            $("#closeorder_wrapper").html('');
+            $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
+            $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+            $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+            Swal.fire({
+                //position: 'top-end',
+                icon: 'success',
+                title: 'Order was closed',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(function (result) {
+                
+            })
         })
        
     </script>
