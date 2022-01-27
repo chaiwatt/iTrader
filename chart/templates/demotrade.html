@@ -230,59 +230,7 @@
                         <h3 class="card-title">Demo Trade</h3>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="stoplost">Stop Lost (0.01%)</label>
-                                    <input type="text" class="form-control" id="stoplost" value="" >
-                                </div>
-                             </div>
-                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="takeprofit">Take Profit (2xSL)</label>
-                                    <input type="text" class="form-control" id="takeprofit" value="" >
-                                </div>
-                             </div>
-                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="lotsize">Lot size</label>
-                                    <input type="text" class="form-control" id="lotsize" value="" readonly >
-                                </div>
-                             </div>
-                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="price">Price</label>
-                                    <input type="text" class="form-control" id="price" value="" readonly >
-                                </div>
-                             </div>
-                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="maxlost">Max Lost</label>
-                                    <input type="text" class="form-control" id="maxlost" value="" readonly >
-                                </div>
-                             </div>
-                             <div class="col-md-6">
-                                <label for="ordertype">Order Type</label>
-                                <select class="form-control" name="ordertype" id="ordertype" >
-                                    <option value="0" >Order Buy</option>
-                                    <option value="1" >Order Sell</option>
-                                </select>
-                             </div>
-                             <div class="col-md-12">
-                                <table class="table table-sm">
-                                    <thead>
-                                      <tr>
-                                        <th>Price</th>
-                                        <th>Profit</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody  id="demotrade_table">   
-                
-                                    </tbody>
-                                  </table>
-                             </div>
-                             
-                        </div>
+                       
                         <div class="form-group">
                             <div class="icheck-success d-inline ml-2">
                                 <input type="checkbox" id="checkEnterOrder">
@@ -390,6 +338,69 @@
           <!-- /.row -->
         </div><!-- /.container-fluid -->
       </div>
+
+      <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title text-danger blink" id="modaltext">ON ORDER</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="stoplost">Stop Lost (0.01%)</label>
+                            <input type="text" class="form-control" id="stoplost" value="" >
+                        </div>
+                     </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="takeprofit">Take Profit (2xSL)</label>
+                            <input type="text" class="form-control" id="takeprofit" value="" >
+                        </div>
+                     </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="lotsize">Lot size</label>
+                            <input type="text" class="form-control" id="lotsize" value=""  >
+                        </div>
+                     </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="text" class="form-control" id="price" value="" readonly >
+                        </div>
+                     </div>
+
+                     <div class="col-md-12">
+                        <label for="ordertype">Order Type</label>
+                        <select class="form-control" name="ordertype" id="ordertype" >
+                            <option value="0" >Order Buy</option>
+                            <option value="1" >Order Sell</option>
+                        </select>
+                     </div>
+
+                     <div class="col-md-12">
+                         <div class="form-group float-right">
+                            <button type="button" id="ordering" class="btn btn-primary mt-3">Open Order</button>
+                         </div>
+                        
+                     </div>
+                     
+                </div>
+               
+            </div>
+       
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+      <!-- /.modal -->
       <!-- /.content -->
       <script>
 
@@ -601,6 +612,12 @@
             //     let check = isContinuityUpTrendrend(data,dataMA100)
             //     console.log(check)
             // }
+
+            if($('#lotsize').val() != '' && $('#price').val() != ''){
+                let pipchange = pipChange(parseFloat(data[data.length-2][1]),parseFloat(data[data.length-1][1]),calculationinfo.degit)
+                let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()))*10
+                $('#pricechange').html((pipchange*pippriceperlot).toFixed(3))
+            }
 
             if(foundOrderBuyEntryPoint == false){
                 foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
@@ -1080,7 +1097,7 @@
                     })
                     $('#autotest').removeClass('start');
                     $('#autotest').text("Auto Test") ;
-                    $('#price').val(data[data.length-1][1])
+                    // $('#price').val(data[data.length-1][1])
 
                     $("#ordertype option[value='" + ordertype +"']").attr("selected","selected");
                     clearInterval(backtestTimer);
@@ -1802,6 +1819,15 @@
             }
         }
 
+        canndleStickChart.on('contextmenu', function(params) {
+            // params.preventDefault();
+            var e = window.event
+            e.preventDefault();
+            console.log(params)
+            // console.log(params.data[2])
+            $('#price').val(params.data[2])
+            $('#modal-default').modal('show');
+        })
         canndleStickChart.on('click', function(params) {
             let type = `Bullish`;
             let body = 0;
@@ -2316,6 +2342,7 @@
                 $('#takeprofit').val(2*stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3))
+                // $('#pricechange').htme('0')
                 console.log(stoplossprice)
 
                 console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
@@ -2377,6 +2404,7 @@
                     html_interval += `<option value="${interval_item.pk}" ${_selectText}>${interval_item.fields.interval}</option>`
                 });
                 
+                $('#pricechange').html("0");
                 $('#spread').html(calculationinfo.spread);
                 $('#spreadprice').html(-(calculationinfo.spread * pippriceperlotsize/10).toFixed(5));
                 $('#pipprice').html(pippriceperlotsize.toFixed(5));
@@ -2486,6 +2514,13 @@
                 })
             })
         }
+       
+        $(document).on('click','#ordering',function(){          
+            $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+        })
+
+   
+        
     </script>
 
 {% endblock %} 
