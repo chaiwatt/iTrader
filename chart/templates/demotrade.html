@@ -266,7 +266,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <!-- <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Report</h3>
                        
@@ -293,7 +293,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
 
                 <div class="card">
@@ -1930,39 +1930,39 @@
 
         });
         
-        $(document).on('click','#zoomatoposition',function(){
-            let firstIndex = _rawData[0].index;
-            // console.log(firstIndex)
-            testResult.forEach((result,key )=> {
-                let entryindex = result.entry - firstIndex;
-                let entryvalue = _rawData[entryindex]
-                let exitindex = result.exit - firstIndex;
-                let exitvalue = _rawData[exitindex]
-                // console.log(entryvalue)
-                MarkData.push({
-                    name: "Entry",
-                    value: entryvalue.close,
-                    xAxis: entryindex,
-                    yAxis: entryvalue.close,
-                    color: "#fff",
-                });
-                MarkData.push({
-                    name: "Exit",
-                    value: exitvalue.close,
-                    xAxis: exitindex,
-                    yAxis: exitvalue.close,
-                    color: "#fff",
-                });
-            })
+        // $(document).on('click','#zoomatoposition',function(){
+        //     let firstIndex = _rawData[0].index;
+        //     // console.log(firstIndex)
+        //     testResult.forEach((result,key )=> {
+        //         let entryindex = result.entry - firstIndex;
+        //         let entryvalue = _rawData[entryindex]
+        //         let exitindex = result.exit - firstIndex;
+        //         let exitvalue = _rawData[exitindex]
+        //         // console.log(entryvalue)
+        //         MarkData.push({
+        //             name: "Entry",
+        //             value: entryvalue.close,
+        //             xAxis: entryindex,
+        //             yAxis: entryvalue.close,
+        //             color: "#fff",
+        //         });
+        //         MarkData.push({
+        //             name: "Exit",
+        //             value: exitvalue.close,
+        //             xAxis: exitindex,
+        //             yAxis: exitvalue.close,
+        //             color: "#fff",
+        //         });
+        //     })
 
-            createData(_rawData);
-            // console.log(_rawData)
-            canndleStickChart.dispatchAction({
-                type: 'dataZoom',
-                start: 44,
-                end: 60
-            });
-        })
+        //     createData(_rawData);
+        //     // console.log(_rawData)
+        //     canndleStickChart.dispatchAction({
+        //         type: 'dataZoom',
+        //         start: 44,
+        //         end: 60
+        //     });
+        // })
 
         $(document).on("click","#btnSaveSetting",function() {
             Swal.fire({
@@ -2139,7 +2139,7 @@
        }
        
        $(document).on("click","#jogtest",function() {
-            $('#report_table').html('');
+            // $('#report_table').html('');
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -2157,17 +2157,17 @@
                     text: 'Back testing is finished!',
                 })
 
-                let html ='';
-                if(testResult.length > 0){
-                    testResult.forEach((result,key )=> {
-                        html += `<tr>
-                            <td>${key+1}</td>
-                            <td>${result.entry}</td>
-                            <td>${result.exit}</td>
-                            </tr>`;
-                    });
-                }
-                $('#report_table').html(html)
+                // let html ='';
+                // if(testResult.length > 0){
+                //     testResult.forEach((result,key )=> {
+                //         html += `<tr>
+                //             <td>${key+1}</td>
+                //             <td>${result.entry}</td>
+                //             <td>${result.exit}</td>
+                //             </tr>`;
+                //     });
+                // }
+                // $('#report_table').html(html)
                 showFinish();
                 return
             }
@@ -2177,7 +2177,7 @@
         })
 
         $(document).on("click","#autotest",function() {
-            $('#report_table').html('');
+            // $('#report_table').html('');
             let selectedOption = $('#selectedBacktestJob option:selected');
             if(selectedOption.val() === '') {
                 Swal.fire({
@@ -2217,17 +2217,17 @@
                     })
                     // console.log(testResult);
                    
-                    let html ='';
-                    if(testResult.length > 0){
-                        testResult.forEach((result,key )=> {
-                            html += `<tr>
-                                <td>${key+1}</td>
-                                <td>${result.entry}</td>
-                                <td>${result.exit}</td>
-                                </tr>`;
-                        });
-                    }
-                    $('#report_table').html(html)
+                    // let html ='';
+                    // if(testResult.length > 0){
+                    //     testResult.forEach((result,key )=> {
+                    //         html += `<tr>
+                    //             <td>${key+1}</td>
+                    //             <td>${result.entry}</td>
+                    //             <td>${result.exit}</td>
+                    //             </tr>`;
+                    //     });
+                    // }
+                    // $('#report_table').html(html)
                     showFinish();
                     return
                 }
@@ -2315,7 +2315,7 @@
 
                 // let spread = pipChange(calculationinfo.bid,calculationinfo.ask,calculationinfo.degit)
                 
-                console.log(calculationinfo.ask - calculationinfo.bid)
+                // console.log(calculationinfo.ask - calculationinfo.bid)
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                
                 // console.log('1 pip for 1 lot ' + pippriceperlotsize.toFixed(5))
@@ -2329,9 +2329,9 @@
                 // $('#takeprofit').val(2*stoplossprice)
                 $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3))
                 // $('#pricechange').htme('0')
-                console.log(stoplossprice)
+                // console.log(stoplossprice)
 
-                console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
+                // console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
 
                 barSize = data.barsize.barsize
                 console.log(barSize)
@@ -2405,13 +2405,34 @@
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
-                orderinfo = null;
-                orderStatus = false
-                accumulateprice = 0;
-                $("#closeorder_wrapper").html('');
-                $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
-                $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
-                $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+                // orderinfo = null;
+                // orderStatus = false
+                // accumulateprice = 0;
+                // $("#closeorder_wrapper").html('');
+                // $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
+                // $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+                // $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+
+                if(orderStatus == true){
+                    orderinfo = null;
+                    orderStatus = false
+                    accumulateprice = 0;
+                    $("#closeorder_wrapper").html('');
+                    $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
+                    $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
+                    $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order was closed',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function (result) {
+                        
+                    })
+
+                }
+
                 
             }).catch(error => {})
         })
@@ -2511,15 +2532,24 @@
         }
        
         $(document).on('click','#ordering',function(){          
-            
-          
             if(orderStatus == true){
                 orderinfo = null;
                 orderStatus = false
+                accumulateprice = 0;
                 $("#closeorder_wrapper").html('');
                 $("#headerinfo").html('').addClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
                 $('#ordering').html('Open Order').addClass("btn-primary").removeClass("btn-danger");
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order was closed',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function (result) {
+                    
+                })
+
             }else{
                 orderStatus = true
                 $("#closeorder_wrapper").html('<button class="btn btn-danger" id="closeorder">Close Order</button>');
