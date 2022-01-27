@@ -2322,7 +2322,8 @@
 
                 // console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
 
-                let stoplossprice = stopLossPrice(0.01,calculationinfo.balance)
+                let stoplossprice = stopLossPrice(0.01,parseFloat($('#presentbalance').html()))
+                // console.log('balance ' + parseFloat($('#presentbalance').html()))
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
