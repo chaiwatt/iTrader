@@ -468,6 +468,7 @@
         var calculationinfo = null;
         var orderStatus = false;
         var orderinfo = null;
+        var accumulateprice = 0;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -601,7 +602,29 @@
             if($('#lotsize').val() != '' && $('#price').val() != ''){
                 let pipchange = pipChange(parseFloat(data[data.length-2][1]),parseFloat(data[data.length-1][1]),calculationinfo.degit)
                 let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()))*10
-                $('#pricechange').html((pipchange*pippriceperlot).toFixed(3))
+                // let currentprice =  (pipchange*pippriceperlot) //orderinfo
+
+                if(orderStatus == true){
+                    
+                    let _pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat(orderinfo.lotsize))*10
+                    // console.log('aPrice ' + accumulateprice)
+                    
+                    
+                    let currentprice =  (pipchange*_pippriceperlot)
+
+                    // console.log('cPrice ' + currentprice + ' sum: ' + (currentprice+accumulateprice))
+
+                    accumulateprice += currentprice
+                    if(accumulateprice >= 0){
+                        $("#pricechange_wrapper").addClass("bg-success").removeClass("bg-danger");
+                        $("#pricechange_icon").addClass("fa-arrow-alt-circle-up").removeClass("fa-arrow-alt-circle-down");
+                    }else{
+                        $("#pricechange_wrapper").addClass("bg-danger").removeClass("bg-success");
+                        $("#pricechange_icon").addClass("fa-arrow-alt-circle-down").removeClass("fa-arrow-alt-circle-up");
+                    }
+                    $('#pricechange').html(accumulateprice.toFixed(3))
+                   
+                }
             }
 
             if(foundOrderBuyEntryPoint == false){
@@ -2365,6 +2388,7 @@
                 $('#pricechange').html("0");
                 $('#spread').html(calculationinfo.spread);
                 $('#spreadprice').html(-(calculationinfo.spread * pippriceperlotsize/10).toFixed(5));
+                $('#pricechange').html(0);
                 $('#pipprice').html(pippriceperlotsize.toFixed(5));
                 $('#symbolname').html(`(${$(this).find(':selected').data('name')})`);
                 $('#symbols').html(html_symbol);
@@ -2376,6 +2400,8 @@
                 $("#timeframe").html($('#backtesttimeframe option:selected').text());
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
+                
+                
             }).catch(error => {})
         })
 
@@ -2485,15 +2511,18 @@
                 orderStatus = true
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
                 $('#ordering').html('Close Order').addClass("btn-danger").removeClass("btn-primary");
-
+                spread = parseFloat($('#spreadprice').html()) * parseFloat($('#lotsize').val())
                 orderinfo = {
                     stoploss : parseFloat($('#stoplost').val()),
                     takeprofit: parseFloat($('#takeprofit').val()),
                     lotsize: parseFloat($('#lotsize').val()),
                     price: parseFloat($('#price').val()),
-                    ordertype: parseInt($('#ordertype option:selected').val())
+                    ordertype: parseInt($('#ordertype option:selected').val()),
+                    spread: spread,
                 }
-                // console.log(orderinfo)
+                $("#pricechange").html(spread.toFixed(3));
+                accumulateprice = spread * -1
+                
             }
            
         })
