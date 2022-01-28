@@ -1004,10 +1004,11 @@ def updatedemobalance(request):
 def getalltimeframedata(request): 
     testdate = request.POST.get('currentdate') #"2022-01-28T4:20:00Z"
     symbol = request.POST.get('symbol')
-    print(getpostdata(symbol,testdate,"M5",1700).tail(450))
-    print(getpostdata(symbol,testdate,"M15",1100).tail(450))
-    print(getpostdata(symbol,testdate,"M30",1100).tail(450))
-    print(getpostdata(symbol,testdate,"H1",1100).tail(450))
+    
+    # print(getpostdata(symbol,testdate,"M5",1700).tail(450))
+    # print(getpostdata(symbol,testdate,"M15",1100).tail(450))
+    # print(getpostdata(symbol,testdate,"M30",1100).tail(450))
+    # print(getpostdata(symbol,testdate,"H1",1100).tail(450))
 
     ohlcs_m5 = []
     ohlcs_m15 = []
@@ -1063,7 +1064,10 @@ def getalltimeframedata(request):
         ohlcs_h1.append(ohlc)
 
     data = {
-        'nothing': '',
+        'ohlcs_m5': ohlcs_m5,
+        'ohlcs_m15': ohlcs_m15,
+        'ohlcs_m30': ohlcs_m30,
+        'ohlcs_h1': ohlcs_h1,
     }
     
     return JsonResponse(data)    
@@ -1093,20 +1097,21 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
         timeframe = 240
 
     to_datetime = datetime.strptime(presentdatedate.strip().replace("T", " ").replace("Z", ""), '%Y-%m-%d %H:%M:%S')
-
+ 
+    to_datetime = to_datetime + timedelta(hours=7)
     minute = int(to_datetime.minute/timeframe)*timeframe
-
+    # print(to_datetime)
     # print(filtered)
     initial_datetime = datetime(to_datetime.year, to_datetime.month, to_datetime.day, to_datetime.hour, minute, 0)
 
     total_minutes = timedelta(minutes=timeframe * numofbar)
 
     from_datetime = initial_datetime - total_minutes 
-    print('==============================================')
-    print(total_minutes)
-    print('Timeframe: ' + _timeframe)
-    print ("From date",  from_datetime.year,  from_datetime.month,  from_datetime.day , from_datetime.hour,  from_datetime.minute)
-    print ("To date ",  to_datetime.year,  to_datetime.month,  to_datetime.day , to_datetime.hour,  to_datetime.minute)
+    # print('==============================================')
+    # print(total_minutes)
+    # print('Timeframe: ' + _timeframe)
+    # print ("From date",  from_datetime.year,  from_datetime.month,  from_datetime.day , from_datetime.hour,  from_datetime.minute)
+    # print ("To date ",  to_datetime.year,  to_datetime.month,  to_datetime.day , to_datetime.hour,  to_datetime.minute)
 
     utc_from = datetime(from_datetime.year, from_datetime.month, from_datetime.day,from_datetime.hour,minute, tzinfo=timezone)
     utc_to = datetime(to_datetime.year, to_datetime.month, to_datetime.day,to_datetime.hour,to_datetime.minute, tzinfo=timezone)
