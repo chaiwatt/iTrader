@@ -181,7 +181,7 @@
       
                       <div class="card-footer ">
                         <div class="form-group float-right">
-                            
+                            <button type="button" id="deleteallbacktest" class="btn btn-danger mr-1">Delete All</button>
                             <button type="button" id="btnSaveSetting" class="btn btn-success mr-1">New Job</button>
                           
                         </div>                        
@@ -215,8 +215,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group float-right">
-                                    <button type="button" id="deleteallbacktest" class="btn btn-danger mr-1">Delete All</button>
+                                    
                                     <button type="button" id="deletebacktest" class="btn btn-danger mr-1">Delete</button>
+                                    <button type="button" id="viewalltimeframe" class="btn btn-primary mr-1">View All TF</button>
                                     <button type="button" id="jogtest" class="btn btn-primary mr-1">Search</button>
                                     <button type="button" id="autotest" class="btn btn-primary ">Auto Search</button>
                                 </div>
@@ -368,7 +369,41 @@
 
                      <div class="col-md-12">
                          <div class="form-group float-right">
-                            <button type="button" id="ordering" data-dismiss="modal" class="btn btn-primary mt-3">Open Order</button>
+                            
+                            <button type="button" id="ordering" data-dismiss="modal" class="btn btn-info mt-3">Open Order</button>
+                         </div>
+                        
+                     </div>
+                     
+                </div>
+               
+            </div>
+       
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+
+      <div class="modal fade" id="modal-viewtimeframe">
+        <div class="modal-dialog" style="max-width: 80%;">
+          <div class="modal-content" >
+            <div class="modal-header">
+              <h4 class="modal-title" >View</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            test
+                        </div>
+                     </div>
+                     <div class="col-md-12">
+                         <div class="form-group float-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-default mt-3">close</button>
                          </div>
                         
                      </div>
@@ -2192,18 +2227,6 @@
                     title: 'Finished',
                     text: 'Back testing is finished!',
                 })
-
-                // let html ='';
-                // if(testResult.length > 0){
-                //     testResult.forEach((result,key )=> {
-                //         html += `<tr>
-                //             <td>${key+1}</td>
-                //             <td>${result.entry}</td>
-                //             <td>${result.exit}</td>
-                //             </tr>`;
-                //     });
-                // }
-                // $('#report_table').html(html)
                 showFinish();
                 return
             }
@@ -2459,6 +2482,7 @@
                 $("#symbol").html($('#symbols option:selected').text());
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
                 
+                $('#jogtest').trigger('click');
             }).catch(error => {})
         })
 
@@ -2583,6 +2607,7 @@
             }
         })
 
+
         $(document).on('click','#closeorder', function(){
             updateDemoBalance(parseFloat($('#pricechange').html())).then(data => {
                 $('#presentbalance').html(data.balance.toFixed(2))
@@ -2614,6 +2639,44 @@
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'updatedemobalance' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+
+        $(document).on('click','#viewalltimeframe', function(){
+            if(data.length == 0 || typeof data.length == 'undefined') {
+                return
+            }
+            // console.log(data[data.length-1][5])
+            // getAllTimeframeData(parseFloat(data[data.length-1][5],'dd').then(data => {
+               
+            // }).catch(error => {})
+
+            getAllTimeframeData(data[data.length-1][5],$('#selectedBacktestJob option:selected').data("name")).then(data => {
+                   
+                }).catch(error => {})
+
+            $('#modal-viewtimeframe').modal('show')
+        });
+
+        function getAllTimeframeData(currentdate,symbol){
+            return new Promise((resolve, reject) => {
+                data = {
+                    symbol : symbol,
+                    currentdate : currentdate,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'getalltimeframedata' %}",
                     dataType : "json",
                     data: data,
                     success: function(data) {

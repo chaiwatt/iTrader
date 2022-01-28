@@ -1001,13 +1001,14 @@ def updatedemobalance(request):
     
     return JsonResponse(data)    
 
-def testSubtractMinute(request): 
-    testdate = "2022-01-28T4:16:00Z"
-    symbol = "EURUSD"
+def getalltimeframedata(request): 
+    testdate = request.POST.get('currentdate') #"2022-01-28T4:20:00Z"
+    symbol = request.POST.get('symbol')
     print(getpostdata(symbol,testdate,"M5",1700).tail(500))
     print(getpostdata(symbol,testdate,"M15",1100).tail(500))
     print(getpostdata(symbol,testdate,"M30",1100).tail(500))
     print(getpostdata(symbol,testdate,"H1",1100).tail(500))
+    
     data = {
         'nothing': '',
     }
