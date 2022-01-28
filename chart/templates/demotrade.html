@@ -699,6 +699,17 @@
                         isFirstFound(orderStatus,$('#checkFirstFound').is(":checked"),0)
                     }
 
+                    if(bullishBig(data,barSize,10) == true){
+                        console.log('Bullish Big')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bullish Big',
+                            'exit': data[data.length-1][4]
+                        })
+
+                        isFirstFound(orderStatus,$('#checkFirstFound').is(":checked"),0)
+                    }
+
                     if(shootingStar(data,barSize,0.5,500,100) == true){
                         console.log('Bearish Shooting Star')
                         testResult.push({
@@ -710,9 +721,6 @@
                         isFirstFound(orderStatus,$('#checkFirstFound').is(":checked"),1)
                     }
                 } 
-
-                
-            
             }
 
             if(foundOrderSellEntryPoint == true){
@@ -753,6 +761,17 @@
                         })
 
                         isFirstFound(orderStatus,$('#checkFirstFound').is(":checked"),1)
+                    }
+
+                    if(bearishBig(data,barSize,10) == true){
+                        console.log('Bearish Big')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bearish Big',
+                            'exit': data[data.length-1][4]
+                        })
+
+                        isFirstFound(orderStatus,$('#checkFirstFound').is(":checked"),0)
                     }
 
                     if(hammer(data,barSize,0.5,100,500) == true){

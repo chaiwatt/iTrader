@@ -647,6 +647,29 @@
         return true
     }
 
+    function bullishBig(_data,barsize,gain){
+        let open = _data[_data.length-1][0]
+        let close = _data[_data.length-1][1]
+        let body = close - open 
+
+        if(body < barsize*gain){
+            return false
+        }
+        return true
+    }
+
+
+    function bearishBig(_data,barsize,gain){
+        let open = _data[_data.length-1][0]
+        let close = _data[_data.length-1][1]
+        let body = open - close 
+
+        if(body < barsize*gain){
+            return false
+        }
+        return true
+    }
+
     function shootingStar(_data,barsize,downgain,percentwick,percenttail){
         let open = _data[_data.length-1][0]
         let close = _data[_data.length-1][1]

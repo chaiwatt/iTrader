@@ -49,5 +49,6 @@ urlpatterns = [
     path('savefirstfoundstatus',views.savefirstfoundstatus,name='savefirstfoundstatus'),
     path('updatestdbarsize',views.updatestdbarsize,name='updatestdbarsize'),
     path('updatedemobalance',views.updatedemobalance,name='updatedemobalance'),
+    path('testSubtractMinute',views.testSubtractMinute,name='testSubtractMinute'),
     
 ]

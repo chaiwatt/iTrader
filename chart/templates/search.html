@@ -199,7 +199,7 @@
         $( document ).ready(function () {   
              setInterval(function(){
                 searchMarket();
-             },5000)
+             },600000)
 
             // setInterval(function(){
             //     closeOrder('').then(data => { //closeall
@@ -228,8 +228,6 @@
 
                 let _orderbuy_close_specs = JSON.parse(data_item.exitspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_close_specs = JSON.parse(data_item.exitspecs).filter(x => x.fields.order_type == 1);
-
-                // console.log(_orderbuy_entry_specs)
 
                 orderbuy_close_specs = _orderbuy_close_specs;
                 ordersell_close_specs = _ordersell_close_specs;
@@ -428,108 +426,164 @@
           
             setDom(dataResult, orderbuy_entry_specs,ordersell_entry_specs,1)
 
-            if(searchType.trend == 1){
-                let orderbuyentrypoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs);
-                let ordersellentrypoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs);
-                if(orderbuyentrypoint ==true || ordersellentrypoint == true){
-                    let ordertype = '';
-                    if(orderbuyentrypoint){
-                        ordertype = 'Order Buy (Trend)'
-                    }else if(ordersellentrypoint == true){
-                        ordertype = 'Order Sell (Trend)'
-                    }
-                    let tmp_info = data[data.length-1];
-                    let found_symbol = $('#symbol').text();
-                    let found_timeframe = $('#timeframe').text();
-                    let found_bar = tmp_info[5];
-                    let found_open = tmp_info[0];
-                    let found_close = tmp_info[1];
-                    let found_low = tmp_info[3];
-                    let found_high = tmp_info[4];
-                    let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype} `
-                    searchResult.push({
-                        'Symbol':found_symbol,
-                        'TF':found_timeframe,
-                        'Bar':found_bar,
-                        'Close':found_close,
-                        'Type':ordertype,
-                    })
-                    UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
-
-                    }).catch(error => {})
-                    // lineNotification(foundResult).then(data => {
-                    //     console.log('sent!.')
-                    // }).catch(error => {})
-                }
+            if(foundOrderBuyEntryPoint == false){
+                foundOrderBuyEntryPoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs)
             }
-
-            if(searchType.pattern == 1){
-                if(momenttumBar.foundBar == true){
-                    let ordertype = '';
-                    if(momenttumBar.type == 1){
-                        ordertype = 'Order Sell (Momentum)'
-                    }else if(momenttumBar.type == 2){
-                        ordertype = 'Order Buy (Momentum)'
-                    }
-
-                    let tmp_info = data[data.length-1];
-                    let found_symbol = $('#symbol').text();
-                    let found_timeframe = $('#timeframe').text();
-                    let found_bar = tmp_info[5];
-                    let found_open = tmp_info[0];
-                    let found_close = tmp_info[1];
-                    let found_low = tmp_info[3];
-                    let found_high = tmp_info[4];
-                    let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
-                    searchResult.push({
-                        'Symbol':found_symbol,
-                        'TF':found_timeframe,
-                        'Bar':found_bar,
-                        'Close':found_close,
-                        'Type':ordertype,
-                    })
-                    UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
-
-                    }).catch(error => {})
-                    // lineNotification(foundResult).then(data => {
-                    //     console.log('sent!.')
-                    // }).catch(error => {})
-                }
-
-                if(trendPattern.foundBar == true){
-                    let ordertype = '';
     
-                    if(trendPattern.type == 1){
-                        ordertype = 'Order Sell (Pattern down trend)'
-                    }else if(trendPattern.type == 2){
-                        ordertype = 'Order Buy (Pattern up trend)'
+            if(foundOrderSellEntryPoint == false){
+                foundOrderSellEntryPoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs)
+            }
+
+            if(foundOrderBuyEntryPoint == true){
+                console.log('hello')
+                if(findOrderBuyExitPoint(dataResult, orderbuy_close_specs)) {
+                    foundOrderBuyEntryPoint = false
+                    orderBuyEntryPointflag =false;
+                    // console.log('exit uptrend ' )
+                }else{
+                    if(bullishLadder(data,7) == true){
+                        console.log('Long Bullish Trend Ladder')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Long Bullish Trend Ladder',
+                            'exit': data[data.length-1][4]
+                        })
+                    }
+                    if(bullishTrend(data,barSize,1,3) == true){
+                        // console.log('found bullish trend')
+                        if(bullishLadder(data,3) == true){
+                            console.log('Bullish Trend Ladder')
+                            testResult.push({
+                                'entry': data[data.length-1][4],
+                                'type' : 'Bullish Trend Ladder',
+                                'exit': data[data.length-1][4]
+                            })
+                        }
                     }
 
-                    let tmp_info = data[data.length-1];
-                    let found_symbol = $('#symbol').text();
-                    let found_timeframe = $('#timeframe').text();
-                    let found_bar = tmp_info[5];
-                    let found_open = tmp_info[0];
-                    let found_close = tmp_info[1];
-                    let found_low = tmp_info[3];
-                    let found_high = tmp_info[4];
-                    let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
-                    console.log(foundResult);
-                    searchResult.push({
-                        'Symbol':found_symbol,
-                        'TF':found_timeframe,
-                        'Bar':found_bar,
-                        'Close':found_close,
-                        'Type':ordertype,
-                    })
-                    UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
+                    if(bullishMomentum(data,barSize,3,0.5,2) == true){
+                        console.log('Bullish Momentum')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bullish Momentum',
+                            'exit': data[data.length-1][4]
+                        })
+                    }
 
-                    }).catch(error => {})
-                    // lineNotification(foundResult).then(data => {
-                    //     console.log('sent!.')
-                    // }).catch(error => {})
-                }
+                    if(shootingStar(data,barSize,0.5,500,100) == true){
+                        console.log('Bearish Shooting Star')
+                        testResult.push({
+                            'entry': data[data.length-1][4],
+                            'type' : 'Bearish Shooting Star',
+                            'exit': data[data.length-1][4]
+                        })
+                    }
+                } 
             }
+
+
+            // if(searchType.trend == 1){
+            //     let orderbuyentrypoint = findOrderBuyEntryPoint(dataResult, orderbuy_entry_specs);
+            //     let ordersellentrypoint = findOrderSellEntryPoint(dataResult, ordersell_entry_specs);
+            //     if(orderbuyentrypoint ==true || ordersellentrypoint == true){
+            //         let ordertype = '';
+            //         if(orderbuyentrypoint){
+            //             ordertype = 'Order Buy (Trend)'
+            //         }else if(ordersellentrypoint == true){
+            //             ordertype = 'Order Sell (Trend)'
+            //         }
+            //         let tmp_info = data[data.length-1];
+            //         let found_symbol = $('#symbol').text();
+            //         let found_timeframe = $('#timeframe').text();
+            //         let found_bar = tmp_info[5];
+            //         let found_open = tmp_info[0];
+            //         let found_close = tmp_info[1];
+            //         let found_low = tmp_info[3];
+            //         let found_high = tmp_info[4];
+            //         let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype} `
+            //         searchResult.push({
+            //             'Symbol':found_symbol,
+            //             'TF':found_timeframe,
+            //             'Bar':found_bar,
+            //             'Close':found_close,
+            //             'Type':ordertype,
+            //         })
+            //         UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
+
+            //         }).catch(error => {})
+            //         // lineNotification(foundResult).then(data => {
+            //         //     console.log('sent!.')
+            //         // }).catch(error => {})
+            //     }
+            // }
+
+            // if(searchType.pattern == 1){
+            //     if(momenttumBar.foundBar == true){
+            //         let ordertype = '';
+            //         if(momenttumBar.type == 1){
+            //             ordertype = 'Order Sell (Momentum)'
+            //         }else if(momenttumBar.type == 2){
+            //             ordertype = 'Order Buy (Momentum)'
+            //         }
+
+            //         let tmp_info = data[data.length-1];
+            //         let found_symbol = $('#symbol').text();
+            //         let found_timeframe = $('#timeframe').text();
+            //         let found_bar = tmp_info[5];
+            //         let found_open = tmp_info[0];
+            //         let found_close = tmp_info[1];
+            //         let found_low = tmp_info[3];
+            //         let found_high = tmp_info[4];
+            //         let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
+            //         searchResult.push({
+            //             'Symbol':found_symbol,
+            //             'TF':found_timeframe,
+            //             'Bar':found_bar,
+            //             'Close':found_close,
+            //             'Type':ordertype,
+            //         })
+            //         UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
+
+            //         }).catch(error => {})
+            //         // lineNotification(foundResult).then(data => {
+            //         //     console.log('sent!.')
+            //         // }).catch(error => {})
+            //     }
+
+            //     if(trendPattern.foundBar == true){
+            //         let ordertype = '';
+    
+            //         if(trendPattern.type == 1){
+            //             ordertype = 'Order Sell (Pattern down trend)'
+            //         }else if(trendPattern.type == 2){
+            //             ordertype = 'Order Buy (Pattern up trend)'
+            //         }
+
+            //         let tmp_info = data[data.length-1];
+            //         let found_symbol = $('#symbol').text();
+            //         let found_timeframe = $('#timeframe').text();
+            //         let found_bar = tmp_info[5];
+            //         let found_open = tmp_info[0];
+            //         let found_close = tmp_info[1];
+            //         let found_low = tmp_info[3];
+            //         let found_high = tmp_info[4];
+            //         let foundResult = `Symbol:${found_symbol} TF:${found_timeframe} Bar:${found_bar} Type:${ordertype}`
+            //         console.log(foundResult);
+            //         searchResult.push({
+            //             'Symbol':found_symbol,
+            //             'TF':found_timeframe,
+            //             'Bar':found_bar,
+            //             'Close':found_close,
+            //             'Type':ordertype,
+            //         })
+            //         UpdateSearchReport(found_symbol,found_timeframe,ordertype).then(data => { //0=order on Buy 1=order on Sell
+
+            //         }).catch(error => {})
+            //         // lineNotification(foundResult).then(data => {
+            //         //     console.log('sent!.')
+            //         // }).catch(error => {})
+            //     }
+            // }
 
             canndleStickChart.setOption({
                 series : [
@@ -751,8 +805,6 @@
                 return result;
             }
 
-
-            
             function findOrderBuyEntryPoint(_reading,_orderbuy_rawSpec,_ordersell_rawSpec){
                 let result = true;
                 _orderbuy_rawSpec.forEach(spec => {
@@ -811,7 +863,6 @@
                                 }
                                 
                             }
-
                         }
                     }
                 });
@@ -819,9 +870,71 @@
                 return result;
             }
 
+            function findOrderBuyExitPoint(_reading,_orderbuy_close_rawSpec){
+                let result = true;
+                _orderbuy_close_rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.exit_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.exit_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+                                if(reading.reading > spec.fields.exit_value){
+                                    result = false ;
+                                    return
+                                }
+                            }
+                        }
+                    }
+                });
+                return result;
+            }
+
+            function findOrderSellExitPoint(_reading,_ordersell_close_rawSpec){
+                let result = true;
+                _ordersell_close_rawSpec.forEach(spec => {
+                    let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    if(typeof reading !== 'undefined'){
+                        if(isNaN(reading.reading) === true){
+                            if(reading.reading !== spec.fields.exit_value){
+                                result = false ;
+                                return
+                            }
+                        }else{ 
+                            if(spec.fields.compare_reverse == 1){
+                                if(reading.reading < spec.fields.exit_value){
+                                    result = false ;
+                                    return
+                                }
+                            }else{
+
+                                if(spec.fields.exit_value < 0){
+                                    if(reading.reading*-1 > spec.fields.exit_value*-1){
+                                        result = false ;
+                                        return
+                                    }
+                                }else{
+                                    if(reading.reading > spec.fields.exit_value){
+                                        result = false ;
+                                        return
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                return result;
+            }
 
             function setDom(_reading,_orderbuy_rawSpec,_ordersell_rawSpec,_type){
-             
                 _orderbuy_rawSpec.filter(x => x.fields.order_type == 0).forEach(spec => {
                     let reading = _reading.find(x => x.parameter === spec.fields.parameter)
                     
@@ -895,6 +1008,84 @@
                 });
 
             }
+            
+
+
+            // function setDom(_reading,_orderbuy_rawSpec,_ordersell_rawSpec,_type){
+             
+            //     _orderbuy_rawSpec.filter(x => x.fields.order_type == 0).forEach(spec => {
+            //         let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+                    
+            //         if(typeof reading !== 'undefined'){
+            //             const dom = document.querySelector(`#td_orderbuy_reading_${spec.fields.parameter}`);
+            //             if(_type == 1){ // entry point
+            //                 if(isNaN(reading.reading) === true){
+            //                     if(reading.reading === spec.fields.entry_value){
+            //                         dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+            //                     }else{
+            //                         dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+            //                     }
+            //                 }else{ 
+            //                     if(spec.fields.compare_reverse == 1){
+            //                         if(reading.reading > spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }else{
+            //                         if(reading.reading < spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     });
+
+            //     _ordersell_rawSpec.filter(x => x.fields.order_type == 1).forEach(spec => {
+            //         let reading = _reading.find(x => x.parameter === spec.fields.parameter)
+            //         if(typeof reading !== 'undefined'){
+            //             const dom = document.querySelector(`#td_ordersell_reading_${spec.fields.parameter}`);
+            //             if(_type == 1){ // entry point
+            //                 if(isNaN(reading.reading) === true){
+            //                     if(reading.reading === spec.fields.entry_value){
+            //                         dom.innerHTML = `<span class="badge bg-success" >${reading.reading}</span>`
+            //                     }else{
+            //                         dom.innerHTML = `<span class="badge bg-danger" >${reading.reading}</span>`
+            //                     }
+            //                 }
+            //                 else{ 
+            //                     if(spec.fields.compare_reverse == 1){
+                                    
+            //                         if(reading.reading > spec.fields.entry_value){
+            //                             dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }else{
+            //                             dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                         }
+            //                     }else{
+            //                         if(spec.fields.entry_value < 0){
+            //                             if(reading.reading*-1 > spec.fields.entry_value*-1){
+            //                                 dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                             }else{
+            //                                 dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                             }
+            //                         }else{
+            //                             if(reading.reading < spec.fields.entry_value){
+            //                                 dom.innerHTML = `<span class="badge bg-success" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                             }else{
+            //                                 dom.innerHTML = `<span class="badge bg-danger" >${parseFloat(reading.reading).toFixed(8)}</span>`
+            //                             }
+            //                         }
+
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     });
+
+            // }
             
 
             
