@@ -1080,10 +1080,11 @@ def testSubtractMinute(request):
 def getpostdata(presentdatedate,_timeframe,num):
     pd.set_option('display.max_columns', 500) # number of columns to be displayed
     pd.set_option('display.width', 1500)      # max table width to display
-        # establish connection to MetaTrader 5 terminal
+
     if not mt5.initialize():
         print("initialize() failed, error code =",mt5.last_error())
         quit()
+
     timezone = pytz.timezone("UTC")
     numofbar = num
     timeframe = 15
@@ -1100,23 +1101,14 @@ def getpostdata(presentdatedate,_timeframe,num):
     elif _timeframe == 'H4':
         timeframe = 240
 
-    elapminute = timeframe * numofbar
-
-    orgdatetime = presentdatedate
-    orgdatetime = orgdatetime.strip()
-    filtered = orgdatetime.replace("T", " ")
-    filtered = filtered.replace("Z", "")
-
-    print(filtered)
-
-    to_datetime = datetime.strptime(filtered, '%Y-%m-%d %H:%M:%S')
+    to_datetime = datetime.strptime(presentdatedate.strip().replace("T", " ").replace("Z", ""), '%Y-%m-%d %H:%M:%S')
 
     minute = int(to_datetime.minute/timeframe)*timeframe
 
     # print(filtered)
     initial_datetime = datetime(to_datetime.year, to_datetime.month, to_datetime.day, to_datetime.hour, minute, 0)
 
-    one_minute = timedelta(minutes=elapminute)
+    one_minute = timedelta(minutes=timeframe * numofbar)
 
     from_datetime = initial_datetime - one_minute 
     print('==============================================')
@@ -1126,10 +1118,6 @@ def getpostdata(presentdatedate,_timeframe,num):
 
     utc_from = datetime(from_datetime.year, from_datetime.month, from_datetime.day,from_datetime.hour,minute, tzinfo=timezone)
     utc_to = datetime(to_datetime.year, to_datetime.month, to_datetime.day,to_datetime.hour,to_datetime.minute, tzinfo=timezone)
-
-    # utc_from = datetime(2022, 1, 21,1,15, tzinfo=timezone)
-    # utc_to = datetime(2022, 1, 21,4,12, tzinfo=timezone)
-    # dataframe = getattr(mt5, f'TIMEFRAME_{timeframe}')
 
     rates = []
     if _timeframe == 'M1':
@@ -1143,18 +1131,11 @@ def getpostdata(presentdatedate,_timeframe,num):
     elif _timeframe == 'H1':
         rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_H1, utc_from, utc_to)
     elif _timeframe == 'H4':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_M4, utc_from, utc_to)
-    
+        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_H4, utc_from, utc_to)
     
     mt5.shutdown()
 
     rates_frame = pd.DataFrame(rates)
     rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
-    
-    # display data
-    # print("\nDisplay dataframe with data: " + timeframe)
-    # print(rates_frame)
-
-
     
     return rates_frame   
