@@ -897,7 +897,7 @@ def manualcloseorder(request):
 
     type_dict = {0: 1, 1: 0}    
 
-    print(tick.ask)
+    # print(tick.ask)
 
     request={
         "action": mt5.TRADE_ACTION_DEAL,
@@ -923,10 +923,8 @@ def manualcloseorder(request):
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
         df['time'] = pd.to_datetime(df['time'], unit='s')
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
-        # print(df)
-        
+        # print(df)   
         for i, data in df.iterrows():
-           
             _data = {
                 'symbol':data['symbol'],
                 'lot':data['volume'] ,
@@ -969,67 +967,6 @@ def symboldata(request):
     return JsonResponse(data)
 
 
-def getSampleOhlc(request):
-    pd.set_option('display.max_columns', 500) # number of columns to be displayed
-    pd.set_option('display.width', 1500)      # max table width to display
-    # import pytz module for working with time zone
-   
-    
-    # establish connection to MetaTrader 5 terminal
-    if not mt5.initialize():
-        print("initialize() failed, error code =",mt5.last_error())
-        quit()
-    
-    found_date = '2022-01-20 23:30:00'
-
-    date_obj = datetime.strptime(found_date, '%Y-%m-%d %H:%M:%S')
-
-    print ("Year Month Day Hour Minute",  date_obj.year,  date_obj.month,  date_obj.day , date_obj.hour,  date_obj.minute)
-
-    timezone = pytz.timezone("UTC")
-
-    utc_from = datetime(2022, 1, 21,0, tzinfo=timezone)
-    utc_to = datetime(2022, 1, 22,23, tzinfo=timezone)
-
-    utc_from = datetime(2022, 1, 21,0, tzinfo=timezone)
-    utc_to = datetime(2022, 1, 22,23, tzinfo=timezone)
-
-    rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_M30, utc_from, utc_to)
-
-    # utc_from = datetime(2020, 1, 10, tzinfo=timezone)
-    # # get 10 EURUSD H4 bars starting from 01.10.2020 in UTC time zone
-    # rates = mt5.copy_rates_from("EURAUD", mt5.TIMEFRAME_M30, utc_from, 10)
-    
-
-    mt5.shutdown()
-    print(rates)
-    # display each element of obtained data in a new line
-    print("Display obtained data 'as is'")
-    counter=0
-    # for rate in rates:
-    #     counter+=1
-    #     if counter<=10:
-    #         print(rate)
-            
-    #         dt_object = datetime.fromtimestamp(rate[0])
-    #         print(dt_object)
-    
-    # create DataFrame out of the obtained data
-    rates_frame = pd.DataFrame(rates)
-    # convert time in seconds into the 'datetime' format
-    rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
-    
-    # display data
-    print("\nDisplay dataframe with data")
-    print(rates_frame)
-
-    data = {
-        'nothing': '',
-    }
-    
-    return JsonResponse(data)
-
-
 def savefirstfoundstatus(request):
     setting = Setting.objects.first()
     setting.firstfoundstatus = request.POST.get('status')
@@ -1065,19 +1002,19 @@ def updatedemobalance(request):
     return JsonResponse(data)    
 
 def testSubtractMinute(request): 
-    testdate = "2022-01-25T4:36:00Z"
-
-    print(getpostdata(testdate,"M5",10))
-    print(getpostdata(testdate,"M15",10))
-    print(getpostdata(testdate,"M30",10))
-    print(getpostdata(testdate,"H1",10))
+    testdate = "2022-01-28T4:16:00Z"
+    symbol = "EURUSD"
+    print(getpostdata(symbol,testdate,"M5",1700).tail(500))
+    print(getpostdata(symbol,testdate,"M15",1100).tail(500))
+    print(getpostdata(symbol,testdate,"M30",1100).tail(500))
+    print(getpostdata(symbol,testdate,"H1",1100).tail(500))
     data = {
         'nothing': '',
     }
     
     return JsonResponse(data)    
 
-def getpostdata(presentdatedate,_timeframe,num):
+def getpostdata(symbol,presentdatedate,_timeframe,num):
     pd.set_option('display.max_columns', 500) # number of columns to be displayed
     pd.set_option('display.width', 1500)      # max table width to display
 
@@ -1108,30 +1045,31 @@ def getpostdata(presentdatedate,_timeframe,num):
     # print(filtered)
     initial_datetime = datetime(to_datetime.year, to_datetime.month, to_datetime.day, to_datetime.hour, minute, 0)
 
-    one_minute = timedelta(minutes=timeframe * numofbar)
+    total_minutes = timedelta(minutes=timeframe * numofbar)
 
-    from_datetime = initial_datetime - one_minute 
+    from_datetime = initial_datetime - total_minutes 
     print('==============================================')
+    print(total_minutes)
     print('Timeframe: ' + _timeframe)
-    # print ("From date",  from_datetime.year,  from_datetime.month,  from_datetime.day , from_datetime.hour,  from_datetime.minute)
-    # print ("To date ",  to_datetime.year,  to_datetime.month,  to_datetime.day , to_datetime.hour,  to_datetime.minute)
+    print ("From date",  from_datetime.year,  from_datetime.month,  from_datetime.day , from_datetime.hour,  from_datetime.minute)
+    print ("To date ",  to_datetime.year,  to_datetime.month,  to_datetime.day , to_datetime.hour,  to_datetime.minute)
 
     utc_from = datetime(from_datetime.year, from_datetime.month, from_datetime.day,from_datetime.hour,minute, tzinfo=timezone)
     utc_to = datetime(to_datetime.year, to_datetime.month, to_datetime.day,to_datetime.hour,to_datetime.minute, tzinfo=timezone)
 
     rates = []
     if _timeframe == 'M1':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_M1, utc_from, utc_to)
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M1, utc_from, utc_to)
     elif _timeframe == 'M5':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_M5, utc_from, utc_to)
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M5, utc_from, utc_to)
     elif _timeframe == 'M15':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_M15, utc_from, utc_to)
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M15, utc_from, utc_to)
     elif _timeframe == 'M30':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_M30, utc_from, utc_to)
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M30, utc_from, utc_to)
     elif _timeframe == 'H1':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_H1, utc_from, utc_to)
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H1, utc_from, utc_to)
     elif _timeframe == 'H4':
-        rates = mt5.copy_rates_range("EURAUD", mt5.TIMEFRAME_H4, utc_from, utc_to)
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H4, utc_from, utc_to)
     
     mt5.shutdown()
 
