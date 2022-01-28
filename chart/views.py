@@ -1136,3 +1136,4 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
     rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
     
     return rates_frame   
+

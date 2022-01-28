@@ -23,6 +23,8 @@ class Setting(models.Model):
     reportsymbolsort=models.CharField(max_length=1, default = 1)
     firstfoundstatus=models.CharField(max_length=1, default = 1)
     demobalance=models.FloatField(default = 1000)
+    spreadlimit=models.IntegerField(default = 15)
+    spreadpricelimit=models.FloatField(default = 20)
     class Meta:
         db_table = "settings" 
 
