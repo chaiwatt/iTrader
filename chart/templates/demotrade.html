@@ -389,7 +389,7 @@
         <div class="modal-dialog" style="max-width: 80%;">
           <div class="modal-content" >
             <div class="modal-header">
-              <h4 class="modal-title" >View</h4>
+              <h4 class="modal-title" >Timeframe Viewer</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -397,17 +397,25 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group">
-                            test
-                        </div>
+                        <div id="canndle_stick_tf_m5"></div>
+                     </div>
+                     <div class="col-md-12">
+                        <div id="canndle_stick_tf_m15"></div>
+                     </div>
+                     <div class="col-md-12">
+                        <div id="canndle_stick_tf_m30"></div>
+                     </div>
+                     <div class="col-md-12">
+                        <div id="canndle_stick_tf_h1"></div>
+                     </div>
+                     <div class="col-md-12">
+                        <div id="canndle_stick_tf_h4"></div>
                      </div>
                      <div class="col-md-12">
                          <div class="form-group float-right">
                             <button type="button" data-dismiss="modal" class="btn btn-default mt-3">close</button>
                          </div>
-                        
-                     </div>
-                     
+                     </div> 
                 </div>
                
             </div>
@@ -446,6 +454,14 @@
         var orderbuy_close_specs = [];//JSON.parse('{{ exitspecs|escapejs }}');
         var ordersell_close_specs = [];
         var data = []
+        var data_tf_m1 = []
+        var data_tf_m5 = []
+        var data_tf_m15 = []
+        var data_tf_m30 = []
+        var data_tf_h1 = []
+        var data_tf_h4 = []
+        var data_tf_d1 = []
+        var data_tf_w1 = []
         var axisData = [];
         var MacdArr = [];
         var AvgMacdArr = [];

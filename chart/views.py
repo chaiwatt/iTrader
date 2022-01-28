@@ -1004,11 +1004,64 @@ def updatedemobalance(request):
 def getalltimeframedata(request): 
     testdate = request.POST.get('currentdate') #"2022-01-28T4:20:00Z"
     symbol = request.POST.get('symbol')
-    print(getpostdata(symbol,testdate,"M5",1700).tail(500))
-    print(getpostdata(symbol,testdate,"M15",1100).tail(500))
-    print(getpostdata(symbol,testdate,"M30",1100).tail(500))
-    print(getpostdata(symbol,testdate,"H1",1100).tail(500))
-    
+    print(getpostdata(symbol,testdate,"M5",1700).tail(450))
+    print(getpostdata(symbol,testdate,"M15",1100).tail(450))
+    print(getpostdata(symbol,testdate,"M30",1100).tail(450))
+    print(getpostdata(symbol,testdate,"H1",1100).tail(450))
+
+    ohlcs_m5 = []
+    ohlcs_m15 = []
+    ohlcs_m30 = []
+    ohlcs_h1 = []
+
+    for i, data in getpostdata(symbol,testdate,"M5",1700).tail(450).iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs_m5.append(ohlc)
+
+    for i, data in getpostdata(symbol,testdate,"M15",1100).tail(450).iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs_m15.append(ohlc)
+
+    for i, data in getpostdata(symbol,testdate,"M30",1100).tail(450).iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs_m30.append(ohlc)
+
+    for i, data in getpostdata(symbol,testdate,"H1",1100).tail(450).iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs_h1.append(ohlc)
+
     data = {
         'nothing': '',
     }
