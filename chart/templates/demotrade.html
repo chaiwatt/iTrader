@@ -664,7 +664,7 @@
                 if(orderStatus == true){
                     
                     let _pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat(orderinfo.lotsize))*10
-                    // console.log('aPrice ' + accumulateprice)
+                    console.log('aPrice ' + pipchange)
                     
                     
                     let currentprice =  (pipchange*_pippriceperlot)
@@ -682,9 +682,9 @@
                         $("#pricechange_wrapper").addClass("bg-danger").removeClass("bg-success");
                         $("#pricechange_icon").addClass("fa-arrow-alt-circle-down").removeClass("fa-arrow-alt-circle-up");
                     }
-                    $('#pricechange').html(accumulateprice.toFixed(3))
+                    $('#pricechange').html(accumulateprice.toFixed(5))
                     // console.log(orderinfo)
-                    if(accumulateprice.toFixed(3) > orderinfo.takeprofit){
+                    if(accumulateprice.toFixed(5) > orderinfo.takeprofit){
                         Swal.fire({
                             icon: 'info',
                             title: 'Sell',
@@ -693,7 +693,7 @@
                         $('#autotest').removeClass('start');
                         $('#autotest').text("Auto Test") ;
                         clearInterval(backtestTimer);
-                    }else if(accumulateprice.toFixed(3) < (orderinfo.stoploss*-1)){
+                    }else if(accumulateprice.toFixed(5) < (orderinfo.stoploss*-1)){
                         Swal.fire({
                             icon: 'warning',
                             title: 'Sell',
@@ -2824,9 +2824,10 @@
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
-                $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(3)*4)
+                $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(5))
+                // console.log(getLotSize(stoplossprice,100,pippriceperlotsize)*4)
                 // $('#pricechange').htme('0')
-                // console.log(stoplossprice)
+                // console.log(pippriceperlotsize)
 
                 // console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
 
@@ -3045,7 +3046,7 @@
                     ordertype: parseInt($('#ordertype option:selected').val()),
                     spread: spread,
                 }
-                $("#pricechange").html(spread.toFixed(3));
+                $("#pricechange").html(spread.toFixed(5));
                 accumulateprice = spread * -1
             }
         })

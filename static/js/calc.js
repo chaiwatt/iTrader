@@ -594,6 +594,7 @@
     }
 
     function pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize){
+        // console.log(symbol + ' '+ degit+ ' '+currentPrice+ ' '+contractSize+ ' '+lotsize)
         if(symbol.substring(0, 3) == 'USD'){
             return (((Math.pow(10, (-1)*degit))/currentPrice)*contractSize)*lotsize
         }else{
