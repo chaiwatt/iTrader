@@ -2812,11 +2812,13 @@
 
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                 let stoplossprice = stopLossPrice(0.02,parseFloat($('#presentbalance').html()))
-
+                
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
-                $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(5))
+                $('#lotsize').val(getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5))
+                // console.log('let size: '+ getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5))
+                // console.log('stop lost: ' + stoplossprice)
 
                 barSize = data.barsize.barsize
                 console.log(barSize)
