@@ -217,7 +217,7 @@
                                 <div class="form-group float-right">
                                     
                                     <button type="button" id="deletebacktest" class="btn btn-danger mr-1">Delete</button>
-                                    
+                                    <button type="button" id="btnviewtimeframe" class="btn btn-primary mr-1">View All TF</button>
                                     <button type="button" id="jogtest" class="btn btn-primary mr-1">Search</button>
                                     <button type="button" id="autotest" class="btn btn-primary ">Auto Search</button>
                                 </div>
@@ -369,7 +369,7 @@
 
                      <div class="col-md-12">
                          <div class="form-group d-flex justify-content-between align-items-center">
-                            <button type="button" id="viewalltimeframe" class="btn btn-info mt-3">View All TIMEFRAME</button>
+                            <button type="button" id="viewalltimeframe" class="btn btn-primary mt-3">View All TIMEFRAME</button>
                             <button type="button" id="ordering" data-dismiss="modal" class="btn btn-info mt-3">Open Order</button>
                          </div>
                         
@@ -2658,7 +2658,7 @@
                 Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'please select Job!',
+                        text: 'Job not selected yet!.',
                     })
                 return
             }
@@ -2684,7 +2684,7 @@
                 Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'please select Job!',
+                        text: 'Job not selected yet!.',
                     })
                 
                 // resetCounter();
@@ -3100,14 +3100,27 @@
             })
         }
 
-        $(document).on('click','#viewalltimeframe', function(){
-    
-            if(presentBarInfo == null) {
+        $(document).on('click','#btnviewtimeframe',function(){
+            if(typeof $('#selectedBacktestJob option:selected').data('name') == 'undefined'){
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Job not selected yet!.',
+                    })
                 return
             }
 
- 
+            presentBarInfo = {
+                symbol: $('#selectedBacktestJob option:selected').data('name'),
+                currentdate: data[data.length-1][5]
+            }
+            $('#modal-viewtimeframe').modal('show')
+        })
 
+        $(document).on('click','#viewalltimeframe', function(){
+            if(presentBarInfo == null) {
+                return
+            }
             $('#modal-viewtimeframe').modal('show')
         });
 
@@ -3135,9 +3148,9 @@
 
         $('#modal-viewtimeframe').on('shown.bs.modal', function (e) {
             getAllTimeframeData(presentBarInfo.currentdate,presentBarInfo.symbol).then(data => {
-                   console.log(data)
-                   createDataAllTimeframe(data)
-                }).catch(error => {})
+                // console.log(data)
+                createDataAllTimeframe(data)
+            }).catch(error => {})
         })
 
     </script>
