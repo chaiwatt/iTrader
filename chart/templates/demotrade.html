@@ -389,7 +389,7 @@
         <div class="modal-dialog" style="max-width: 80%;">
           <div class="modal-content" >
             <div class="modal-header">
-              <h4 class="modal-title" >Timeframe Viewer</h4>
+              <h4 class="modal-title" >TIMEFRAME: <span id="tfviewer"></span> </h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -2688,8 +2688,6 @@
                         title: 'Oops...',
                         text: 'Job not selected yet!.',
                     })
-                
-                // resetCounter();
                 return
             }
 
@@ -2718,18 +2716,6 @@
                         title: 'Finished',
                         text: 'Back testing is finished!',
                     })
-                    // console.log(testResult);  
-                    // let html ='';
-                    // if(testResult.length > 0){
-                    //     testResult.forEach((result,key )=> {
-                    //         html += `<tr>
-                    //             <td>${key+1}</td>
-                    //             <td>${result.entry}</td>
-                    //             <td>${result.exit}</td>
-                    //             </tr>`;
-                    //     });
-                    // }
-                    // $('#report_table').html(html)
                     showFinish();
                     return
                 }
@@ -3150,7 +3136,7 @@
 
         $('#modal-viewtimeframe').on('shown.bs.modal', function (e) {
             getAllTimeframeData(presentBarInfo.currentdate,presentBarInfo.symbol).then(data => {
-                // console.log(data)
+                $('#tfviewer').html($('#selectedBacktestJob option:selected').data('name'))
                 createDataAllTimeframe(data)
             }).catch(error => {})
         })
