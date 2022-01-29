@@ -2722,6 +2722,7 @@
                 let _count = count++;
                 let arraySet = _rawData.slice(_count,_count + testRange)
                 createData(arraySet);
+                currentselecteddate = data[data.length-1][5]
             }
             backtestTimer = setInterval(testing,backtestTimerInterval);
             var c = 0;
