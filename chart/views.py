@@ -37,7 +37,7 @@ def index(request):
     mt5.login(myaccount.login,myaccount.password,myaccount.server)
 
     accountinfo = mt5.account_info()
-    print (accountinfo)
+    # print (accountinfo)
     currentview = CurrentView.objects.first()
     tf = TimeFrame.objects.get(id = currentview.timeframe_id)
     timeframe = tf.name
@@ -51,11 +51,11 @@ def index(request):
     # lasttick=mt5.symbol_info_tick(symbol)
     # print(lasttick)
 
-    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
-    print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-    print(stopLossPrice(0.1,accountinfo.balance))
-    print(getLotSize(stopLossPrice(0.01,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
+    # print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
+    # print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+    # print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+    # print(stopLossPrice(0.1,accountinfo.balance))
+    # print(getLotSize(stopLossPrice(0.01,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
 
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
 
@@ -265,7 +265,7 @@ def getSymbolData(request):
         'timeframes':TimeFrame.objects.all()
     })
 def lineNotification(request):
-    print('hello')
+
     # message = 'ทดสอบ'
     payload = {
         'message':request.POST['message']
@@ -368,21 +368,24 @@ def createbacktest(request):
 
     backtestsymbol = request.POST.get('backtestsymbol')
 
-    # print(backtestsymbol)
+
 
     tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
     backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
 
     symbol = Symbol.objects.filter(id = backtestsymbol).first()
 
-    newBackTest = BackTest(symbol_id= backtestsymbol,timeframename= tf.name,symbolname= symbol.name,code= datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
+    newBackTest = BackTest(symbol_id= backtestsymbol,timeframename= tf.name,symbolname= symbol.name,code= datetime.now(tz=timezone.utc).strftime("%Y-%m-%d-%H-%M-%S"),backtestsize_id= request.POST.get('size'),timeframe_id= request.POST.get('timeframe'), interval_id=request.POST.get('interval'))
     newBackTest.save()
 
     backtestid = newBackTest.id
 
     backtest_symbol = Symbol.objects.filter(id=backtestsymbol).first()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))
-    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
+    # ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+
+    # print(ohlc_data)
 
     bulk_list = list()
     for j, data in ohlc_data.iterrows():
@@ -514,8 +517,8 @@ def spec(request):
 
     # ids = Spec.objects.all().values_list('symbol_id', flat=True).distinct('symbol_id')
     ids = Spec.objects.all().values('symbol_id').distinct()
-    print(ids)
-    print(Symbol.objects.filter(id__in = ids))
+    # print(ids)
+    # print(Symbol.objects.filter(id__in = ids))
 
 
     return render(request,'spec.html',{
@@ -544,7 +547,7 @@ def changespecentrypointvalue(request):
     id = request.POST.get('id')
     symbolid = request.POST.get('symbol')
     val = request.POST['value'];
-    print(val)
+    # print(val)
     spec = Spec.objects.filter(id = id,symbol_id=symbolid).first()
    
     if spec.parameter_type == 'equal':
@@ -668,7 +671,7 @@ def entrybuyposition(request):
     symbol = "USDJPY"
     symbol_info = mt5.symbol_info(symbol)     
 
-    print(symbol_info)   
+    # print(symbol_info)   
     filling_type = 1
 
     filling_type = symbol_info.filling_mode - 1
@@ -761,7 +764,7 @@ def openorder(request):
 
     ordertype = request.POST.get('ordertype')   
     lot = float(request.POST.get('lot'))
-    print(request.POST.get('lot'))
+    # print(request.POST.get('lot'))
 
     symbol = Symbol.objects.filter(id = request.POST.get('symbol') ).first().name
     tick = mt5.symbol_info_tick(symbol)
@@ -771,7 +774,7 @@ def openorder(request):
     price_dict = {'buy': tick.ask, 'sell': tick.bid};
 
 
-    print(price_dict[ordertype])
+    # print(price_dict[ordertype])
 
     deviation = 20
     request = {
@@ -877,9 +880,9 @@ def closeorder(request):
                 "type_filling": mt5.ORDER_FILLING_IOC,
             }
             result=mt5.order_send(request)
-            print(result)
+            # print(result)
 
-        print(df)
+        # print(df)
     
     data = {
         'entryspecs': '',
@@ -1099,8 +1102,8 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
         timeframe = 240
 
     to_datetime = datetime.strptime(presentdatedate.strip().replace("T", " ").replace("Z", ""), '%Y-%m-%d %H:%M:%S')
- 
-    to_datetime = to_datetime + timedelta(hours=7)
+    # print(to_datetime)
+    # to_datetime = to_datetime + timedelta(hours=7)
     minute = int(to_datetime.minute/timeframe)*timeframe
     # print(to_datetime)
     # print(filtered)
@@ -1143,7 +1146,7 @@ def manualaddbarsize(request):
     ids = StdBarSize.objects.all().values('symbol_id').distinct()
     symbols = Symbol.objects.filter().exclude(id__in = ids)
     for  symbol in symbols:
-        print(symbol.name)
+        # print(symbol.name)
         m1 = StdBarSize(symbolname = symbol.name,timeframe= 'M1',value = 1000,symbol_id = symbol.id)
         m1.save()
 
