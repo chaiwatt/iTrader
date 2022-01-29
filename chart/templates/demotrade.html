@@ -2819,12 +2819,19 @@
                 $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(5))
 
                 barSize = data.barsize.barsize
-
+                console.log(barSize)
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
+                        title: 'Not found Test spec',
                         text: `Not found Test spec for ${$(this).find(':selected').data('name')}`,
+                    })
+                }
+                if(barSize == 1000) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'STD Bar error',
+                        text: `STD Bar size for ${$(this).find(':selected').data('name')} is not set yet`,
                     })
                 }
                 _rawData =  createRawData(data.ohlcs);

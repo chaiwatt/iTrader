@@ -117,7 +117,7 @@ def index(request):
     return render(request,'index.html',{
         'orders': orders,
         'resData': data,
-        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id),
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id).order_by('name'),
         'timeframes':TimeFrame.objects.all(),
         
         'searchreports':SearchReport.objects.all().order_by('-id')[:30],
@@ -343,7 +343,7 @@ def demotrade(request):
     ids = StdBarSize.objects.all().values('symbol_id').distinct()
 
     return render(request,'demotrade.html',{
-        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id,id__in = ids),
+        'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id,id__in = ids).order_by('name'),
         'timeframes':TimeFrame.objects.all(),
         'backtestsizes':BackTestSize.objects.all(),
         'backtest':backtest,
