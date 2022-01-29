@@ -431,15 +431,15 @@ def getbacktestjob(request):
     symbol = Symbol.objects.filter(id = symbolid).first()
     symbol_info=mt5.symbol_info(symbol.name)
 
-    print(symbol_info)
+    # print(symbol_info)
  
-    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
+    # print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
 
-    print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+    # print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
 
-    print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-    print(stopLossPrice(0.1,accountinfo.balance))
-    print(getLotSize(stopLossPrice(0.1,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
+    # print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
+    # print(stopLossPrice(0.1,accountinfo.balance))
+    # print(getLotSize(stopLossPrice(0.1,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
 
     calculationInfo ={
         'symbol': symbol_info.name,
@@ -465,6 +465,7 @@ def getbacktestjob(request):
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
         'barsize' : barsize,
+        'setting' : serializers.serialize('json', Setting.objects.all()),
         'calculationInfo' : calculationInfo
     }
     return JsonResponse(data)    
@@ -1137,3 +1138,37 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
     
     return rates_frame   
 
+def manualaddbarsize(request):
+    ids = StdBarSize.objects.all().values('symbol_id').distinct()
+    symbols = Symbol.objects.filter().exclude(id__in = ids)
+    for  symbol in symbols:
+        print(symbol.name)
+        m1 = StdBarSize(symbolname = symbol.name,timeframe= 'M1',value = 1000,symbol_id = symbol.id)
+        m1.save()
+
+        m5 = StdBarSize(symbolname = symbol.name,timeframe= 'M5',value = 1000,symbol_id = symbol.id)
+        m5.save()
+
+        m15 = StdBarSize(symbolname = symbol.name,timeframe= 'M15',value = 1000,symbol_id = symbol.id)
+        m15.save()
+
+        m30 = StdBarSize(symbolname = symbol.name,timeframe= 'M30',value = 1000,symbol_id = symbol.id)
+        m30.save()
+
+        h1 = StdBarSize(symbolname = symbol.name,timeframe= 'H1',value = 1000,symbol_id = symbol.id)
+        h1.save()
+
+        h4 = StdBarSize(symbolname = symbol.name,timeframe= 'H4',value = 1000,symbol_id = symbol.id)
+        h4.save()
+
+        d1 = StdBarSize(symbolname = symbol.name,timeframe= 'D1',value = 1000,symbol_id = symbol.id)
+        d1.save()
+
+        w1 = StdBarSize(symbolname = symbol.name,timeframe= 'W1',value = 1000,symbol_id = symbol.id)
+        w1.save() 
+
+    data = {
+        'balance': '',
+    }
+    
+    return JsonResponse(data)  

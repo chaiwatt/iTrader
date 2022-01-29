@@ -682,7 +682,7 @@
                         $("#pricechange_wrapper").addClass("bg-danger").removeClass("bg-success");
                         $("#pricechange_icon").addClass("fa-arrow-alt-circle-down").removeClass("fa-arrow-alt-circle-up");
                     }
-                    $('#pricechange').html(accumulateprice.toFixed(5))
+                    $('#pricechange').html(accumulateprice.toFixed(5)+'$')
                     // console.log(orderinfo)
                     if(accumulateprice.toFixed(5) > orderinfo.takeprofit){
                         Swal.fire({
@@ -2796,6 +2796,7 @@
 
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id'),$(this).find(':selected').data('timeframe')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
+                let setting = JSON.parse(data.setting)[0].fields
                 let _orderbuy_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 1);
 
@@ -2809,31 +2810,15 @@
                 ordersell_entry_specs = _ordersell_entry_specs;
                 calculationinfo = data.calculationInfo;
 
-                // console.log(calculationinfo.degit) 
-
-                // let spread = pipChange(calculationinfo.bid,calculationinfo.ask,calculationinfo.degit)
-                
-                // console.log(calculationinfo.ask - calculationinfo.bid)
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
-               
-                // console.log('1 pip for 1 lot ' + pippriceperlotsize.toFixed(5))
-                // console.log('spread for 1 lot ' +  (calculationinfo.spread * pippriceperlotsize/10).toFixed(5))
-
                 let stoplossprice = stopLossPrice(0.02,parseFloat($('#presentbalance').html()))
-                // console.log('balance ' + parseFloat($('#presentbalance').html()))
+
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
                 $('#lotsize').val(getLotSize(stoplossprice,100,pippriceperlotsize).toFixed(5))
-                // console.log(getLotSize(stoplossprice,100,pippriceperlotsize)*4)
-                // $('#pricechange').htme('0')
-                // console.log(pippriceperlotsize)
-
-                // console.log(getLotSize(stoplossprice,100,pippriceperlotsize))
 
                 barSize = data.barsize.barsize
-                // console.log(barSize)
-
 
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
@@ -2843,7 +2828,6 @@
                     })
                 }
                 _rawData =  createRawData(data.ohlcs);
-                // console.log(_rawData)
 
                 _orderbuy_entry_specs.forEach(spec_item => {
                     html_openbuy_testspecs += `<tr>
@@ -2910,9 +2894,9 @@
                     }).then(function (result) {
                     })
                 }
-                
+                let spreadprice = (calculationinfo.spread * pippriceperlotsize/10).toFixed(5)
                 $('#spread').html(calculationinfo.spread);
-                $('#spreadprice').html(-(calculationinfo.spread * pippriceperlotsize/10).toFixed(5));
+                $('#spreadprice').html(-spreadprice+'$');
                 $('#pricechange').html(0);
                 $('#pipprice').html(pippriceperlotsize.toFixed(5));
                 $('#symbolname').html(`(${$(this).find(':selected').data('name')})`);
@@ -2927,6 +2911,18 @@
                 backtestTimerInterval = parseInt($('#interval option:selected').text());
                 
                 $('#jogtest').trigger('click');
+
+                // console.log(JSON.parse(data.setting)[0].fields)
+                if(calculationinfo.spread > setting.spreadlimit || spreadprice > setting.spreadpricelimit ){
+                    Swal.fire({
+                            icon: 'warning',
+                            title: `${$('#symbols option:selected').text()} is over spread`,
+                            text: `Spread or Spread Price is over limitted (${setting.spreadlimit}points/${setting.spreadpricelimit}$)`,
+                        })
+                }
+               
+                
+
             }).catch(error => {})
         })
 
@@ -3046,7 +3042,7 @@
                     ordertype: parseInt($('#ordertype option:selected').val()),
                     spread: spread,
                 }
-                $("#pricechange").html(spread.toFixed(5));
+                $("#pricechange").html(spread.toFixed(5)+'$');
                 accumulateprice = spread * -1
             }
         })
