@@ -50,5 +50,7 @@ urlpatterns = [
     path('updatedemobalance',views.updatedemobalance,name='updatedemobalance'),
     path('getalltimeframedata',views.getalltimeframedata,name='getalltimeframedata'),
     path('manualaddbarsize',views.manualaddbarsize,name='manualaddbarsize'),
+    path('deltesymbol',views.deltesymbol,name='deltesymbol'),
+    
     
 ]

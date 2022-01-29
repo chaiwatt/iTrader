@@ -340,7 +340,8 @@ def demotrade(request):
    
 
     backtestintervals = BackTestInterval.objects.all()
-    ids = StdBarSize.objects.all().values('symbol_id').distinct()
+    # ids = StdBarSize.objects.all().values('symbol_id').distinct()
+    ids = StdBarSize.objects.filter(value = 1000).values('symbol_id').distinct()
 
     return render(request,'demotrade.html',{
         'symbols':Symbol.objects.filter(status="1",broker_id=myaccount.broker_id,id__in = ids).order_by('name'),
@@ -1172,3 +1173,12 @@ def manualaddbarsize(request):
     }
     
     return JsonResponse(data)  
+
+
+def deltesymbol(request):
+    id = 49
+    Symbol.objects.filter(id = id).delete()
+    data = {
+        'backtestjobs' :  '', 
+    }
+    return JsonResponse(data)    
