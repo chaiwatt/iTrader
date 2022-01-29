@@ -526,6 +526,7 @@
         var orderinfo = null;
         var accumulateprice = 0;
         var presentBarInfo = null;
+        var currentselecteddate = '';
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -2675,6 +2676,7 @@
             let _count = count++;
             let arraySet = _rawData.slice(_count,_count + testRange)
             createData(arraySet);
+            currentselecteddate = data[data.length-1][5]
         })
 
         $(document).on("click","#autotest",function() {
@@ -3112,7 +3114,7 @@
 
             presentBarInfo = {
                 symbol: $('#selectedBacktestJob option:selected').data('name'),
-                currentdate: data[data.length-1][5]
+                currentdate: currentselecteddate
             }
             $('#modal-viewtimeframe').modal('show')
         })
