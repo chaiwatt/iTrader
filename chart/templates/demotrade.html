@@ -2850,7 +2850,7 @@
                 calculationinfo = data.calculationInfo;
                 
                 let lotsizefactor = data.lotsizefactor.factor
-                // console.log('lotsizefactor')
+
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                 let stoplossprice = parseFloat(stopLossPrice(0.02,parseFloat($('#presentbalance').html())))
                 let lotsize = getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5)*lotsizefactor
@@ -2865,7 +2865,7 @@
 
                 barSize = data.barsize.barsize
               
-                console.log(barSize)
+                // console.log(barSize)
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
                         icon: 'error',
