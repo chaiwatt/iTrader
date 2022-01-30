@@ -2850,12 +2850,12 @@
                 calculationinfo = data.calculationInfo;
                 
                 let lotsizefactor = data.lotsizefactor.factor
-                console.log('lotsizefactor')
+                // console.log('lotsizefactor')
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
                 let stoplossprice = parseFloat(stopLossPrice(0.02,parseFloat($('#presentbalance').html())))
                 let lotsize = getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5)*lotsizefactor
 
-                console.log(lotsize)
+                // console.log(lotsize)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)

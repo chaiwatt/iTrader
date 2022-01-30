@@ -477,7 +477,7 @@ def getbacktestjob(request):
     lotsizefactor = {
         'factor': LotSizeFactor.objects.filter(timeframename = request.POST.get('timeframe')).first().factor,
     }
-    print(LotSizeFactor.objects.filter(timeframename = request.POST.get('timeframe')).first().factor)
+    # print(LotSizeFactor.objects.filter(timeframename = request.POST.get('timeframe')).first().factor)
     ids = StdBarSize.objects.all().values('symbol_id').distinct()
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
