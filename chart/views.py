@@ -62,7 +62,7 @@ def index(request):
     # print(symbol_price)
     
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
-    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
     ohlcs = []
     orders = []
     for i, data in ohlc_data.iterrows():
@@ -84,7 +84,7 @@ def index(request):
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
     elif len(positions)>0:
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True)
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
         # print(df)
         
@@ -153,6 +153,9 @@ def getLotSize(stoplostPrice,numPips,pipPrice):
     return stoplostPrice/(numPips*pipPrice)
 
 def getohlc(request):  
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
     currentview = CurrentView.objects.first()
     tf = TimeFrame.objects.get(id = currentview.timeframe_id)
     timeframe = tf.name
@@ -162,7 +165,7 @@ def getohlc(request):
 
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 600))
-    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
     ohlcs = []
     orders = []
     for i, data in ohlc_data.iterrows():
@@ -183,7 +186,7 @@ def getohlc(request):
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
     elif len(positions)>0:
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True,utc=True)
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
         # print(df)
         
@@ -216,6 +219,10 @@ def getohlc(request):
 
 def getSymbolData(request):
     setting = Setting.objects.first()
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
     currentview = CurrentView.objects.first()
     currentview.symbol_id = request.POST['selectedSymbol']
@@ -232,7 +239,7 @@ def getSymbolData(request):
     symbol_price = mt5.symbol_info_tick(symbol)._asdict()
     
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, dataframe, 0, 500))
-    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
     ohlcs = []
     for i, data in ohlc_data.iterrows():
         ohlc = {
@@ -363,12 +370,21 @@ def demotrade(request):
 
 
 def createbacktest(request):
+    setting = Setting.objects.first()
+    
+    myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+
+    mt5.login(myaccount.login,myaccount.password,myaccount.server)
+
+    accountinfo = mt5.account_info()
+
 
     btsize = BackTestSize.objects.filter(id = int(request.POST.get('size'))).first().size + 250
 
     backtestsymbol = request.POST.get('backtestsymbol')
-
-
 
     tf = TimeFrame.objects.get(id = request.POST.get('timeframe'))
     backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf.name}')
@@ -619,6 +635,9 @@ def search(request):
     })  
 
 def getsingleohlc(request):  
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
 
     timeframeid = request.POST.get('timeframe')
 
@@ -630,7 +649,7 @@ def getsingleohlc(request):
 
     symbol_price = mt5.symbol_info_tick(_symbol.name)._asdict()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(_symbol.name, dataframe, 0, 450))
-    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
+    ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
     ohlcs = []
     for i, data in ohlc_data.iterrows():
         ohlc = {
@@ -803,7 +822,7 @@ def openorder(request):
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
     elif len(positions)>0:
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True)
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
         # print(df)
         
@@ -844,7 +863,7 @@ def closeorder(request):
     elif len(positions)>0:
         profit = 0.5
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True)
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
 
         # df.query('type == 1 and profit > @profit', inplace = True)
@@ -891,6 +910,10 @@ def closeorder(request):
     return JsonResponse(data)
 
 def manualcloseorder(request):
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
+        
     symbol = request.POST.get('symbol')   
     lot = float(request.POST.get('lot'))
     ordertype = int(request.POST.get('type'))
@@ -926,7 +949,7 @@ def manualcloseorder(request):
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
     elif len(positions)>0:
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True)
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
         # print(df)   
         for i, data in df.iterrows():
@@ -1082,8 +1105,8 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
     pd.set_option('display.width', 1500)      # max table width to display
 
     if not mt5.initialize():
-        print("initialize() failed, error code =",mt5.last_error())
-        quit()
+        print("initialize() failed")
+        mt5.shutdown()
 
     timezone = pytz.timezone("UTC")
     numofbar = num
@@ -1138,7 +1161,7 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
     mt5.shutdown()
 
     rates_frame = pd.DataFrame(rates)
-    rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
+    rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s',utc=True)
     
     return rates_frame   
 
