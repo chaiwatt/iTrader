@@ -42,9 +42,9 @@ def index(request):
     # lotsize_fb = database.child('Data').child('lotsize').get().val()
     # database.child("Data").update({"symbol": "USDJPY"})
     # database.child("Data").child("tp").remove()
+    # print (symbol_fb)
+    # print (lotsize_fb)
 
-    print (symbol_fb)
-    print (lotsize_fb)
     setting = Setting.objects.first()
     
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
