@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport,StdBarSize
+from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport,StdBarSize,LotSizeFactor
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -186,7 +186,7 @@ def getohlc(request):
         print("No positions with group=\"*USD*\", error code={}".format(mt5.last_error()))
     elif len(positions)>0:
         df=pd.DataFrame(list(positions),columns=positions[0]._asdict().keys())
-        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True,utc=True)
+        df['time'] = pd.to_datetime(df['time'], unit='s',utc=True)
         df.drop(['time_update', 'time_msc', 'time_update_msc', 'external_id'], axis=1, inplace=True)
         # print(df)
         
@@ -474,6 +474,10 @@ def getbacktestjob(request):
     barsize = {
         'barsize': StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe')).first().value,
     }
+    lotsizefactor = {
+        'factor': LotSizeFactor.objects.filter(timeframename = request.POST.get('timeframe')).first().factor,
+    }
+    print(LotSizeFactor.objects.filter(timeframename = request.POST.get('timeframe')).first().factor)
     ids = StdBarSize.objects.all().values('symbol_id').distinct()
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = id)),
@@ -485,6 +489,7 @@ def getbacktestjob(request):
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
         'barsize' : barsize,
+        'lotsizefactor' : lotsizefactor,
         'setting' : serializers.serialize('json', Setting.objects.all()),
         'calculationInfo' : calculationInfo
     }
@@ -913,7 +918,7 @@ def manualcloseorder(request):
     if not mt5.initialize():
         print("initialize() failed")
         mt5.shutdown()
-        
+
     symbol = request.POST.get('symbol')   
     lot = float(request.POST.get('lot'))
     ordertype = int(request.POST.get('type'))

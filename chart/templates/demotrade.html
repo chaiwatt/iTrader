@@ -191,16 +191,27 @@
 
                   <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Testing Job <div class="icheck-success d-inline ml-2">
-                            <input type="checkbox" id="checkFirstFound"
-                            {% if setting.firstfoundstatus == '2' %}
-                            checked
-                            {%endif%}
-                            >
-                            <label for="checkFirstFound">
-                               <small>(Notify and exit 1st found)</small> 
-                            </label>
-                          </div></h3>
+                        <h3 class="card-title">Testing Job 
+                            
+                            <div class="icheck-success d-inline ml-2">
+                                <input type="checkbox" id="checkFirstFound"
+                                {% if setting.firstfoundstatus == '2' %}
+                                checked
+                                {%endif%}
+                                >
+                                <label for="checkFirstFound">
+                                <small>(Break 1st found)</small> 
+                                </label>
+                            </div>
+
+                            <div class="icheck-success d-inline ml-2">
+                                <input type="checkbox" id="checkMeasurePip">
+                                <label for="checkMeasurePip">
+                                <small>Measure pip</small> 
+                                </label>
+                            </div>
+                        
+                        </h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -527,6 +538,8 @@
         var accumulateprice = 0;
         var presentBarInfo = null;
         var currentselecteddate = '';
+        var measurepip = false;
+        var measurepipvalue = [];
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -665,7 +678,7 @@
                 if(orderStatus == true){
                     
                     let _pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat(orderinfo.lotsize))*10
-                    console.log('aPrice ' + pipchange)
+                    // console.log('aPrice ' + pipchange)
                     
                     
                     let currentprice =  (pipchange*_pippriceperlot)
@@ -1541,6 +1554,7 @@
                     scale:true,
                     boundaryGap: [0.05, 0.05],
                     splitArea : {show : true},
+                    
                     axisLine:{
                         lineStyle:{
                             color:'#aca9a9'
@@ -2378,11 +2392,47 @@
             $('#modal-default').modal('show');
         })
 
+
+        var zr = canndleStickChart.getZr();
+        zr.on('click', function (params) {
+            var pointInPixel = [params.offsetX, params.offsetY];
+            var pointInGrid = canndleStickChart.convertFromPixel('grid', pointInPixel);
+
+            if(!isNaN(pointInGrid[0])){
+                measurepipvalue.push(pointInGrid[1])
+                
+                if (measurepipvalue.length == 2 && $('#checkMeasurePip').is(":checked") == true){
+                    // console.log($('#lotsize').val())
+                    
+                    let pipchange= pipChange(parseFloat(Math.min.apply(Math, measurepipvalue)),parseFloat(Math.max.apply(Math, measurepipvalue)),calculationinfo.degit)
+                    let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()))*10
+                    // console.log(pipchange)
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Pip Change',
+                        html: `<h3>Lot Size: <strong>${(parseFloat($('#lotsize').val())).toFixed(5)}</strong><br>Upper Price: <strong>${Math.max.apply(Math, measurepipvalue).toFixed(5)}</strong><br>Lower Price:  <strong>${Math.min.apply(Math, measurepipvalue).toFixed(5)}</strong><br>Pip Change: <strong>${pipchange.toFixed(5)}</strong><br>Price:  <strong>${parseFloat(  pipchange * pippriceperlot ).toFixed(2)}$</strong><h3>`  
+                    })
+                    measurepipvalue = []
+                }
+            }
+        });
+
+        $(document).on('change','#checkMeasurePip',function(){
+            measurepipvalue = []
+        })
+
+        zr.on('mousemove', function (params) {
+            if($('#checkMeasurePip').is(":checked") == true){
+                canndleStickChart.getZr().setCursorStyle('pointer')
+            }
+        });
+
         canndleStickChart.on('click', function(params) {
             let type = `Bullish`;
             let body = 0;
             let diffbodywick = 0;
             let diffbodytail = 0;
+            // console.log(params)
 
             // console.log(params.data[1] - params.data[2])
             let openSubtractClose = params.data[1] - params.data[2]
@@ -2798,18 +2848,23 @@
                 orderbuy_entry_specs = _orderbuy_entry_specs;
                 ordersell_entry_specs = _ordersell_entry_specs;
                 calculationinfo = data.calculationInfo;
-
-                let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
-                let stoplossprice = stopLossPrice(0.02,parseFloat($('#presentbalance').html()))
                 
+                let lotsizefactor = data.lotsizefactor.factor
+                console.log('lotsizefactor')
+                let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
+                let stoplossprice = parseFloat(stopLossPrice(0.02,parseFloat($('#presentbalance').html())))
+                let lotsize = getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5)*lotsizefactor
+
+                console.log(lotsize)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
-                $('#lotsize').val(getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5))
+                $('#lotsize').val(lotsize)
                 // console.log('let size: '+ getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5))
-                // console.log('stop lost: ' + stoplossprice)
+                console.log('stop lost: ' + stoplossprice)
 
                 barSize = data.barsize.barsize
+              
                 console.log(barSize)
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({

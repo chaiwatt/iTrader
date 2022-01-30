@@ -136,3 +136,9 @@ class StdBarSize(models.Model):
     class Meta:
         db_table = "std_bar_sizes"   
             
+class LotSizeFactor(models.Model):
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
+    timeframename=models.CharField(max_length=10)
+    factor=models.FloatField(default=1)
+    class Meta:
+        db_table = "lot_size_factors"               
