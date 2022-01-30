@@ -15,17 +15,36 @@ import numpy as np
 import math
 from datetime import datetime,timedelta
 import pytz
+import pyrebase
+
+config ={
+    'apiKey': "AIzaSyBWkbdZu6r0giHnxVwGrqJaHXoQIk2_TWk",
+    'authDomain': "itrader-32c33.firebaseapp.com",
+    'databaseURL': "https://itrader-32c33-default-rtdb.firebaseio.com",
+    
+    'projectId': "itrader-32c33",
+    'storageBucket': "itrader-32c33.appspot.com",
+    'messagingSenderId': "915590837295",
+    'appId': "1:915590837295:web:783b66e023b0a7bbeb42da"
+}
+
+firebase = pyrebase.initialize_app(config)
+authe = firebase.auth()
+database = firebase.database()
 
 #symbol = 'EURUSD'
-timeframe = 'M1';
-dataframe = mt5.TIMEFRAME_M1
-
-# login = 25006371
-# password = 'g(gpG4/hO%Z@'
-# server = 'demo.mt5tickmill.com'
+# timeframe = 'M1';
+# dataframe = mt5.TIMEFRAME_M1
 
 # Create your views here.
 def index(request):
+    # symbol_fb = database.child('Data').child('symbol').get().val()
+    # lotsize_fb = database.child('Data').child('lotsize').get().val()
+    # database.child("Data").update({"symbol": "USDJPY"})
+    # database.child("Data").child("tp").remove()
+
+    print (symbol_fb)
+    print (lotsize_fb)
     setting = Setting.objects.first()
     
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
