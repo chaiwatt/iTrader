@@ -2521,23 +2521,23 @@
 
             let word = '<i class="fas fa-arrow-alt-circle-up text-success"></i>'
             let wordstd = '<i class="fas fa-arrow-alt-circle-up text-success"></i>'
-            if(openSubtractClose > previousbody){
-                percent = ((openSubtractClose/previousbody)*100).toFixed(2)
+            if(Math.abs(openSubtractClose) > Math.abs(previousbody)){
+                percent = (((Math.abs(openSubtractClose) - Math.abs(previousbody))/Math.abs(previousbody))*100).toFixed(2)
                 console.log('bigger than previous')
             }else{
                 console.log('smaller than previous')
                 word = '<i class="fas fa-arrow-alt-circle-down text-danger"></i>'
-                percent = ((previousbody/openSubtractClose)*100).toFixed(2)
+                percent = (((Math.abs(previousbody) - Math.abs(openSubtractClose))/Math.abs(openSubtractClose))*100).toFixed(2)
             }
  
 
-            if(openSubtractClose > barSize){
-                percentstd = ((openSubtractClose/barSize)*100).toFixed(2)
+            if(Math.abs(openSubtractClose) > Math.abs(barSize)){
+                percentstd = (((Math.abs(openSubtractClose) - Math.abs(barSize))/Math.abs(barSize))*100).toFixed(2)
          
             }else{
               
                 wordstd = '<i class="fas fa-arrow-alt-circle-down text-danger"></i>'
-                percentstd = ((barSize/openSubtractClose)*100).toFixed(2)
+                percentstd = ((( Math.abs(barSize)-Math.abs(openSubtractClose))/Math.abs(openSubtractClose))*100).toFixed(2)
             }
 
 
