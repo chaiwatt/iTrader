@@ -551,26 +551,30 @@
         return true
     }
 
-    function bullishMomentum(_data,barsize,upgain,downgain,numbars){
-        let result = true;
-        let open = _data[_data.length-1][0]
+    function bullishMomentum(_data,barsize,_percent,_percentstd){
         let close = _data[_data.length-1][1]
+        let open = _data[_data.length-1][0]
+        
+        let closeprevious = _data[_data.length-2][1]
+        let openprevious = _data[_data.length-2][0]
+        
         let body = close - open
-        // console.log('body ' + body)
-        if(body < 0  ||  Math.abs(body) < barsize*upgain){
-            
+        let previousbody = closeprevious - openprevious
+        
+        if(body < 0 || previousbody < 0 || body < previousbody ||  body < barsize ||  previousbody < barsize ){  
             return false
         }
-        for (let i = 1 ; i <= numbars; i++){
-            let open = _data[_data.length-i-1][0]
-            let close = _data[_data.length-i-1][1]
-            let body = close - open
-            // console.log(body)
-            if(Math.abs(body) > barsize*downgain){
-                return false
-            }
+
+        let percent = ((Math.abs(body) - Math.abs(previousbody))/Math.abs(previousbody))*100
+
+        let percentstd = ((Math.abs(body) - Math.abs(barSize))/Math.abs(barSize))*100
+     
+        if(percent > _percent && percentstd > _percentstd){
+            return true
+        }else{
+            return false
         }
-        return true
+
     }
 
     function bearishTrend(_data,barsize,gain,numbars){
@@ -628,24 +632,48 @@
         return true
     }
 
-    function bearishMomentum(_data,barsize,upgain,downgain,numbars){
-        let open = _data[_data.length-1][0]
+    function bearishMomentum(_data,barsize,_percent,_percentstd){
         let close = _data[_data.length-1][1]
-        let body = open - close
-
-        if(body < 0  || Math.abs(body) < barsize*upgain){
+        let open = _data[_data.length-1][0]
+        
+        let closeprevious = _data[_data.length-2][1]
+        let openprevious = _data[_data.length-2][0]
+        
+        let body = close - open
+        let previousbody = closeprevious - openprevious
+        
+        if(body > 0 || previousbody > 0 || Math.abs(body) < Math.abs(previousbody) ||  Math.abs(body) < barsize ||  Math.abs(previousbody) < barsize ){  
             return false
         }
-        for (let i = 1 ; i <= numbars; i++){
-            let open = _data[_data.length-i-1][0]
-            let close = _data[_data.length-i-1][1]
-            let body = close - open
-  
-            if(Math.abs(body) > barsize*downgain){
-                return false
-            }
+
+        let percent = ((Math.abs(body) - Math.abs(previousbody))/Math.abs(previousbody))*100
+
+        let percentstd = ((Math.abs(body) - Math.abs(barSize))/Math.abs(barSize))*100
+     
+        if(percent > _percent && percentstd > _percentstd){
+            return true
+        }else{
+            return false
         }
-        return true
+
+
+        // let open = _data[_data.length-1][0]
+        // let close = _data[_data.length-1][1]
+        // let body = open - close
+
+        // if(body < 0  || Math.abs(body) < barsize*upgain){
+        //     return false
+        // }
+        // for (let i = 1 ; i <= numbars; i++){
+        //     let open = _data[_data.length-i-1][0]
+        //     let close = _data[_data.length-i-1][1]
+        //     let body = close - open
+  
+        //     if(Math.abs(body) > barsize*downgain){
+        //         return false
+        //     }
+        // }
+        // return true
     }
 
     function bullishBig(_data,barsize,gain){

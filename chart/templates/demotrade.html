@@ -806,7 +806,7 @@
                         }
                     }
 
-                    if(bullishMomentum(data,barSize,3,0.5,2) == true){
+                    if(bullishMomentum(data,barSize,300,300) == true){
                         console.log('Bullish Momentum')
                         testResult.push({
                             'entry': data[data.length-1][4],
@@ -870,7 +870,7 @@
                         }
                     }
    
-                    if(bearishMomentum(data,barSize,3,0.5,2) == true){
+                    if(bearishMomentum(data,barSize,300,300) == true){
                         console.log('Bearish Momentum')
                         testResult.push({
                             'entry': data[data.length-1][4],
