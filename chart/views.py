@@ -36,7 +36,7 @@ database = firebase.database()
 # timeframe = 'M1';
 # dataframe = mt5.TIMEFRAME_M1
 
-# Create your views here.
+
 def index(request):
     # symbol_fb = database.child('Data').child('symbol').get().val()
     # lotsize_fb = database.child('Data').child('lotsize').get().val()
@@ -1193,7 +1193,6 @@ def manualaddbarsize(request):
     ids = StdBarSize.objects.all().values('symbol_id').distinct()
     symbols = Symbol.objects.filter().exclude(id__in = ids)
     for  symbol in symbols:
-        # print(symbol.name)
         m1 = StdBarSize(symbolname = symbol.name,timeframe= 'M1',value = 1000,symbol_id = symbol.id)
         m1.save()
 

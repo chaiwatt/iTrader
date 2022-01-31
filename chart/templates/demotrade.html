@@ -540,6 +540,8 @@
         var currentselecteddate = '';
         var measurepip = false;
         var measurepipvalue = [];
+        var countfromorderposition = 0;
+        let positionmark = 0;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -676,6 +678,18 @@
                 // let currentprice =  (pipchange*pippriceperlot) //orderinfo
 
                 if(orderStatus == true){
+                    countfromorderposition++;
+                    console.log(countfromorderposition)
+                    positionmark = 249 - countfromorderposition
+                    console.log(positionmark)
+                    MarkData = [];
+                    MarkData.push({
+                        name: "Entry",
+                        value: orderinfo.price,
+                        xAxis: positionmark,
+                        yAxis: orderinfo.price,
+                        color: "#fff",
+                    });
                     
                     let _pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat(orderinfo.lotsize))*10
                     // console.log('aPrice ' + pipchange)
@@ -696,7 +710,7 @@
                         $("#pricechange_wrapper").addClass("bg-danger").removeClass("bg-success");
                         $("#pricechange_icon").addClass("fa-arrow-alt-circle-down").removeClass("fa-arrow-alt-circle-up");
                     }
-                    $('#pricechange').html(accumulateprice.toFixed(5)+'$')
+                    $('#pricechange').html(accumulateprice.toFixed(2)+'$')
                     // console.log(orderinfo)
                     if(accumulateprice.toFixed(5) > orderinfo.takeprofit){
                         Swal.fire({
@@ -2361,6 +2375,7 @@
             console.log(params)
 
             if(orderStatus == true){
+                
                 $("#closeorder_wrapper").html('<button class="btn btn-danger" id="closeorder">Close Order</button>');
                 $("#headerinfo").html('(ON ORDER)').addClass("text-danger").addClass("blink");
                 $("#modaltext").html('ON ORDER').addClass("text-danger").addClass("blink");
@@ -2373,6 +2388,15 @@
                 $("#ordertype option[value='" + orderinfo.ordertype +"']").attr("selected","selected");
         
             }else{
+
+                MarkData.push({
+                    name: "Entry",
+                        value: params.data[2],
+                        xAxis: params.data[0],
+                        yAxis: params.data[2],
+                        color: "#fff",
+                    });
+                
                 $("#closeorder_wrapper").html('');
                 $("#headerinfo").html('').removeClass("text-danger").removeClass("blink");
                 $("#modaltext").html('ORDER').removeClass("text-danger").removeClass("blink");
@@ -2381,6 +2405,13 @@
                 
                 $("#ordertype option[selected]").removeAttr("selected");   
                 $("#ordertype option[value='0']").attr("selected","selected");
+                
+                console.log(SSMA100Arr[SSMA100Arr.length-1])
+                if(SSMA100Arr[SSMA100Arr.length-1] < params.data[4]){
+                    $("#ordertype option[value='0']").attr("selected","selected");
+                }else{
+                    $("#ordertype option[value='1']").attr("selected","selected");
+                }
 
             }
 
@@ -2852,10 +2883,11 @@
                 let lotsizefactor = data.lotsizefactor.factor
 
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
-                let stoplossprice = parseFloat(stopLossPrice(0.02,parseFloat($('#presentbalance').html())))
+                let stoplossprice = parseFloat(stopLossPrice(0.015,parseFloat($('#presentbalance').html())))
                 let lotsize = getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5)*lotsizefactor
 
-                // console.log(lotsize)
+                console.log(stoplossprice)
+                console.log(lotsize)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
@@ -2930,6 +2962,8 @@
                     orderinfo = null;
                     orderStatus = false
                     accumulateprice = 0;
+                    countfromorderposition = 0;
+                    MarkData = [];
                     updateDemoBalance(parseFloat($('#pricechange').html())).then(data => {
                         $('#presentbalance').html(data.balance.toFixed(2))
                     }).catch(error => {})
@@ -3061,7 +3095,9 @@
                 orderinfo = null;
                 orderStatus = false
                 accumulateprice = 0;
+                countfromorderposition = 0;
                 console.log('update balance')
+                MarkData = [];
                 updateDemoBalance(parseFloat($('#pricechange').html())).then(data => {
                     $('#presentbalance').html(data.balance.toFixed(2))
                 }).catch(error => {})
@@ -3095,7 +3131,7 @@
                     ordertype: parseInt($('#ordertype option:selected').val()),
                     spread: spread,
                 }
-                $("#pricechange").html(spread.toFixed(5)+'$');
+                $("#pricechange").html(spread.toFixed(2)+'$');
                 accumulateprice = spread * -1
             }
         })
@@ -3106,6 +3142,8 @@
                 $('#presentbalance').html(data.balance.toFixed(2))
             }).catch(error => {})
             accumulateprice = 0;
+            countfromorderposition = 0;
+            MarkData = [];
             orderStatus = false;
             $('#pricechange').html(0);
             $("#closeorder_wrapper").html('');
