@@ -106,6 +106,9 @@ class Spec(models.Model):
     status=models.CharField(max_length=1, default = 1)
     spec_type=models.CharField(max_length=1, default=1)
     order_type=models.CharField(max_length=1, default = 0)
+    stoplostpip=models.IntegerField(default = 20)
+    stoplostpercent=models.FloatField(default = 0.015)
+    lotsizeoffset=models.FloatField(default = 1)
     class Meta:
         db_table = "specs"
 
