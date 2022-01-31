@@ -1231,3 +1231,21 @@ def deletesymbol(request):
         'backtestjobs' :  '', 
     }
     return JsonResponse(data)    
+
+
+def getdemobalance(request):
+    data = {
+        'balance': Setting.objects.first().demobalance,
+    }
+    return JsonResponse(data)    
+
+
+def changedemobalance(request):
+    setting = Setting.objects.first()
+    setting.demobalance = request.POST.get('balance')
+    setting.save()
+
+    data = {
+        'balance': Setting.objects.first().demobalance,
+    }
+    return JsonResponse(data)          

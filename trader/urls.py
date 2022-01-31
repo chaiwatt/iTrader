@@ -51,6 +51,7 @@ urlpatterns = [
     path('getalltimeframedata',views.getalltimeframedata,name='getalltimeframedata'),
     path('manualaddbarsize',views.manualaddbarsize,name='manualaddbarsize'),
     path('deletesymbol',views.deletesymbol,name='deletesymbol'),
-    
+    path('getdemobalance',views.getdemobalance,name='getdemobalance'),
+    path('changedemobalance',views.changedemobalance,name='changedemobalance'),
     
 ]

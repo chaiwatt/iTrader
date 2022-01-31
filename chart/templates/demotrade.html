@@ -434,6 +434,39 @@
         </div>
         <!-- /.modal-dialog -->
       </div>
+
+      <div class="modal fade" id="modal-updatebalance">
+        <div class="modal-dialog">
+          <div class="modal-content" >
+            <div class="modal-header">
+              <h4 class="modal-title" >Balance</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="balance">Balance</label>
+                            <input type="text" class="form-control" id="balance" value="" >
+                        </div>
+                     </div>
+          
+                     <div class="col-md-12">
+                         <div class="form-group float-right">
+                            <button type="button" id="updatebalance" data-dismiss="modal" class="btn btn-info mt-3">Update</button>
+                         </div>
+                     </div> 
+                </div>
+               
+            </div>
+       
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
       <!-- /.modal -->
       <!-- /.modal -->
       <!-- /.content -->
@@ -2883,8 +2916,8 @@
                 let lotsizefactor = data.lotsizefactor.factor
 
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
-                let stoplossprice = parseFloat(stopLossPrice(0.015,parseFloat($('#presentbalance').html())))
-                let lotsize = getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5)*lotsizefactor
+                let stoplossprice = parseFloat(stopLossPrice(setting.stoplostpercent,parseFloat($('#presentbalance').html())))
+                let lotsize = getLotSize(stoplossprice,setting.stoplostpip,pippriceperlotsize).toFixed(5)*lotsizefactor
 
                 console.log(stoplossprice)
                 console.log(lotsize)
@@ -3234,6 +3267,64 @@
                 createDataAllTimeframe(data)
             }).catch(error => {})
         })
+
+        $(document).on('click','#showbalance',function(){
+            getDemoBalance().then(data => {
+               $('#balance').val(data.balance)
+            }).catch(error => {})
+            $('#modal-updatebalance').modal('show')
+        })
+
+        function getDemoBalance(){
+            return new Promise((resolve, reject) => {
+                data = {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'getdemobalance' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+
+        
+        $(document).on('click','#updatebalance',function(){
+            changeDemoBalance($('#balance').val()).then(data => {
+                location.reload(true);
+            }).catch(error => {})
+            // $('#modal-updatebalance').modal('hide')
+        })
+
+        function changeDemoBalance(balance){
+            return new Promise((resolve, reject) => {
+                data = {
+                    balance : balance,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'changedemobalance' %}",
+                    dataType : "json",
+                    data: data,
+                    success: function(data) {
+                        resolve(data)
+                    },
+                    error: function(error) {
+                        reject(error)
+                    },
+                })
+            })
+        }
+
+        
 
     </script>
 

@@ -18,13 +18,13 @@ class MyAccount(models.Model):
 
 class Setting(models.Model):
     myaccount=models.ForeignKey(MyAccount, on_delete=models.CASCADE)
-    autoclose=models.CharField(max_length=1, default=1)
-    autocloseprice=models.FloatField(max_length=10, default = 0)
     reportsymbolsort=models.CharField(max_length=1, default = 1)
     firstfoundstatus=models.CharField(max_length=1, default = 1)
     demobalance=models.FloatField(default = 1000)
     spreadlimit=models.IntegerField(default = 15)
     spreadpricelimit=models.FloatField(default = 20)
+    stoplostpip=models.IntegerField(default = 20)
+    stoplostpercent=models.FloatField(default = 0.015)
     class Meta:
         db_table = "settings" 
 
