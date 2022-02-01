@@ -1225,7 +1225,7 @@ def manualaddbarsize(request):
 
 
 def deletesymbol(request):
-    id = 49
+    id = 12
     Symbol.objects.filter(id = id).delete()
     data = {
         'backtestjobs' :  '', 

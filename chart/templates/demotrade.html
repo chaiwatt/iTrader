@@ -2950,7 +2950,7 @@
                 let stoplossprice = parseFloat(stopLossPrice(stdbarsize.stoplostpercent,parseFloat($('#presentbalance').html())))
                 let lotsize = getLotSize(stoplossprice,stdbarsize.stoplostpip,pippriceperlotsize).toFixed(5)*stdbarsize.lotsizeoffset
 
-                // console.log(stoplossprice)
+                console.log(stdbarsize.lotsizeoffset)
                 // console.log(lotsize)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
