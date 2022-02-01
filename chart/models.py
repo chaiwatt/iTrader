@@ -106,9 +106,7 @@ class Spec(models.Model):
     status=models.CharField(max_length=1, default = 1)
     spec_type=models.CharField(max_length=1, default=1)
     order_type=models.CharField(max_length=1, default = 0)
-    stoplostpip=models.IntegerField(default = 20)
-    stoplostpercent=models.FloatField(default = 0.015)
-    lotsizeoffset=models.FloatField(default = 1)
+
     class Meta:
         db_table = "specs"
 
@@ -136,6 +134,9 @@ class StdBarSize(models.Model):
     symbolname=models.CharField(max_length=100, default=None)
     timeframe=models.CharField(max_length=10, default=None)
     value=models.FloatField(max_length=15, null=True)
+    stoplostpip=models.IntegerField(default = 20)
+    stoplostpercent=models.FloatField(default = 0.015)
+    lotsizeoffset=models.FloatField(default = 1)
     class Meta:
         db_table = "std_bar_sizes"   
             

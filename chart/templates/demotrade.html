@@ -2930,6 +2930,7 @@
             getBacktestJob(selectedOption.val(),$(this).find(':selected').data('id'),$(this).find(':selected').data('timeframe')).then(data => {
                 let backtest = JSON.parse(data.backtest)[0].fields;
                 let setting = JSON.parse(data.setting)[0].fields
+                let stdbarsize = JSON.parse(data.barsize)[0].fields
                 let _orderbuy_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 1);
 
@@ -2946,21 +2947,21 @@
                 let lotsizefactor = data.lotsizefactor.factor
 
                 let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
-                let stoplossprice = parseFloat(stopLossPrice(setting.stoplostpercent,parseFloat($('#presentbalance').html())))
-                let lotsize = getLotSize(stoplossprice,setting.stoplostpip,pippriceperlotsize).toFixed(5)*lotsizefactor
+                let stoplossprice = parseFloat(stopLossPrice(stdbarsize.stoplostpercent,parseFloat($('#presentbalance').html())))
+                let lotsize = getLotSize(stoplossprice,stdbarsize.stoplostpip,pippriceperlotsize).toFixed(5)*stdbarsize.lotsizeoffset
 
-                console.log(stoplossprice)
-                console.log(lotsize)
+                // console.log(stoplossprice)
+                // console.log(lotsize)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
                 $('#lotsize').val(lotsize)
                 // console.log('let size: '+ getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5))
-                console.log('stop lost: ' + stoplossprice)
+                // console.log('stop lost: ' + stoplossprice)
 
-                barSize = data.barsize.barsize
+                barSize = stdbarsize.value
               
-                // console.log(barSize)
+                console.log(barSize)
                 if(JSON.parse(data.entryspecs).length == 0) {
                     Swal.fire({
                         icon: 'error',

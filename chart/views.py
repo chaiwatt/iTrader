@@ -507,7 +507,7 @@ def getbacktestjob(request):
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
-        'barsize' : barsize,
+        'barsize' : serializers.serialize('json', StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe'))),
         'lotsizefactor' : lotsizefactor,
         'setting' : serializers.serialize('json', Setting.objects.all()),
         'calculationInfo' : calculationInfo
