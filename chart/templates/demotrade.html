@@ -419,6 +419,12 @@
                      <div class="col-md-12">
                         <div id="canndle_stick_tf_h1"></div>
                      </div>
+                     <div class="col-md-12">
+                        <div id="canndle_stick_tf_h4"></div>
+                     </div>
+                     <div class="col-md-12">
+                        <div id="canndle_stick_tf_d1"></div>
+                     </div>
           
                      <div class="col-md-12">
                          <div class="form-group float-right">
@@ -494,6 +500,8 @@
         var canndle_stick_tf_m15 = echarts.init(document.getElementById('canndle_stick_tf_m15'));  
         var canndle_stick_tf_m30 = echarts.init(document.getElementById('canndle_stick_tf_m30'));  
         var canndle_stick_tf_h1 = echarts.init(document.getElementById('canndle_stick_tf_h1'));         
+        var canndle_stick_tf_h4 = echarts.init(document.getElementById('canndle_stick_tf_h4'));    
+        var canndle_stick_tf_d1 = echarts.init(document.getElementById('canndle_stick_tf_d1'));    
 
         var searchType = JSON.parse("{{searchtype|escapejs}}")[0].fields; 
         var responseData = [] ; //JSON.parse("{{resData|escapejs}}"); 
@@ -1417,20 +1425,24 @@
             let data_tf_m15 = getData(response.ohlcs_m15);
             let data_tf_m30 = getData(response.ohlcs_m30);
             let data_tf_h1 = getData(response.ohlcs_h1);
-
+            let data_tf_h4 = getData(response.ohlcs_h4);
+            let data_tf_d1 = getData(response.ohlcs_d1);
 
 
             let closedPrice_tf_m5 = getClosedPrice(response.ohlcs_m5);
             let closedPrice_tf_m15 = getClosedPrice(response.ohlcs_m15);
             let closedPrice_tf_m30 = getClosedPrice(response.ohlcs_m30);
             let closedPrice_tf_h1 = getClosedPrice(response.ohlcs_h1);
-
+            let closedPrice_tf_h4 = getClosedPrice(response.ohlcs_h4);
+            let closedPrice_tf_d1 = getClosedPrice(response.ohlcs_d1);
 
 
             let axisData_tf_m5 = getDateLabel(response.ohlcs_m5); 
             let axisData_tf_m15 = getDateLabel(response.ohlcs_m15); 
             let axisData_tf_m30 = getDateLabel(response.ohlcs_m30); 
             let axisData_tf_h1 = getDateLabel(response.ohlcs_h1); 
+            let axisData_tf_h4 = getDateLabel(response.ohlcs_h4); 
+            let axisData_tf_d1 = getDateLabel(response.ohlcs_d1); 
 
 
 
@@ -1438,25 +1450,31 @@
             let SSMA100Arr_tf_m15 = SSMA_Calc(closedPrice_tf_m15,100);
             let SSMA100Arr_tf_m30 = SSMA_Calc(closedPrice_tf_m30,100);
             let SSMA100Arr_tf_h1 = SSMA_Calc(closedPrice_tf_h1,100);
+            let SSMA100Arr_tf_h4 = SSMA_Calc(closedPrice_tf_h4,100);
+            let SSMA100Arr_tf_d1 = SSMA_Calc(closedPrice_tf_d1,100);
 
 
             let nullSmoth_SSMA100_tf_m5 = Array(closedPrice_tf_m5.length - SSMA100Arr_tf_m5.length).fill(null);
             let nullSmoth_SSMA100_tf_m15 = Array(closedPrice_tf_m15.length - SSMA100Arr_tf_m15.length).fill(null);
             let nullSmoth_SSMA100_tf_m30 = Array(closedPrice_tf_m30.length - SSMA100Arr_tf_m30.length).fill(null);
             let nullSmoth_SSMA100_tf_h1 = Array(closedPrice_tf_h1.length - SSMA100Arr_tf_h1.length).fill(null);
+            let nullSmoth_SSMA100_tf_h4 = Array(closedPrice_tf_h4.length - SSMA100Arr_tf_h4.length).fill(null);
+            let nullSmoth_SSMA100_tf_d1 = Array(closedPrice_tf_d1.length - SSMA100Arr_tf_d1.length).fill(null);
 
 
             let dataMA100_tf_m5  =  nullSmoth_SSMA100_tf_m5.concat(SSMA100Arr_tf_m5); 
             let dataMA100_tf_m15  =  nullSmoth_SSMA100_tf_m15.concat(SSMA100Arr_tf_m15); 
             let dataMA100_tf_m30  =  nullSmoth_SSMA100_tf_m30.concat(SSMA100Arr_tf_m30); 
             let dataMA100_tf_h1  =  nullSmoth_SSMA100_tf_h1.concat(SSMA100Arr_tf_h1); 
+            let dataMA100_tf_h4  =  nullSmoth_SSMA100_tf_h4.concat(SSMA100Arr_tf_h4); 
+            let dataMA100_tf_d1  =  nullSmoth_SSMA100_tf_d1.concat(SSMA100Arr_tf_d1); 
             
 
             canndle_stick_tf_m5.setOption({
                 series : [{name: 'M5',data: data_tf_m5,},{name: 'SMA100', data: dataMA100_tf_m5,}],                
                 xAxis : [{data : axisData_tf_m5}],
                 dataZoom : {
-                    start : Math.round((data_tf_m5.length-300)/(data_tf_m5.length)*100),
+                    start : 81,
                     end : 100
                 },
             });
@@ -1466,7 +1484,7 @@
                 series : [{name: 'M15',data: data_tf_m15,},{name: 'SMA100', data: dataMA100_tf_m15,}],                
                 xAxis : [{data : axisData_tf_m15}],
                 dataZoom : {
-                    start : Math.round((data_tf_m15.length-300)/(data_tf_m15.length)*100),
+                    start : 90,
                     end : 100
                 },
             });
@@ -1476,7 +1494,7 @@
                 series : [{name: 'M30',data: data_tf_m30,},{name: 'SMA100', data: dataMA100_tf_m30,}],                
                 xAxis : [{data : axisData_tf_m30}],
                 dataZoom : {
-                    start : Math.round((data_tf_m30.length-300)/(data_tf_m30.length)*100),
+                    start : 90.8,
                     end : 100
                 },
             });
@@ -1486,12 +1504,32 @@
                 series : [{name: 'H1',data: data_tf_h1,},{name: 'SMA100', data: dataMA100_tf_h1,}],                
                 xAxis : [{data : axisData_tf_h1}],
                 dataZoom : {
-                    start : Math.round((data_tf_h1.length-300)/(data_tf_h1.length)*100),
+                    start : 90.8,
                     end : 100
                 },
             });
             canndle_stick_tf_h1.resize();
 
+            
+            canndle_stick_tf_h4.setOption({
+                series : [{name: 'H4',data: data_tf_h4,},{name: 'SMA100', data: dataMA100_tf_h4,}],                
+                xAxis : [{data : axisData_tf_h4}],
+                dataZoom : {
+                    start : 90.8,
+                    end : 100
+                },
+            });
+            canndle_stick_tf_h4.resize();
+
+            canndle_stick_tf_d1.setOption({
+                series : [{name: 'D1',data: data_tf_d1,},{name: 'SMA100', data: dataMA100_tf_d1,}],                
+                xAxis : [{data : axisData_tf_d1}],
+                dataZoom : {
+                    start : 90.8,
+                    end : 100
+                },
+            });
+            canndle_stick_tf_d1.resize();
 
 
             // canndle_stick_tf_m15.setOption({
@@ -1905,6 +1943,7 @@
             },
             legend: {
                 data:['M5','SMA100'],
+                selected:{'SMA100':false},
                 textStyle: {
                     color: '#fff'
                 }
@@ -2028,6 +2067,7 @@
             },
             legend: {
                 data:['M15','SMA100'],
+                selected:{'SMA100':false},
                 textStyle: {
                     color: '#fff'
                 }
@@ -2151,6 +2191,7 @@
             },
             legend: {
                 data:['M30','SMA100'],
+                selected:{'SMA100':false},
                 textStyle: {
                     color: '#fff'
                 }
@@ -2274,6 +2315,255 @@
             },
             legend: {
                 data:['H1','SMA100'],
+                selected:{'SMA100':false},
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    // mark : {show: true},
+                    // dataZoom : {show: true},
+                    // magicType : {show: true, type: ['line', 'bar']},
+                    // restore : {show: true},
+                    saveAsImage : {
+                        show: true,
+                        title: 'Save As picture'
+                    }
+                }
+            },            
+            dataZoom : 
+                {
+                    show : true,
+                    realtime: true,
+                    start : Math.round((data.length-90)/(data.length)*100),
+                    end : 100,
+                    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                    handleSize: '80%',
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    handleStyle: {
+                        color: '#fff',
+                        shadowBlur: 3,
+                        shadowColor: 'rgba(0, 0, 0, 0.6)',
+                        shadowOffsetX: 2,
+                        shadowOffsetY: 2
+                    }
+                },
+            grid: {
+                left: 80,
+                top: 40,
+                right: 20,
+                bottom: 85
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : true,
+                    axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData,
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    boundaryGap: [0.05, 0.05],
+                    splitArea : {show : true},
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            series : [
+                {
+                    name:'OHLC',
+                    type:'candlestick',
+                    data: data,
+                    markPoint: {
+                        label: {
+                            normal: {
+                                formatter: function (param) {
+                                    return param != null ? param.data['name'] : '';
+                                }
+                            }
+                        },
+                        data: MarkData,
+                    },
+   
+                    itemStyle: {
+                        color: upColor,
+                        color0: downColor,
+                        borderColor: null,
+                        borderColor0: null
+                    },
+                }, 
+                {
+                    name: 'SMA100',
+                    type: 'line',
+                    data: Smoth_SSMA20Arr,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }, 
+            ]
+        };
+
+        option_canndle_stick_tf_h4 = {
+            backgroundColor: '#21202D',
+            title : {
+                // text: 'OHLC',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                },
+                showDelay: 0,             // delay ms
+
+            },
+            legend: {
+                data:['H4','SMA100'],
+                selected:{'SMA100':false},
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    // mark : {show: true},
+                    // dataZoom : {show: true},
+                    // magicType : {show: true, type: ['line', 'bar']},
+                    // restore : {show: true},
+                    saveAsImage : {
+                        show: true,
+                        title: 'Save As picture'
+                    }
+                }
+            },            
+            dataZoom : 
+                {
+                    show : true,
+                    realtime: true,
+                    start : Math.round((data.length-90)/(data.length)*100),
+                    end : 100,
+                    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                    handleSize: '80%',
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    handleStyle: {
+                        color: '#fff',
+                        shadowBlur: 3,
+                        shadowColor: 'rgba(0, 0, 0, 0.6)',
+                        shadowOffsetX: 2,
+                        shadowOffsetY: 2
+                    }
+                },
+            grid: {
+                left: 80,
+                top: 40,
+                right: 20,
+                bottom: 85
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : true,
+                    axisTick: {onGap:false},
+                    splitLine: {show:false},
+                    data : axisData,
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    boundaryGap: [0.05, 0.05],
+                    splitArea : {show : true},
+                    axisLine:{
+                        lineStyle:{
+                            color:'#aca9a9'
+                        }
+                    },
+                }
+            ],
+            series : [
+                {
+                    name:'OHLC',
+                    type:'candlestick',
+                    data: data,
+                    markPoint: {
+                        label: {
+                            normal: {
+                                formatter: function (param) {
+                                    return param != null ? param.data['name'] : '';
+                                }
+                            }
+                        },
+                        data: MarkData,
+                    },
+   
+                    itemStyle: {
+                        color: upColor,
+                        color0: downColor,
+                        borderColor: null,
+                        borderColor0: null
+                    },
+                }, 
+                {
+                    name: 'SMA100',
+                    type: 'line',
+                    data: Smoth_SSMA20Arr,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 1
+                    }
+                }, 
+            ]
+        };
+
+        option_canndle_stick_tf_d1 = {
+            backgroundColor: '#21202D',
+            title : {
+                // text: 'OHLC',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                },
+                showDelay: 0,             // delay ms
+
+            },
+            legend: {
+                data:['D1','SMA100'],
+                selected:{'SMA100':false},
                 textStyle: {
                     color: '#fff'
                 }
@@ -2388,6 +2678,8 @@
         canndle_stick_tf_m15.setOption(option_canndle_stick_tf_m15);
         canndle_stick_tf_m30.setOption(option_canndle_stick_tf_m30);
         canndle_stick_tf_h1.setOption(option_canndle_stick_tf_h1);
+        canndle_stick_tf_h4.setOption(option_canndle_stick_tf_h4);
+        canndle_stick_tf_d1.setOption(option_canndle_stick_tf_d1);
         // console.log('what')
         
         // echarts.connect([canndleStickChart,macdChart,canndleStickChartZoom,canndle_stick_tf_m5]);

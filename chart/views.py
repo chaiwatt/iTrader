@@ -1066,6 +1066,8 @@ def getalltimeframedata(request):
     ohlcs_m15 = []
     ohlcs_m30 = []
     ohlcs_h1 = []
+    ohlcs_h4 = []
+    ohlcs_d1 = []
 
     for i, data in getpostdata(symbol,testdate,"M5",1700).tail(450).iterrows():
         ohlc = {
@@ -1114,12 +1116,42 @@ def getalltimeframedata(request):
             'id':i
         }
         ohlcs_h1.append(ohlc)
+        print(ohlc)
+
+    for i, data in getpostdata(symbol,testdate,"H4",1100).tail(450).iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs_h4.append(ohlc)
+
+    for i, data in getpostdata(symbol,testdate,"D1",1100).tail(450).iterrows():
+        ohlc = {
+            'time':data['time'],
+            'open':data['open'] ,
+            'high':data['high'],
+            'low':data['low'] ,
+            'close':data['close'], 
+            'tick':data['tick_volume'],
+            'id':i
+        }
+        ohlcs_d1.append(ohlc)
+
+        # print(ohlc)
+
 
     data = {
         'ohlcs_m5': ohlcs_m5,
         'ohlcs_m15': ohlcs_m15,
         'ohlcs_m30': ohlcs_m30,
         'ohlcs_h1': ohlcs_h1,
+        'ohlcs_h4': ohlcs_h4,
+        'ohlcs_d1': ohlcs_d1,
     }
     
     return JsonResponse(data)    
@@ -1147,6 +1179,8 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
         timeframe = 60
     elif _timeframe == 'H4':
         timeframe = 240
+    elif _timeframe == 'D1':
+        timeframe = 1440    
 
     to_datetime = datetime.strptime(presentdatedate.strip().replace("T", " ").replace("Z", ""), '%Y-%m-%d %H:%M:%S')
     # print(to_datetime)
@@ -1181,7 +1215,8 @@ def getpostdata(symbol,presentdatedate,_timeframe,num):
         rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H1, utc_from, utc_to)
     elif _timeframe == 'H4':
         rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H4, utc_from, utc_to)
-    
+    elif _timeframe == 'D1':
+        rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_D1, utc_from, utc_to)
     mt5.shutdown()
 
     rates_frame = pd.DataFrame(rates)
@@ -1225,7 +1260,7 @@ def manualaddbarsize(request):
 
 
 def deletesymbol(request):
-    id = 29
+    id = 67
     Symbol.objects.filter(id = id).delete()
     data = {
         'backtestjobs' :  '', 
