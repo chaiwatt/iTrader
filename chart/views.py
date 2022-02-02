@@ -470,15 +470,16 @@ def getbacktestjob(request):
     symbol = Symbol.objects.filter(id = symbolid).first()
     symbol_info=mt5.symbol_info(symbol.name)
 
-    # print(symbol_info)
- 
-    # print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits))
+    fullstring = "StackAbuse"
+    usdbase = 1
 
-    # print(pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-
-    # print(pipChange(symbol_info.bid,symbol_info.ask,symbol_info.digits) * pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1))
-    # print(stopLossPrice(0.1,accountinfo.balance))
-    # print(getLotSize(stopLossPrice(0.1,accountinfo.balance),100, pipPricePerLotsize(symbol_info.name,symbol_info.digits,symbol_info.ask,symbol_info.trade_contract_size,1)))
+    if symbol.name.find('USD') == -1:
+        usbasesymbol = symbol.name[0:3] + 'USD'
+        _sb = mt5.symbol_info_tick(usbasesymbol)
+        print (mt5.symbol_info_tick(usbasesymbol))
+        if _sb != None:
+            usdbase = _sb.ask
+            print (usdbase)
 
     calculationInfo ={
         'symbol': symbol_info.name,
@@ -509,6 +510,7 @@ def getbacktestjob(request):
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
         'barsize' : serializers.serialize('json', StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe'))),
         'lotsizefactor' : lotsizefactor,
+        'usdbase' : usdbase,
         'setting' : serializers.serialize('json', Setting.objects.all()),
         'calculationInfo' : calculationInfo
     }
@@ -1260,7 +1262,7 @@ def manualaddbarsize(request):
 
 
 def deletesymbol(request):
-    id = 67
+    id = 68
     Symbol.objects.filter(id = id).delete()
     data = {
         'backtestjobs' :  '', 

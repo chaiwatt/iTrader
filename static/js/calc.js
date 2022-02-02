@@ -594,15 +594,19 @@
         if (degit % 2 == 0){
             multipleNum = 1
         }
+        // console.log('degit')
         return ((toPrice - fromPrice) * Math.pow(10, 1*degit))/multipleNum 
     }
 
-    function pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize){
-        // console.log(symbol + ' '+ degit+ ' '+currentPrice+ ' '+contractSize+ ' '+lotsize)
+    function pipPricePerLotsize(symbol,degit,currentPrice,contractSize,lotsize,usdbase){
+        // console.log(symbol.substring(3, 6))
         if(symbol.substring(0, 3) == 'USD'){
             return (((Math.pow(10, (-1)*degit))/currentPrice)*contractSize)*lotsize
-        }else{
+        }
+        else if(symbol.substring(3, 6) == 'USD'){
             return ((Math.pow(10, (-1)*degit))*contractSize)*lotsize
+        }else{
+            return (((Math.pow(10, (-1)*degit))/currentPrice)*contractSize)*lotsize*usdbase
         }
     }
 

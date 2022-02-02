@@ -583,6 +583,7 @@
         var measurepipvalue = [];
         var countfromorderposition = 0;
         let positionmark = 0;
+        let usdbase = 1;
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -715,7 +716,7 @@
 
             if($('#lotsize').val() != '' && $('#price').val() != ''){
                 let pipchange = pipChange(parseFloat(data[data.length-2][1]),parseFloat(data[data.length-1][1]),calculationinfo.degit)
-                let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()))*10
+                let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()),usdbase)*10
                 // let currentprice =  (pipchange*pippriceperlot) //orderinfo
 
                 if(orderStatus == true){
@@ -732,7 +733,7 @@
                         color: "#fff",
                     });
                     
-                    let _pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat(orderinfo.lotsize))*10
+                    let _pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat(orderinfo.lotsize),usdbase)*10
                     // console.log('aPrice ' + pipchange)
                     
                     
@@ -2761,7 +2762,7 @@
                     // console.log($('#lotsize').val())
                     
                     let pipchange= pipChange(parseFloat(Math.min.apply(Math, measurepipvalue)),parseFloat(Math.max.apply(Math, measurepipvalue)),calculationinfo.degit)
-                    let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()))*10
+                    let pippriceperlot = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,parseFloat($('#lotsize').val()),usdbase)*10
                     // console.log(pipchange)
                     Swal.fire({
                         icon: 'info',
@@ -3237,19 +3238,17 @@
                 calculationinfo = data.calculationInfo;
                 
                 let lotsizefactor = data.lotsizefactor.factor
+                usdbase = data.usdbase
+                console.log(usdbase)
 
-                let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1)*10;
+                let pippriceperlotsize = pipPricePerLotsize(calculationinfo.symbol,calculationinfo.degit,calculationinfo.ask,calculationinfo.trade_contract_size,1,usdbase)*10;
                 let stoplossprice = parseFloat(stopLossPrice(stdbarsize.stoplostpercent,parseFloat($('#presentbalance').html())))
                 let lotsize = getLotSize(stoplossprice,stdbarsize.stoplostpip,pippriceperlotsize).toFixed(5)*stdbarsize.lotsizeoffset
 
-                console.log(stdbarsize.lotsizeoffset)
-                // console.log(lotsize)
                 $('#stoplost').val(stoplossprice)
                 $('#takeprofit').val(2*stoplossprice)
                 // $('#takeprofit').val(2*stoplossprice)
                 $('#lotsize').val(lotsize)
-                // console.log('let size: '+ getLotSize(stoplossprice,20,pippriceperlotsize).toFixed(5))
-                // console.log('stop lost: ' + stoplossprice)
 
                 barSize = stdbarsize.value
               
