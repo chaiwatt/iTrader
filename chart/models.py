@@ -89,11 +89,23 @@ class BackTestOHLC(models.Model):
     high=models.FloatField()
     low=models.FloatField()
     close=models.FloatField()
-    tick=models.FloatField()
+    tick=models.IntegerField()
     class Meta:
         db_table = "back_test_ohlcs"
 
-
+class BackTestOHLCTimeframe(models.Model):
+    backtest=models.ForeignKey(BackTest, on_delete=models.CASCADE)
+    symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)
+    timeframe=models.ForeignKey(TimeFrame, on_delete=models.CASCADE)
+    timeframename=models.CharField(max_length=100, default = None)
+    date=models.DateTimeField()
+    open=models.FloatField()
+    high=models.FloatField()
+    low=models.FloatField()
+    close=models.FloatField()
+    tick=models.IntegerField()
+    class Meta:
+        db_table = "back_test_ohlc_timeframes"
         
 class Spec(models.Model):
     symbol=models.ForeignKey(Symbol, on_delete=models.CASCADE)

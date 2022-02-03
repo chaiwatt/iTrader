@@ -5,7 +5,7 @@ import MetaTrader5 as mt5
 from django.http import HttpRequest, JsonResponse,HttpResponse
 from json import dumps
 from django.db.models import Q
-from .models import CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport,StdBarSize,LotSizeFactor
+from .models import BackTestOHLCTimeframe, CurrentView,Symbol,TimeFrame,BackTest,BackTestSize,BackTestInterval,BackTestOHLC,Setting,MyAccount,Broker,Spec,SearchType,SearchReport,StdBarSize,LotSizeFactor,BackTestOHLCTimeframe
 import requests
 symbol = 'USDJPY'
 from django.utils import timezone
@@ -418,9 +418,6 @@ def createbacktest(request):
     backtest_symbol = Symbol.objects.filter(id=backtestsymbol).first()
     ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(backtest_symbol.name, backtestdataframe, 0, btsize))
     ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
-    # ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s')
-
-    # print(ohlc_data)
 
     bulk_list = list()
     for j, data in ohlc_data.iterrows():
@@ -428,12 +425,28 @@ def createbacktest(request):
             BackTestOHLC(backtest_id=newBackTest.id,symbol_id=backtestsymbol,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
     BackTestOHLC.objects.bulk_create(bulk_list)   
 
+    addBackTestOHLCTimeframe(btsize,newBackTest.id,backtestsymbol,backtest_symbol.name)
     data = {
         'backtest': serializers.serialize('json', BackTest.objects.filter(id = backtestid)),
         'backtestjobs' : serializers.serialize('json', BackTest.objects.all().order_by("-id")), 
     }
 
     return JsonResponse(data)
+
+def addBackTestOHLCTimeframe(btsize,backtest_id,symbolid,symbol):
+    bulk_list = list()
+    timeframes = ["M5", "M15", "M30", "H1", "H4", "D1"]
+    for idx, tf in enumerate(timeframes):
+        backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf}')
+        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, backtestdataframe, 0, btsize))
+        ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
+        
+        for j, data in ohlc_data.iterrows():
+            bulk_list.append(
+                BackTestOHLCTimeframe(backtest_id=backtest_id,timeframe_id=(idx+2),timeframename=tf,symbol_id=symbolid,date=data['time'], open=data['open'], high=data['high'], low=data['low'], close=data['close'], tick=data['tick_volume']))
+
+    BackTestOHLCTimeframe.objects.bulk_create(bulk_list)   
+    return
 
 def deleteallbacktest(request):
     BackTest.objects.all().delete()
