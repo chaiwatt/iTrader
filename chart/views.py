@@ -463,12 +463,9 @@ def deletebacktest(request):
     return JsonResponse(data)
 
 def getbacktestjob(request):
-
-
     setting = Setting.objects.first()
     
     myaccount = MyAccount.objects.filter(id = setting.myaccount_id).first()
-
     
     if not mt5.initialize():
         print("initialize() failed")
@@ -519,6 +516,7 @@ def getbacktestjob(request):
         'intervals': serializers.serialize('json', BackTestInterval.objects.all()),
         'backtestsizes': serializers.serialize('json', BackTestSize.objects.all()),
         'ohlcs': serializers.serialize('json', BackTestOHLC.objects.filter(backtest_id = id)),
+        'ohlctimeframes': serializers.serialize('json', BackTestOHLCTimeframe.objects.filter(backtest_id = id)),
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
         'barsize' : serializers.serialize('json', StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe'))),
@@ -574,7 +572,6 @@ def spec(request):
     ids = Spec.objects.all().values('symbol_id').distinct()
     # print(ids)
     # print(Symbol.objects.filter(id__in = ids))
-
 
     return render(request,'spec.html',{
         'accountinfo' : accountinfo,

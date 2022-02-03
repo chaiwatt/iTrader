@@ -3226,6 +3226,15 @@
                 let stdbarsize = JSON.parse(data.barsize)[0].fields
                 let _orderbuy_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 1);
+                let _ohlc_timeframe = JSON.parse(data.ohlctimeframes)
+                let _ohlc_timeframe_m5 = _ohlc_timeframe.filter(x => x.fields.timeframe == 2)
+                let _ohlc_timeframe_m15 = _ohlc_timeframe.filter(x => x.fields.timeframe == 3)
+                let _ohlc_timeframe_m30 = _ohlc_timeframe.filter(x => x.fields.timeframe == 4)
+                let _ohlc_timeframe_h1 = _ohlc_timeframe.filter(x => x.fields.timeframe == 5)
+                let _ohlc_timeframe_h4 = _ohlc_timeframe.filter(x => x.fields.timeframe == 6)
+                let _ohlc_timeframe_d1 = _ohlc_timeframe.filter(x => x.fields.timeframe == 7)
+
+                console.log(_ohlc_timeframe_m15)
 
                 let _orderbuy_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 1);
