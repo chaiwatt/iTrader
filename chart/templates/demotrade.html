@@ -611,7 +611,7 @@
             _forexData = response;
         
             data = getData(_forexData);
-            // console.log(data[data.length-1])
+            console.log(data[data.length-1])
             closedPrice = getClosedPrice(_forexData);
             lowPrice = getLowPrice(_forexData);
             highPrice = getHighPrice(_forexData);
@@ -3234,7 +3234,19 @@
                 let _ohlc_timeframe_h4 = _ohlc_timeframe.filter(x => x.fields.timeframe == 6)
                 let _ohlc_timeframe_d1 = _ohlc_timeframe.filter(x => x.fields.timeframe == 7)
 
-                console.log(_ohlc_timeframe_m15)
+
+                console.log(_ohlc_timeframe_m15[0].fields.date)
+
+                let d = new Date(_ohlc_timeframe_m15[0].fields.date);
+                console.log(d.getUTCFullYear()); // Yr=ear
+                console.log(d.getUTCMonth()+1); // Month
+                console.log(d.getUTCDate()); // Day
+                console.log(d.getUTCHours()); // Hours
+                console.log(d.getUTCMinutes());
+                console.log(d.getUTCSeconds());
+
+                // let _ohlc_timeframe_arr_m15 = createRawData(_ohlc_timeframe_m15)
+                // console.log(_ohlc_timeframe_arr_m15)
 
                 let _orderbuy_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 1);
