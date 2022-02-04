@@ -244,14 +244,13 @@
     }
 
     function createTfData(_arr){
-        // console.log(_arr)
         return [[
-            [_arr[4].m15.open,_arr[4].m15.close,_arr[4].m15.low,_arr[4].m15.high],
-            [_arr[3].m30.open,_arr[3].m30.close,_arr[3].m30.low,_arr[3].m30.high],
-            [_arr[2].h1.open,_arr[2].h1.close,_arr[2].h1.low,_arr[2].h1.high],
-            [_arr[1].h4.open,_arr[1].h4.close,_arr[1].h4.low,_arr[1].h4.high],
-            [_arr[0].d1.open,_arr[0].d1.close,_arr[0].d1.low,_arr[0].d1.high],
-        ], [_arr[4].m15.time,_arr[3].m30.time,_arr[2].h1.time,_arr[1].h4.time,_arr[0].d1.time] ] 
+            [_arr[4].m15.open,_arr[4].m15.close,_arr[4].m15.low,_arr[4].m15.high,_arr[4].m15.index],
+            [_arr[3].m30.open,_arr[3].m30.close,_arr[3].m30.low,_arr[3].m30.high,_arr[3].m30.index],
+            [_arr[2].h1.open,_arr[2].h1.close,_arr[2].h1.low,_arr[2].h1.high,_arr[2].h1.index],
+            [_arr[1].h4.open,_arr[1].h4.close,_arr[1].h4.low,_arr[1].h4.high,_arr[1].h4.index],
+            [_arr[0].d1.open,_arr[0].d1.close,_arr[0].d1.low,_arr[0].d1.high,_arr[0].d1.index],
+        ], [_arr[4].m15.time,_arr[3].m30.time,_arr[2].h1.time,_arr[1].h4.time,_arr[0].d1.time]] 
     }
 
     function getSampleData(_arr) {

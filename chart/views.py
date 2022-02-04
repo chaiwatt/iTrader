@@ -522,6 +522,7 @@ def getbacktestjob(request):
         'entryspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =1)),
         'exitspecs': serializers.serialize('json', Spec.objects.filter(symbol_id = symbolid, status =1, spec_type =2)),
         'barsize' : serializers.serialize('json', StdBarSize.objects.filter(symbol_id = symbolid, timeframe = request.POST.get('timeframe'))),
+        'barsizes' : serializers.serialize('json', StdBarSize.objects.filter(symbol_id = symbolid)),
         'lotsizefactor' : lotsizefactor,
         'usdbase' : usdbase,
         'setting' : serializers.serialize('json', Setting.objects.all()),
