@@ -798,9 +798,7 @@
 
             if($('#timeframesync').is(":checked")){
                 let ohlc_timeframe_arr = convertOhlcTimeframe(_ohlc_timeframe,data[data.length-1][5])
-                // console.log(ohlc_timeframe_arr)
                 let tfs_arr = createTfData(ohlc_timeframe_arr)
-
                 let bullishall = bullishAllTimeframe(ohlc_timeframe_arr,false,false)
                         
                 if(bullishall == true){
@@ -817,7 +815,6 @@
                 }
 
                 canndle_stick_tf_all.setOption({
-                  
                     series : [
                         {
                             name: 'OHLC',
