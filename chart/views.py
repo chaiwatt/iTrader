@@ -436,9 +436,11 @@ def createbacktest(request):
 def addBackTestOHLCTimeframe(btsize,backtest_id,symbolid,symbol):
     bulk_list = list()
     timeframes = ["M5", "M15", "M30", "H1", "H4", "D1"]
+    _timeframe_offset = [5, 2, 1, 1, 1, 1]
     for idx, tf in enumerate(timeframes):
         backtestdataframe = getattr(mt5, f'TIMEFRAME_{tf}')
-        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, backtestdataframe, 0, btsize))
+        
+        ohlc_data = pd.DataFrame(mt5.copy_rates_from_pos(symbol, backtestdataframe, 0, btsize*_timeframe_offset[idx]))
         ohlc_data['time']=pd.to_datetime(ohlc_data['time'], unit='s',utc=True)
         
         for j, data in ohlc_data.iterrows():

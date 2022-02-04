@@ -99,14 +99,6 @@
                 })
         });
 
-        // basedate = new Date(_basedate).getTime(),
-        // result = data_ohlc_timeframe_d1.filter(d => {
-        //     let time = new Date(d.time).getTime();
-        //     return (basedate == time);
-        // });
-
-        console.log(_basedate)
-
         return createOhlcTimeframesData(_basedate,data_ohlc_timeframe_d1,data_ohlc_timeframe_h4,data_ohlc_timeframe_h1,data_ohlc_timeframe_m30,data_ohlc_timeframe_m15,data_ohlc_timeframe_m5)
 
     }
@@ -133,22 +125,30 @@
         let baseYear = d.getUTCFullYear()
         let baseMonth = d.getUTCMonth()+1
         let baseDay = d.getUTCDate()
+        let baseHour = d.getUTCHours()
+        let baseMinute = d.getUTCMinutes()
         let only_data_ohlc_timeframe_h4 = []
+        let basehour_h4 = parseInt(baseHour/4) * 4
+        // console.log(basehour_h4)
         data_ohlc_timeframe_h4.forEach((ohlc,key) => {
             let test_d = new Date(ohlc.time);
-            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate()) && parseInt(basehour_h4) == parseInt(test_d.getUTCHours()) 
+            ){
                 only_data_ohlc_timeframe_h4.push({
                      h4 : ohlc
                 })
             }
         });
-        console.log(only_data_ohlc_timeframe_h4)
+        // console.log(only_data_ohlc_timeframe_h4)
         h4 = only_data_ohlc_timeframe_h4[only_data_ohlc_timeframe_h4.length-1]
 
         let only_data_ohlc_timeframe_h1= []
+        let basehour_h1 = parseInt(baseHour)
         data_ohlc_timeframe_h1.forEach((ohlc,key) => {
             let test_d = new Date(ohlc.time);
-            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate()) && 
+            parseInt(basehour_h1) == parseInt(test_d.getUTCHours()) 
+            ){
                 only_data_ohlc_timeframe_h1.push({
                      h1 : ohlc
                 })
@@ -158,9 +158,16 @@
         h1 = only_data_ohlc_timeframe_h1[only_data_ohlc_timeframe_h1.length-1]
 
         let only_data_ohlc_timeframe_m30= []
+        let baseminute_m30 = parseInt(baseMinute/30) * 30
         data_ohlc_timeframe_m30.forEach((ohlc,key) => {
             let test_d = new Date(ohlc.time);
-            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) 
+            && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) 
+            && parseInt(baseDay) == parseInt(test_d.getUTCDate())
+            && parseInt(baseHour) == parseInt(test_d.getUTCHours())
+            && parseInt(baseminute_m30) == parseInt(test_d.getUTCMinutes())
+            
+            ){
                 only_data_ohlc_timeframe_m30.push({
                      m30 : ohlc
                 })
@@ -172,9 +179,15 @@
         ////
 
         let only_data_ohlc_timeframe_m15= []
+        let baseminute_m15 = parseInt(baseMinute/15) * 15
         data_ohlc_timeframe_m15.forEach((ohlc,key) => {
             let test_d = new Date(ohlc.time);
-            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) 
+            && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) 
+            && parseInt(baseDay) == parseInt(test_d.getUTCDate())
+            && parseInt(baseHour) == parseInt(test_d.getUTCHours())
+            && parseInt(baseminute_m15) == parseInt(test_d.getUTCMinutes())
+            ){
                 only_data_ohlc_timeframe_m15.push({
                      m15 : ohlc
                 })
@@ -186,11 +199,17 @@
         ////
         
         let only_data_ohlc_timeframe_m5= []
+        let baseminute_m5 = parseInt(baseMinute/5) * 5
         data_ohlc_timeframe_m5.forEach((ohlc,key) => {
             let test_d = new Date(ohlc.time);
-            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+            
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) 
+            && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) 
+            && parseInt(baseDay) == parseInt(test_d.getUTCDate())
+            && parseInt(baseHour) == parseInt(test_d.getUTCHours())
+            ){
                 only_data_ohlc_timeframe_m5.push({
-                     m30 : ohlc
+                     m5 : ohlc
                 })
             }
         });
@@ -222,6 +241,17 @@
             ]))
         });
         return _data;
+    }
+
+    function createTfData(_arr){
+        // console.log(_arr)
+        return [[
+            [_arr[4].m15.open,_arr[4].m15.close,_arr[4].m15.low,_arr[4].m15.high],
+            [_arr[3].m30.open,_arr[3].m30.close,_arr[3].m30.low,_arr[3].m30.high],
+            [_arr[2].h1.open,_arr[2].h1.close,_arr[2].h1.low,_arr[2].h1.high],
+            [_arr[1].h4.open,_arr[1].h4.close,_arr[1].h4.low,_arr[1].h4.high],
+            [_arr[0].d1.open,_arr[0].d1.close,_arr[0].d1.low,_arr[0].d1.high],
+        ], [_arr[4].m15.time,_arr[3].m30.time,_arr[2].h1.time,_arr[1].h4.time,_arr[0].d1.time] ] 
     }
 
     function getSampleData(_arr) {
@@ -1081,6 +1111,32 @@
         }
     }
 
+    function bullishAllTimeframe(_data,checkwick,chekbar){
+        if(parseFloat(_data[0].d1.close) > parseFloat(_data[0].d1.open)
+            && parseFloat(_data[1].h4.close) > parseFloat(_data[1].h4.open)
+            && parseFloat(_data[2].h1.close) > parseFloat(_data[2].h1.open)
+            && parseFloat(_data[3].m30.close) > parseFloat(_data[3].m30.open) 
+            && parseFloat(_data[4].m15.close) > parseFloat(_data[4].m15.open) 
+        ){
+            return true
+        }else{
+            return false
+        }
+    }
+
+    function bearishAllTimeframe(_data,checktail,chekbar){
+        if(parseFloat(_data[0].d1.close) < parseFloat(_data[0].d1.open)
+            && parseFloat(_data[1].h4.close) < parseFloat(_data[1].h4.open)
+            && parseFloat(_data[2].h1.close) < parseFloat(_data[2].h1.open)
+            && parseFloat(_data[3].m30.close) < parseFloat(_data[3].m30.open) 
+            && parseFloat(_data[4].m15.close) < parseFloat(_data[4].m15.open) 
+        ){
+            return true
+        }else{
+            return false
+        }
+    }
+
     function isCorrectWickTail(data,percent){
         presentarr = data.filter((ohlc,idx) => idx < 4)
         let sorted = sortArr(presentarr);
@@ -1175,40 +1231,40 @@
         return _RS;
     }
 
-    function getCurrentOhlcTimeframe(ohlctimeframes,basedate = null) {
-        let ohlc_timeframe_m5 = ohlctimeframes.filter(x => x.fields.timeframe == 2)
-        let ohlc_timeframe_m15 = ohlctimeframes.filter(x => x.fields.timeframe == 3)
-        let ohlc_timeframe_m30 = ohlctimeframes.filter(x => x.fields.timeframe == 4)
-        let ohlc_timeframe_h1 = ohlctimeframes.filter(x => x.fields.timeframe == 5)
-        let ohlc_timeframe_h4 = ohlctimeframes.filter(x => x.fields.timeframe == 6)
-        let ohlc_timeframe_d1 = ohlctimeframes.filter(x => x.fields.timeframe == 7)
+    // function getCurrentOhlcTimeframe(ohlctimeframes,basedate = null) {
+    //     let ohlc_timeframe_m5 = ohlctimeframes.filter(x => x.fields.timeframe == 2)
+    //     let ohlc_timeframe_m15 = ohlctimeframes.filter(x => x.fields.timeframe == 3)
+    //     let ohlc_timeframe_m30 = ohlctimeframes.filter(x => x.fields.timeframe == 4)
+    //     let ohlc_timeframe_h1 = ohlctimeframes.filter(x => x.fields.timeframe == 5)
+    //     let ohlc_timeframe_h4 = ohlctimeframes.filter(x => x.fields.timeframe == 6)
+    //     let ohlc_timeframe_d1 = ohlctimeframes.filter(x => x.fields.timeframe == 7)
 
 
-        console.log(result)
-        let d = new Date(basedate);
-        console.log(d.getUTCFullYear()); // Yr=ear
-        console.log(d.getUTCMonth()+1); // Month
-        console.log(d.getUTCDate()); // Day
-        console.log(d.getUTCHours());
-        console.log(d.getUTCMinutes());
-        console.log(d.getUTCSeconds());
+    //     console.log(result)
+    //     let d = new Date(basedate);
+    //     console.log(d.getUTCFullYear()); // Yr=ear
+    //     console.log(d.getUTCMonth()+1); // Month
+    //     console.log(d.getUTCDate()); // Day
+    //     console.log(d.getUTCHours());
+    //     console.log(d.getUTCMinutes());
+    //     console.log(d.getUTCSeconds());
 
-        let minute_d1 = d.getUTCDate() * 1440
-        let minute_h4 = d.getUTCHours() * 240
-        let minute_h1 = d.getUTCDate() * 60
-        let minute = d.getUTCMinutes()
+    //     let minute_d1 = d.getUTCDate() * 1440
+    //     let minute_h4 = d.getUTCHours() * 240
+    //     let minute_h1 = d.getUTCDate() * 60
+    //     let minute = d.getUTCMinutes()
 
-        console.log(ohlc_timeframe_m15.find(x => x.fields.date == basedate) )
+    //     console.log(ohlc_timeframe_m15.find(x => x.fields.date == basedate) )
 
-        return {
-            ohlc_timeframe_m5 : ohlc_timeframe_m5[0],
-            ohlc_timeframe_m15 : ohlc_timeframe_m15[0],
-            ohlc_timeframe_m30 : ohlc_timeframe_m30[0],
-            ohlc_timeframe_h1 : ohlc_timeframe_h1[0],
-            ohlc_timeframe_h4 : ohlc_timeframe_h4[0],
-            ohlc_timeframe_d1 : ohlc_timeframe_d1[0],
-        }
+    //     return {
+    //         ohlc_timeframe_m5 : ohlc_timeframe_m5[0],
+    //         ohlc_timeframe_m15 : ohlc_timeframe_m15[0],
+    //         ohlc_timeframe_m30 : ohlc_timeframe_m30[0],
+    //         ohlc_timeframe_h1 : ohlc_timeframe_h1[0],
+    //         ohlc_timeframe_h4 : ohlc_timeframe_h4[0],
+    //         ohlc_timeframe_d1 : ohlc_timeframe_d1[0],
+    //     }
 
-        return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / nRange)
-    }
+    //     return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / nRange)
+    // }
 
