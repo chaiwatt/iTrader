@@ -486,10 +486,10 @@ def getbacktestjob(request):
     if symbol.name.find('USD') == -1:
         usbasesymbol = symbol.name[0:3] + 'USD'
         _sb = mt5.symbol_info_tick(usbasesymbol)
-        print (mt5.symbol_info_tick(usbasesymbol))
+        # print (mt5.symbol_info_tick(usbasesymbol))
         if _sb != None:
             usdbase = _sb.ask
-            print (usdbase)
+            # print (usdbase)
 
     calculationInfo ={
         'symbol': symbol_info.name,
@@ -912,7 +912,7 @@ def closeorder(request):
         # print(df)
 
         for i, data in df.iterrows():
-            print('ticket {0} time {1} volume {2} type {3} profit {4} symbol {5}'.format(data['ticket'],data['time'], data['volume'],data['type'],data['profit'],data['symbol']))
+            # print('ticket {0} time {1} volume {2} type {3} profit {4} symbol {5}'.format(data['ticket'],data['time'], data['volume'],data['type'],data['profit'],data['symbol']))
          
             deviation=20
             tick=mt5.symbol_info_tick(symbol)
@@ -1128,7 +1128,7 @@ def getalltimeframedata(request):
             'id':i
         }
         ohlcs_h1.append(ohlc)
-        print(ohlc)
+        # print(ohlc)
 
     for i, data in getpostdata(symbol,testdate,"H4",1100).tail(450).iterrows():
         ohlc = {

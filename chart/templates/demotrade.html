@@ -193,29 +193,42 @@
                     <div class="card-header">
                         <h3 class="card-title">Testing Job 
                             
-                            <div class="icheck-success d-inline ml-2">
-                                <input type="checkbox" id="checkFirstFound"
-                                {% if setting.firstfoundstatus == '2' %}
-                                checked
-                                {%endif%}
-                                >
-                                <label for="checkFirstFound">
-                                <small>(Break 1st found)</small> 
-                                </label>
-                            </div>
-
-                            <div class="icheck-success d-inline ml-2">
-                                <input type="checkbox" id="checkMeasurePip">
-                                <label for="checkMeasurePip">
-                                <small>Measure pip</small> 
-                                </label>
-                            </div>
-                        
+                     
                         </h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="form-group"> 
+                                    <div class="icheck-success d-inline ml-2">
+                                        <input type="checkbox" id="checkFirstFound"
+                                        {% if setting.firstfoundstatus == '2' %}
+                                        checked
+                                        {%endif%}
+                                        >
+                                        <label for="checkFirstFound">
+                                        <small>(Break 1st found)</small> 
+                                        </label>
+                                    </div>
+
+                                    <div class="icheck-success d-inline ml-2">
+                                        <input type="checkbox" id="timeframesync">
+                                        <label for="timeframesync">
+                                        <small>Timeframe Sync</small> 
+                                        </label>
+                                    </div>
+        
+                                    <div class="icheck-success d-inline ml-2">
+                                        <input type="checkbox" id="checkMeasurePip">
+                                        <label for="checkMeasurePip">
+                                        <small>Measure pip</small> 
+                                        </label>
+                                    </div>
+                                    <hr>
+                                </div>
+
+                           
+                            
                                 <div class="form-group"> 
                                     <label for="selectedBacktestJob">Select Job</label>
                                     <select class="form-control" name="selectedBacktestJob" id="selectedBacktestJob" >
@@ -584,6 +597,8 @@
         var countfromorderposition = 0;
         let positionmark = 0;
         let usdbase = 1;
+        let _ohlc_timeframe = []
+
         $( document ).ready(function () {   
             //  setInterval(function(){
             //     $.ajax({
@@ -609,9 +624,10 @@
 
         function createData(response){
             _forexData = response;
-        
+            
             data = getData(_forexData);
             console.log(data[data.length-1])
+            console.log(convertOhlcTimeframe(_ohlc_timeframe,data[data.length-1][5]))
             closedPrice = getClosedPrice(_forexData);
             lowPrice = getLowPrice(_forexData);
             highPrice = getHighPrice(_forexData);
@@ -3226,27 +3242,9 @@
                 let stdbarsize = JSON.parse(data.barsize)[0].fields
                 let _orderbuy_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_entry_specs = JSON.parse(data.entryspecs).filter(x => x.fields.order_type == 1);
-                let _ohlc_timeframe = JSON.parse(data.ohlctimeframes)
-                let _ohlc_timeframe_m5 = _ohlc_timeframe.filter(x => x.fields.timeframe == 2)
-                let _ohlc_timeframe_m15 = _ohlc_timeframe.filter(x => x.fields.timeframe == 3)
-                let _ohlc_timeframe_m30 = _ohlc_timeframe.filter(x => x.fields.timeframe == 4)
-                let _ohlc_timeframe_h1 = _ohlc_timeframe.filter(x => x.fields.timeframe == 5)
-                let _ohlc_timeframe_h4 = _ohlc_timeframe.filter(x => x.fields.timeframe == 6)
-                let _ohlc_timeframe_d1 = _ohlc_timeframe.filter(x => x.fields.timeframe == 7)
-
-
-                console.log(_ohlc_timeframe_m15[0].fields.date)
-
-                let d = new Date(_ohlc_timeframe_m15[0].fields.date);
-                console.log(d.getUTCFullYear()); // Yr=ear
-                console.log(d.getUTCMonth()+1); // Month
-                console.log(d.getUTCDate()); // Day
-                console.log(d.getUTCHours()); // Hours
-                console.log(d.getUTCMinutes());
-                console.log(d.getUTCSeconds());
-
-                // let _ohlc_timeframe_arr_m15 = createRawData(_ohlc_timeframe_m15)
-                // console.log(_ohlc_timeframe_arr_m15)
+                _ohlc_timeframe = JSON.parse(data.ohlctimeframes)
+              
+               
 
                 let _orderbuy_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 0);
                 let _ordersell_close_specs = JSON.parse(data.exitspecs).filter(x => x.fields.order_type == 1);

@@ -16,6 +16,193 @@
         });
         return _data;
     }
+
+    function convertOhlcTimeframe(ohlctimeframes,_basedate){
+        let ohlc_timeframe_m5 = ohlctimeframes.filter(x => x.fields.timeframe == 2)
+        let ohlc_timeframe_m15 = ohlctimeframes.filter(x => x.fields.timeframe == 3)
+        let ohlc_timeframe_m30 = ohlctimeframes.filter(x => x.fields.timeframe == 4)
+        let ohlc_timeframe_h1 = ohlctimeframes.filter(x => x.fields.timeframe == 5)
+        let ohlc_timeframe_h4 = ohlctimeframes.filter(x => x.fields.timeframe == 6)
+        let ohlc_timeframe_d1 = ohlctimeframes.filter(x => x.fields.timeframe == 7)
+
+        var data_ohlc_timeframe_m5 = []
+        var data_ohlc_timeframe_m15 = []
+        var data_ohlc_timeframe_m30 = []
+        var data_ohlc_timeframe_h1 = []
+        var data_ohlc_timeframe_h4 = []
+        var data_ohlc_timeframe_d1 = []
+
+        ohlc_timeframe_m5.forEach((ohlc,key) => {
+            data_ohlc_timeframe_m5.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                    index: ohlc.pk,
+                })
+        });
+        ohlc_timeframe_m15.forEach((ohlc,key) => {
+            data_ohlc_timeframe_m15.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                    index: ohlc.pk,
+                })
+        });
+        ohlc_timeframe_m30.forEach((ohlc,key) => {
+            data_ohlc_timeframe_m30.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                    index: ohlc.pk,
+                })
+        });
+        ohlc_timeframe_h1.forEach((ohlc,key) => {
+            data_ohlc_timeframe_h1.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                    index: ohlc.pk,
+                })
+        });
+        ohlc_timeframe_h4.forEach((ohlc,key) => {
+            data_ohlc_timeframe_h4.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                    index: ohlc.pk,
+                })
+        });
+        ohlc_timeframe_d1.forEach((ohlc,key) => {
+            data_ohlc_timeframe_d1.push({
+                    time: ohlc.fields.date,
+                    open: ohlc.fields.open,
+                    close: ohlc.fields.close,
+                    low: ohlc.fields.low,
+                    high: ohlc.fields.high,
+                    tick: ohlc.fields.tick,
+                    index: ohlc.pk,
+                })
+        });
+
+        // basedate = new Date(_basedate).getTime(),
+        // result = data_ohlc_timeframe_d1.filter(d => {
+        //     let time = new Date(d.time).getTime();
+        //     return (basedate == time);
+        // });
+
+        console.log(_basedate)
+
+        return createOhlcTimeframesData(_basedate,data_ohlc_timeframe_d1,data_ohlc_timeframe_h4,data_ohlc_timeframe_h1,data_ohlc_timeframe_m30,data_ohlc_timeframe_m15,data_ohlc_timeframe_m5)
+
+    }
+
+    function createOhlcTimeframesData(basedate,data_ohlc_timeframe_d1,data_ohlc_timeframe_h4,data_ohlc_timeframe_h1,data_ohlc_timeframe_m30,data_ohlc_timeframe_m15,data_ohlc_timeframe_m5){
+        // console.log(basedate)
+        let currentOhlctimeframe = []
+        let d1 = null;
+        let h4= null;
+        let h1= null;
+        let m30= null;
+        let m15= null;
+        let m5= null;
+        let d = new Date(basedate);
+        let newDateStr = `${d.getUTCFullYear()}-${(d.getUTCMonth()+1).toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}T00:00:00Z`
+        newDate = new Date(newDateStr).getTime(),
+        result = data_ohlc_timeframe_d1.filter(d => {
+            let time = new Date(d.time).getTime();
+            return (newDate == time);
+        });
+        
+        d1 =  {d1 : result[0]} 
+
+        let baseYear = d.getUTCFullYear()
+        let baseMonth = d.getUTCMonth()+1
+        let baseDay = d.getUTCDate()
+        let only_data_ohlc_timeframe_h4 = []
+        data_ohlc_timeframe_h4.forEach((ohlc,key) => {
+            let test_d = new Date(ohlc.time);
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+                only_data_ohlc_timeframe_h4.push({
+                     h4 : ohlc
+                })
+            }
+        });
+        console.log(only_data_ohlc_timeframe_h4)
+        h4 = only_data_ohlc_timeframe_h4[only_data_ohlc_timeframe_h4.length-1]
+
+        let only_data_ohlc_timeframe_h1= []
+        data_ohlc_timeframe_h1.forEach((ohlc,key) => {
+            let test_d = new Date(ohlc.time);
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+                only_data_ohlc_timeframe_h1.push({
+                     h1 : ohlc
+                })
+            }
+        });
+        // console.log(only_data_ohlc_timeframe_h1)
+        h1 = only_data_ohlc_timeframe_h1[only_data_ohlc_timeframe_h1.length-1]
+
+        let only_data_ohlc_timeframe_m30= []
+        data_ohlc_timeframe_m30.forEach((ohlc,key) => {
+            let test_d = new Date(ohlc.time);
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+                only_data_ohlc_timeframe_m30.push({
+                     m30 : ohlc
+                })
+            }
+        });
+        // console.log(only_data_ohlc_timeframe_m30)
+        m30 = only_data_ohlc_timeframe_m30[only_data_ohlc_timeframe_m30.length-1]
+
+        ////
+
+        let only_data_ohlc_timeframe_m15= []
+        data_ohlc_timeframe_m15.forEach((ohlc,key) => {
+            let test_d = new Date(ohlc.time);
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+                only_data_ohlc_timeframe_m15.push({
+                     m15 : ohlc
+                })
+            }
+        });
+        // console.log(only_data_ohlc_timeframe_m15)
+        m15 = only_data_ohlc_timeframe_m15[only_data_ohlc_timeframe_m15.length-1]
+
+        ////
+        
+        let only_data_ohlc_timeframe_m5= []
+        data_ohlc_timeframe_m5.forEach((ohlc,key) => {
+            let test_d = new Date(ohlc.time);
+            if(parseInt(baseYear) == parseInt(test_d.getUTCFullYear()) && parseInt(baseMonth) == parseInt(test_d.getUTCMonth()+1) && parseInt(baseDay) == parseInt(test_d.getUTCDate())){
+                only_data_ohlc_timeframe_m5.push({
+                     m30 : ohlc
+                })
+            }
+        });
+        // console.log(only_data_ohlc_timeframe_m5)
+        m5 = only_data_ohlc_timeframe_m5[only_data_ohlc_timeframe_m5.length-1]
+
+        ////
+
+        currentOhlctimeframe.push(d1,h4,h1,m30,m15,m5)
+        return currentOhlctimeframe
+
+    }
     
     function getData(_arr) {
         var _data = []
@@ -986,5 +1173,42 @@
             }
         }
         return _RS;
+    }
+
+    function getCurrentOhlcTimeframe(ohlctimeframes,basedate = null) {
+        let ohlc_timeframe_m5 = ohlctimeframes.filter(x => x.fields.timeframe == 2)
+        let ohlc_timeframe_m15 = ohlctimeframes.filter(x => x.fields.timeframe == 3)
+        let ohlc_timeframe_m30 = ohlctimeframes.filter(x => x.fields.timeframe == 4)
+        let ohlc_timeframe_h1 = ohlctimeframes.filter(x => x.fields.timeframe == 5)
+        let ohlc_timeframe_h4 = ohlctimeframes.filter(x => x.fields.timeframe == 6)
+        let ohlc_timeframe_d1 = ohlctimeframes.filter(x => x.fields.timeframe == 7)
+
+
+        console.log(result)
+        let d = new Date(basedate);
+        console.log(d.getUTCFullYear()); // Yr=ear
+        console.log(d.getUTCMonth()+1); // Month
+        console.log(d.getUTCDate()); // Day
+        console.log(d.getUTCHours());
+        console.log(d.getUTCMinutes());
+        console.log(d.getUTCSeconds());
+
+        let minute_d1 = d.getUTCDate() * 1440
+        let minute_h4 = d.getUTCHours() * 240
+        let minute_h1 = d.getUTCDate() * 60
+        let minute = d.getUTCMinutes()
+
+        console.log(ohlc_timeframe_m15.find(x => x.fields.date == basedate) )
+
+        return {
+            ohlc_timeframe_m5 : ohlc_timeframe_m5[0],
+            ohlc_timeframe_m15 : ohlc_timeframe_m15[0],
+            ohlc_timeframe_m30 : ohlc_timeframe_m30[0],
+            ohlc_timeframe_h1 : ohlc_timeframe_h1[0],
+            ohlc_timeframe_h4 : ohlc_timeframe_h4[0],
+            ohlc_timeframe_d1 : ohlc_timeframe_d1[0],
+        }
+
+        return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / nRange)
     }
 
